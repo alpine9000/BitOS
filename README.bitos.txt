@@ -11,6 +11,7 @@ readline-6.3-src/* Copyright (C) 2007 Free Software Foundation, Inc. (GNU GENERA
 apps/wolf/wolf.cpp Copyright (c) 2004-2007, Lode Vandevenne. (Simplified BSD License)
 apps/wolf/media/*  Copyright (C) Id Software, Inc. (LIMITED USE SOFTWARE LICENSE AGREEMENT - apps/wolf/media/LICENSE.DOC)
 apps/bemacs/* Various authors, released to the public domain (apps/bemacs/README.original)
+bin2c.c - Written by sandro AT sigala DOT it - BEER-WARE LICENSE
 
 Notes:
 ------
