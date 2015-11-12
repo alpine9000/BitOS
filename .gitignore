@@ -21,7 +21,7 @@
 *.dylib
 
 # Executables
-*.exe
+.exe
 *.out
 *.app
 *.i*86
@@ -31,3 +31,7 @@
 # Debug files
 *.dSYM/
 *.d
+*.map
+
+# Emacs backup files
+*~
