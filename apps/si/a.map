@@ -1,0 +1,1108 @@
+Archive member included to satisfy reference by file (symbol)
+
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(bft.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o (bft_init)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(client.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o (kernel_die)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-exit.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o (exit)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-impure.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-exit.o) (_global_impure_ptr)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memcpy.o)
+                              si.o (memcpy)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memset.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(client.o) (memset)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sysclose.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o (close)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-trap.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(bft.o) (__trap34)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(syscalls.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sysclose.o) (_close_r)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(panic.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(syscalls.o) (panic)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-__call_atexit.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-exit.o) (__call_exitprocs)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-printf.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(syscalls.o) (printf)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sprintf.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(syscalls.o) (sprintf)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sprintf.o) (_svfprintf_r)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sysstat.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(syscalls.o) (stat)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfprintf.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-printf.o) (_vfprintf_r)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wsetup.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfprintf.o) (__swsetup_r)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-__atexit.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-__call_atexit.o) (__atexit_lock)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-dtoa.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o) (_dtoa_r)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fflush.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfprintf.o) (_fflush_r)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-findfp.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfprintf.o) (__sinit)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fwalk.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-findfp.o) (_fwalk)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-locale.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o) (_localeconv_r)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-makebuf.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wsetup.o) (__smakebuf_r)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memchr.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o) (memchr)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-mprec.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-dtoa.o) (_Balloc)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sf_fpclassify.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o) (__fpclassifyf)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-stdio.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-findfp.o) (__sread)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-strcmp.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-locale.o) (strcmp)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-strlen.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o) (strlen)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfiprintf.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o) (__ssprint_r)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfiprintf.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfprintf.o) (__sprint_r)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fclose.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-findfp.o) (fclose)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fputwc.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfiprintf.o) (_fputwc_r)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fvwrite.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfiprintf.o) (__sfvwrite_r)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memmove.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfiprintf.o) (memmove)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wbuf.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fputwc.o) (__swbuf_r)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wcrtomb.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fputwc.o) (_wcrtomb_r)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wctomb_r.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wcrtomb.o) (__wctomb)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_ashiftrt.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-mprec.o) (__ashiftrt_r4_23)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_ashiftrt_n.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-mprec.o) (__ashrsi3)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_ashiftlt.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-__call_atexit.o) (__ashlsi3_r0)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_lshiftrt.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-mprec.o) (__lshrsi3_r0)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivsi3.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-dtoa.o) (__udivsi3)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o) (__udivdi3)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_umoddi3.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o) (__umoddi3)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_df_to_sf.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o) (__truncdfsf2)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udiv_qrnnd_16.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o) (__udiv_qrnnd_16)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_clz.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o) (__clz_tab)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_make_sf.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_df_to_sf.o) (__make_fp)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_unpack_df.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_df_to_sf.o) (__unpack_d)
+/usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_pack_sf.o)
+                              /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_make_sf.o) (__pack_f)
+
+Allocating common symbols
+Common symbol       size              file
+
+sprite              0x4               si.o
+target              0x4               si.o
+work                0x4               si.o
+invaders            0x14a             si.o
+width               0x4               si.o
+height              0x4               si.o
+errno               0x4               /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(client.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+LOAD /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crti.o
+LOAD /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtbegin.o
+LOAD si.o
+LOAD media/sprite.o
+LOAD media/fastinvader1.o
+LOAD media/fastinvader2.o
+LOAD media/fastinvader3.o
+LOAD media/fastinvader4.o
+LOAD media/shoot.o
+LOAD /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a
+LOAD /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc-Os-4-200.a
+LOAD /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a
+LOAD /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a
+LOAD /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc-Os-4-200.a
+LOAD /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtend.o
+LOAD /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtn.o
+                0x00000000000000d4                . = (0x0 + SIZEOF_HEADERS)
+
+.note.gnu.build-id
+ *(.note.gnu.build-id)
+
+.hash           0x00000000000000d4       0x34
+ *(.hash)
+ .hash          0x00000000000000d4       0x34 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+
+.gnu.hash
+ *(.gnu.hash)
+
+.dynsym         0x0000000000000108       0x80
+ *(.dynsym)
+ .dynsym        0x0000000000000108       0x80 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+
+.dynstr         0x0000000000000188       0x40
+ *(.dynstr)
+ .dynstr        0x0000000000000188       0x40 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+
+.gnu.version    0x00000000000001c8        0x0
+ *(.gnu.version)
+ .gnu.version   0x00000000000001c8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+
+.gnu.version_d  0x00000000000001c8        0x0
+ *(.gnu.version_d)
+ .gnu.version_d
+                0x00000000000001c8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+
+.gnu.version_r  0x00000000000001c8        0x0
+ *(.gnu.version_r)
+ .gnu.version_r
+                0x00000000000001c8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+
+.rela.dyn       0x00000000000001c8     0x1bcc
+ *(.rela.init)
+ *(.rela.text .rela.text.* .rela.gnu.linkonce.t.*)
+ .rela.text     0x00000000000001c8     0x1b00 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+ *(.rela.fini)
+ *(.rela.rodata .rela.rodata.* .rela.gnu.linkonce.r.*)
+ .rela.rodata   0x0000000000001cc8        0xc /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+ *(.rela.data .rela.data.* .rela.gnu.linkonce.d.*)
+ .rela.data     0x0000000000001cd4       0xc0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+ *(.rela.tdata .rela.tdata.* .rela.gnu.linkonce.td.*)
+ *(.rela.tbss .rela.tbss.* .rela.gnu.linkonce.tb.*)
+ *(.rela.ctors)
+ *(.rela.dtors)
+ *(.rela.got)
+ .rela.got      0x0000000000001d94        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+ *(.rela.sdata .rela.sdata.* .rela.gnu.linkonce.s.*)
+ *(.rela.sbss .rela.sbss.* .rela.gnu.linkonce.sb.*)
+ *(.rela.sdata2 .rela.sdata2.* .rela.gnu.linkonce.s2.*)
+ *(.rela.sbss2 .rela.sbss2.* .rela.gnu.linkonce.sb2.*)
+ *(.rela.bss .rela.bss.* .rela.gnu.linkonce.b.*)
+ *(.rela.iplt)
+ .rela.got.funcdesc
+                0x0000000000001d94        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+
+.rela.plt       0x0000000000001d94        0x0
+ *(.rela.plt)
+ .rela.plt      0x0000000000001d94        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+
+.init
+ *(SORT(.init))
+
+.plt            0x0000000000001d94        0x0
+ *(.plt)
+ .plt           0x0000000000001d94        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+
+.iplt
+ *(.iplt)
+
+.text           0x0000000000001d98     0xb78c
+ *(.text.unlikely .text.*_unlikely .text.unlikely.*)
+ *(.text.exit .text.exit.*)
+ *(.text.startup .text.startup.*)
+ *(.text.hot .text.hot.*)
+ *(.text .stub .text.* .gnu.linkonce.t.*)
+ .text          0x0000000000001d98       0x7c /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+                0x0000000000001d98                start
+                0x0000000000001df4                _exit
+ .text          0x0000000000001e14        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crti.o
+ .text          0x0000000000001e14        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtbegin.o
+ .text          0x0000000000001e14      0xc98 si.o
+                0x0000000000001e14                initInvader
+                0x0000000000001ea8                initInvaders
+                0x0000000000001f70                downShiftInvaders
+                0x0000000000002000                moveMissle
+                0x0000000000002048                moveInvaders
+                0x000000000000223c                renderMissle
+                0x00000000000022d8                drawRGBA
+                0x000000000000237c                preRender
+                0x00000000000024c0                render
+                0x0000000000002650                setupAudio
+                0x00000000000027c4                shoot
+                0x0000000000002844                main
+ .text          0x0000000000002aac        0x0 media/sprite.o
+ .text          0x0000000000002aac        0x0 media/fastinvader1.o
+ .text          0x0000000000002aac        0x0 media/fastinvader2.o
+ .text          0x0000000000002aac        0x0 media/fastinvader3.o
+ .text          0x0000000000002aac        0x0 media/fastinvader4.o
+ .text          0x0000000000002aac        0x0 media/shoot.o
+ .text          0x0000000000002aac       0x1c /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(bft.o)
+                0x0000000000002aac                bft_init
+ .text          0x0000000000002ac8       0xe8 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(client.o)
+                0x0000000000002ac8                kernel_threadBlocked
+                0x0000000000002ad8                kernel_spinLock
+                0x0000000000002ae8                kernel_unlock
+                0x0000000000002af8                kernel_pid
+                0x0000000000002b08                kernel_die
+                0x0000000000002b18                process_spawn
+                0x0000000000002b28                process_wait
+                0x0000000000002b3c                process_load
+                0x0000000000002b4c                pathconf
+                0x0000000000002b50                fpathconf
+                0x0000000000002b54                wolf
+                0x0000000000002b58                malloc
+                0x0000000000002b64                calloc
+                0x0000000000002b94                free
+                0x0000000000002ba0                realloc
+ .text          0x0000000000002bb0       0x2c /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-exit.o)
+                0x0000000000002bb0                exit
+ .text          0x0000000000002bdc        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-impure.o)
+ .text          0x0000000000002bdc       0x94 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memcpy.o)
+                0x0000000000002bdc                memcpy
+ .text          0x0000000000002c70       0x40 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memset.o)
+                0x0000000000002c70                memset
+ .text          0x0000000000002cb0       0x14 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sysclose.o)
+                0x0000000000002cb0                close
+ .text          0x0000000000002cc4       0x14 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-trap.o)
+                0x0000000000002cc4                __trap34
+ .text          0x0000000000002cd8      0x4a4 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(syscalls.o)
+                0x0000000000002cd8                _bitos_lock_init
+                0x0000000000002cec                _bitos_lock_init_recursive
+                0x0000000000002d00                _bitos_lock_close
+                0x0000000000002d14                _bitos_lock_close_recursive
+                0x0000000000002d28                _bitos_lock_acquire
+                0x0000000000002d3c                _bitos_lock_acquire_recursive
+                0x0000000000002d50                _bitos_lock_try_acquire
+                0x0000000000002d64                _bitos_lock_try_acquire_recursive
+                0x0000000000002d78                _bitos_lock_release
+                0x0000000000002d8c                _bitos_lock_release_recursive
+                0x0000000000002da0                _times_r
+                0x0000000000002dac                _gettimeofday_r
+                0x0000000000002db8                _read_r
+                0x0000000000002dc4                _lseek_r
+                0x0000000000002dd0                _write_r
+                0x0000000000002ddc                _close_r
+                0x0000000000002dec                _fstat_r
+                0x0000000000002df8                _open_r
+                0x0000000000002e04                _creat_r
+                0x0000000000002e10                _unlink_r
+                0x0000000000002e1c                _isatty_r
+                0x0000000000002e28                _kill_r
+                0x0000000000002e3c                _getpid_r
+                0x0000000000002e48                popen
+                0x0000000000002e54                pclose
+                0x0000000000002e68                opendir
+                0x0000000000002e74                readdir
+                0x0000000000002e80                sysconf
+                0x0000000000002ee4                _stat_r
+                0x0000000000002ef0                access
+                0x0000000000002f14                chdir
+                0x0000000000002f20                getcwd
+                0x0000000000002f30                getwd
+                0x0000000000002f40                mkdir
+                0x0000000000002f50                pipe
+                0x0000000000002f5c                chmod
+                0x0000000000002f60                umask
+                0x0000000000002f64                lstat
+                0x0000000000002f70                closedir
+                0x0000000000002f74                utime
+                0x0000000000002f90                _link_r
+                0x0000000000002fac                chown
+                0x0000000000002fc8                rmdir
+                0x0000000000002fe4                dup2
+                0x0000000000003000                sleep
+                0x000000000000301c                alarm
+                0x0000000000003038                execvp
+                0x0000000000003054                fork
+                0x0000000000003070                _wait_r
+                0x000000000000308c                execv
+                0x00000000000030a8                getpwnam
+                0x00000000000030c4                dup
+                0x00000000000030e0                ftruncate
+                0x00000000000030fc                getlogin
+                0x0000000000003118                _rename_r
+                0x0000000000003124                select
+                0x0000000000003128                _malloc_r
+                0x0000000000003134                _realloc_r
+                0x0000000000003140                _free_r
+                0x000000000000314c                _calloc_r
+ .text          0x000000000000317c        0xc /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(panic.o)
+                0x000000000000317c                panic
+ .text          0x0000000000003188      0x12c /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-__call_atexit.o)
+                0x0000000000003188                __call_exitprocs
+ .text          0x00000000000032b4       0xe4 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-printf.o)
+                0x00000000000032b4                _printf_r
+                0x0000000000003320                printf
+ .text          0x0000000000003398      0x104 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sprintf.o)
+                0x0000000000003398                _sprintf_r
+                0x0000000000003414                sprintf
+ .text          0x000000000000349c     0x1d48 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o)
+                0x000000000000349c                _svfprintf_r
+ .text          0x00000000000051e4       0x14 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sysstat.o)
+                0x00000000000051e4                stat
+ .text          0x00000000000051f8     0x2224 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfprintf.o)
+                0x00000000000051f8                _vfprintf_r
+                0x000000000000733c                vfprintf
+ .text          0x000000000000741c       0xf8 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wsetup.o)
+                0x000000000000741c                __swsetup_r
+ .text          0x0000000000007514       0xf4 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-__atexit.o)
+                0x0000000000007514                __register_exitproc
+ .text          0x0000000000007608      0xf98 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-dtoa.o)
+                0x0000000000007760                _dtoa_r
+ .text          0x00000000000085a0      0x238 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fflush.o)
+                0x00000000000085a0                __sflush_r
+                0x0000000000008718                _fflush_r
+                0x00000000000087b0                fflush
+ .text          0x00000000000087d8      0x300 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-findfp.o)
+                0x00000000000087d8                _cleanup_r
+                0x0000000000008894                __sfmoreglue
+                0x00000000000088dc                _cleanup
+                0x00000000000088f4                __sinit
+                0x0000000000008960                __sfp
+                0x0000000000008a44                __sfp_lock_acquire
+                0x0000000000008a54                __sfp_lock_release
+                0x0000000000008a64                __sinit_lock_acquire
+                0x0000000000008a74                __sinit_lock_release
+                0x0000000000008a84                __fp_lock_all
+                0x0000000000008ab0                __fp_unlock_all
+ .text          0x0000000000008ad8       0xf4 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fwalk.o)
+                0x0000000000008ad8                _fwalk
+                0x0000000000008b4c                _fwalk_reent
+ .text          0x0000000000008bcc       0xa4 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-locale.o)
+                0x0000000000008bcc                _setlocale_r
+                0x0000000000008c1c                __locale_charset
+                0x0000000000008c28                __locale_mb_cur_max
+                0x0000000000008c34                __locale_msgcharset
+                0x0000000000008c40                __locale_cjk_lang
+                0x0000000000008c44                _localeconv_r
+                0x0000000000008c50                setlocale
+                0x0000000000008c64                localeconv
+ .text          0x0000000000008c70      0x118 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-makebuf.o)
+                0x0000000000008c70                __smakebuf_r
+ .text          0x0000000000008d88       0x9c /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memchr.o)
+                0x0000000000008d88                memchr
+ .text          0x0000000000008e24      0xaa0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-mprec.o)
+                0x0000000000008e24                _Balloc
+                0x0000000000008e98                _Bfree
+                0x0000000000008eb0                __multadd
+                0x0000000000008f60                __s2b
+                0x0000000000009018                __hi0bits
+                0x0000000000009074                __lo0bits
+                0x00000000000090dc                __i2b
+                0x00000000000090f8                __multiply
+                0x0000000000009248                __pow5mult
+                0x0000000000009324                __lshift
+                0x0000000000009420                __mcmp
+                0x000000000000945c                __mdiff
+                0x000000000000959c                __ulp
+                0x00000000000095f0                __b2d
+                0x00000000000096a4                __d2b
+                0x000000000000974c                __ratio
+                0x00000000000097c8                _mprec_log10
+                0x00000000000097f4                __copybits
+                0x0000000000009844                __any_on
+ .text          0x00000000000098c4       0x48 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sf_fpclassify.o)
+                0x00000000000098c4                __fpclassifyf
+ .text          0x000000000000990c       0xf4 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-stdio.o)
+                0x000000000000990c                __sread
+                0x000000000000994c                __seofread
+                0x0000000000009950                __swrite
+                0x00000000000099a8                __sseek
+                0x00000000000099f0                __sclose
+ .text          0x0000000000009a00       0x38 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-strcmp.o)
+                0x0000000000009a00                strcmp
+ .text          0x0000000000009a38       0x20 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-strlen.o)
+                0x0000000000009a38                strlen
+ .text          0x0000000000009a58     0x11d0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfiprintf.o)
+                0x0000000000009a58                __ssprint_r
+                0x0000000000009bc0                _svfiprintf_r
+ .text          0x000000000000ac28     0x152c /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfiprintf.o)
+                0x000000000000acdc                __sprint_r
+                0x000000000000acf4                _vfiprintf_r
+                0x000000000000c074                vfiprintf
+ .text          0x000000000000c154      0x118 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fclose.o)
+                0x000000000000c154                _fclose_r
+                0x000000000000c258                fclose
+ .text          0x000000000000c26c      0x160 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fputwc.o)
+                0x000000000000c26c                _fputwc_r
+                0x000000000000c38c                fputwc
+ .text          0x000000000000c3cc      0x358 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fvwrite.o)
+                0x000000000000c3cc                __sfvwrite_r
+ .text          0x000000000000c724       0xcc /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memmove.o)
+                0x000000000000c724                memmove
+ .text          0x000000000000c7f0       0xf0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wbuf.o)
+                0x000000000000c7f0                __swbuf_r
+                0x000000000000c8cc                __swbuf
+ .text          0x000000000000c8e0       0xe0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wcrtomb.o)
+                0x000000000000c8e0                _wcrtomb_r
+                0x000000000000c944                wcrtomb
+ .text          0x000000000000c9c0       0x58 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wctomb_r.o)
+                0x000000000000c9c0                __ascii_wctomb
+                0x000000000000c9e0                _wctomb_r
+ .text          0x000000000000ca18       0x52 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_ashiftrt.o)
+                0x000000000000ca18                __ashiftrt_r4_31
+                0x000000000000ca18                __ashiftrt_r4_32
+                0x000000000000ca1e                __ashiftrt_r4_30
+                0x000000000000ca20                __ashiftrt_r4_29
+                0x000000000000ca22                __ashiftrt_r4_28
+                0x000000000000ca24                __ashiftrt_r4_27
+                0x000000000000ca26                __ashiftrt_r4_26
+                0x000000000000ca28                __ashiftrt_r4_25
+                0x000000000000ca2a                __ashiftrt_r4_24
+                0x000000000000ca32                __ashiftrt_r4_23
+                0x000000000000ca34                __ashiftrt_r4_22
+                0x000000000000ca36                __ashiftrt_r4_21
+                0x000000000000ca38                __ashiftrt_r4_20
+                0x000000000000ca3a                __ashiftrt_r4_19
+                0x000000000000ca3c                __ashiftrt_r4_18
+                0x000000000000ca3e                __ashiftrt_r4_17
+                0x000000000000ca40                __ashiftrt_r4_16
+                0x000000000000ca46                __ashiftrt_r4_15
+                0x000000000000ca48                __ashiftrt_r4_14
+                0x000000000000ca4a                __ashiftrt_r4_13
+                0x000000000000ca4c                __ashiftrt_r4_12
+                0x000000000000ca4e                __ashiftrt_r4_11
+                0x000000000000ca50                __ashiftrt_r4_10
+                0x000000000000ca52                __ashiftrt_r4_9
+                0x000000000000ca54                __ashiftrt_r4_8
+                0x000000000000ca56                __ashiftrt_r4_7
+                0x000000000000ca58                __ashiftrt_r4_6
+                0x000000000000ca5a                __ashiftrt_r4_5
+                0x000000000000ca5c                __ashiftrt_r4_4
+                0x000000000000ca5e                __ashiftrt_r4_3
+                0x000000000000ca60                __ashiftrt_r4_2
+                0x000000000000ca62                __ashiftrt_r4_1
+                0x000000000000ca66                __ashiftrt_r4_0
+ *fill*         0x000000000000ca6a        0x2 
+ .text          0x000000000000ca6c       0x80 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_ashiftrt_n.o)
+                0x000000000000ca6c                __ashrsi3
+ .text          0x000000000000caec       0xbc /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_ashiftlt.o)
+                0x000000000000caec                __ashlsi3
+                0x000000000000caf0                __ashlsi3_r0
+ .text          0x000000000000cba8       0xbc /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_lshiftrt.o)
+                0x000000000000cba8                __lshrsi3
+                0x000000000000cbac                __lshrsi3_r0
+ .text          0x000000000000cc64       0x6c /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivsi3.o)
+                0x000000000000cc86                __udivsi3
+ .text          0x000000000000ccd0      0x2a0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o)
+                0x000000000000ccd0                __udivdi3
+ .text          0x000000000000cf70      0x2e8 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_umoddi3.o)
+                0x000000000000cf70                __umoddi3
+ .text          0x000000000000d258       0x4c /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_df_to_sf.o)
+                0x000000000000d258                __truncdfsf2
+ *fill*         0x000000000000d2a4        0x4 
+ .text          0x000000000000d2a8       0x60 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udiv_qrnnd_16.o)
+                0x000000000000d2a8                __udiv_qrnnd_16
+ .text          0x000000000000d308        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_clz.o)
+ .text          0x000000000000d308       0x20 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_make_sf.o)
+                0x000000000000d308                __make_fp
+ .text          0x000000000000d328       0xd0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_unpack_df.o)
+                0x000000000000d328                __unpack_d
+ .text          0x000000000000d3f8      0x12c /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_pack_sf.o)
+                0x000000000000d3f8                __pack_f
+ .text          0x000000000000d524        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtend.o
+ .text          0x000000000000d524        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtn.o
+ *(.gnu.warning)
+
+.fini
+ *(SORT(.fini))
+                [!provide]                        PROVIDE (__etext, .)
+                [!provide]                        PROVIDE (_etext, .)
+                [!provide]                        PROVIDE (etext, .)
+
+.rodata         0x000000000000d524     0x2eb8
+ *(.rodata .rodata.* .gnu.linkonce.r.*)
+ .rodata        0x000000000000d524       0x37 si.o
+ *fill*         0x000000000000d55b        0x1 
+ .rodata        0x000000000000d55c      0xc04 media/sprite.o
+                0x000000000000d55c                sprite_rgba
+                0x000000000000e15c                sprite_rgba_length
+ .rodata        0x000000000000e160      0x408 media/fastinvader1.o
+                0x000000000000e160                fastinvader1_wav
+                0x000000000000e564                fastinvader1_wav_length
+ .rodata        0x000000000000e568      0x444 media/fastinvader2.o
+                0x000000000000e568                fastinvader2_wav
+                0x000000000000e9a8                fastinvader2_wav_length
+ .rodata        0x000000000000e9ac      0x450 media/fastinvader3.o
+                0x000000000000e9ac                fastinvader3_wav
+                0x000000000000edf8                fastinvader3_wav_length
+ .rodata        0x000000000000edfc      0x47c media/fastinvader4.o
+                0x000000000000edfc                fastinvader4_wav
+                0x000000000000f274                fastinvader4_wav_length
+ .rodata        0x000000000000f278      0xd64 media/shoot.o
+                0x000000000000f278                shoot_wav
+                0x000000000000ffd8                shoot_wav_length
+ .rodata        0x000000000000ffdc        0x4 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-impure.o)
+                0x000000000000ffdc                _global_impure_ptr
+ .rodata.str1.4
+                0x000000000000ffe0        0x2 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-impure.o)
+ *fill*         0x000000000000ffe2        0x2 
+ .rodata.str1.4
+                0x000000000000ffe4      0x197 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(syscalls.o)
+ *fill*         0x000000000001017b        0x1 
+ .rodata.str1.4
+                0x000000000001017c       0x42 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o)
+ *fill*         0x00000000000101be        0x2 
+ .rodata        0x00000000000101c0       0x20 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o)
+ .rodata.str1.4
+                0x00000000000101e0       0x42 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfprintf.o)
+ .rodata        0x00000000000101e0       0x20 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfprintf.o)
+ .rodata.str1.4
+                0x0000000000010200       0x10 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-dtoa.o)
+                                         0x12 (size before relaxing)
+ .rodata.str1.4
+                0x0000000000010210        0xc /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-locale.o)
+                                         0x12 (size before relaxing)
+ .rodata        0x000000000001021c       0x80 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-mprec.o)
+                0x0000000000010228                __mprec_tinytens
+                0x0000000000010230                __mprec_bigtens
+                0x0000000000010238                __mprec_tens
+ .rodata.str1.4
+                0x000000000001029c       0x2f /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfiprintf.o)
+ .rodata        0x000000000001029c       0x20 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfiprintf.o)
+ .rodata.str1.4
+                0x00000000000102bc       0x2f /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfiprintf.o)
+ .rodata        0x00000000000102bc       0x20 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfiprintf.o)
+ .rodata        0x00000000000102dc      0x100 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_clz.o)
+                0x00000000000102dc                __clz_tab
+
+.interp         0x00000000000103dc       0x13
+ .interp        0x00000000000103dc       0x13 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+
+.rofixup        0x00000000000103f0        0x0
+ .rofixup       0x00000000000103f0        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+
+.rodata1
+ *(.rodata1)
+
+.eh_frame_hdr
+ *(.eh_frame_hdr)
+
+.eh_frame       0x00000000000103f0      0x190
+ *(.eh_frame)
+ .eh_frame      0x00000000000103f0       0xc8 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o)
+ .eh_frame      0x00000000000104b8       0xc8 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_umoddi3.o)
+                                         0xdc (size before relaxing)
+
+.gcc_except_table
+ *(.gcc_except_table .gcc_except_table.*)
+
+.exception_ranges
+ *(.exception_ranges .exception_ranges*)
+                0x0000000000010580                . = (ALIGN (0x80) + (. & 0x7f))
+
+.eh_frame
+ *(.eh_frame)
+
+.gcc_except_table
+ *(.gcc_except_table .gcc_except_table.*)
+
+.exception_ranges
+ *(.exception_ranges .exception_ranges*)
+
+.tdata
+ *(.tdata .tdata.* .gnu.linkonce.td.*)
+
+.tbss
+ *(.tbss .tbss.* .gnu.linkonce.tb.*)
+ *(.tcommon)
+
+.preinit_array
+ *(.preinit_array)
+
+.init_array
+ *(SORT(.init_array.*))
+ *(.init_array)
+
+.fini_array
+ *(SORT(.fini_array.*))
+ *(.fini_array)
+
+.ctors          0x0000000000010580        0x0
+                0x0000000000010580                ___ctors = .
+ *crtbegin.o(.ctors)
+ *crtbegin?.o(.ctors)
+ *(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
+ *(SORT(.ctors.*))
+ *(.ctors)
+                0x0000000000010580                ___ctors_end = .
+
+.dtors          0x0000000000010580        0x0
+                0x0000000000010580                ___dtors = .
+ *crtbegin.o(.dtors)
+ *crtbegin?.o(.dtors)
+ *(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
+ *(SORT(.dtors.*))
+ *(.dtors)
+                0x0000000000010580                ___dtors_end = .
+
+.jcr
+ *(.jcr)
+
+.data.rel.ro
+ *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*)
+ *(.data.rel.ro .data.rel.ro.* .gnu.linkonce.d.rel.ro.*)
+
+.dynamic        0x0000000000010580       0x80
+ *(.dynamic)
+ .dynamic       0x0000000000010580       0x80 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+                0x0000000000010580                DYNAMIC
+
+.data           0x0000000000010600      0x4d8
+ *(.data .data.* .gnu.linkonce.d.*)
+ .data          0x0000000000010600        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+ .data          0x0000000000010600        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crti.o
+ .data          0x0000000000010600        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtbegin.o
+ .data          0x0000000000010600       0x18 si.o
+                0x0000000000010600                invaderDirection
+                0x0000000000010602                invaderSpeed
+                0x0000000000010604                missleSpeed
+ .data          0x0000000000010618        0x0 media/sprite.o
+ .data          0x0000000000010618        0x0 media/fastinvader1.o
+ .data          0x0000000000010618        0x0 media/fastinvader2.o
+ .data          0x0000000000010618        0x0 media/fastinvader3.o
+ .data          0x0000000000010618        0x0 media/fastinvader4.o
+ .data          0x0000000000010618        0x0 media/shoot.o
+ .data          0x0000000000010618        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(bft.o)
+ .data          0x0000000000010618        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(client.o)
+ .data          0x0000000000010618        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-exit.o)
+ .data          0x0000000000010618      0x440 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-impure.o)
+                0x0000000000010618                _impure_ptr
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memcpy.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memset.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sysclose.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-trap.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(syscalls.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(panic.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-__call_atexit.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-printf.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sprintf.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sysstat.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfprintf.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wsetup.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-__atexit.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-dtoa.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fflush.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-findfp.o)
+ .data          0x0000000000010a58        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fwalk.o)
+ .data          0x0000000000010a58       0x7c /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-locale.o)
+                0x0000000000010ad0                __mb_cur_max
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-makebuf.o)
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memchr.o)
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-mprec.o)
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sf_fpclassify.o)
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-stdio.o)
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-strcmp.o)
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-strlen.o)
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfiprintf.o)
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfiprintf.o)
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fclose.o)
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fputwc.o)
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fvwrite.o)
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memmove.o)
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wbuf.o)
+ .data          0x0000000000010ad4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wcrtomb.o)
+ .data          0x0000000000010ad4        0x4 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wctomb_r.o)
+                0x0000000000010ad4                __wctomb
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_ashiftrt.o)
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_ashiftrt_n.o)
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_ashiftlt.o)
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_lshiftrt.o)
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivsi3.o)
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o)
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_umoddi3.o)
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_df_to_sf.o)
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udiv_qrnnd_16.o)
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_clz.o)
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_make_sf.o)
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_unpack_df.o)
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_pack_sf.o)
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtend.o
+ .data          0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtn.o
+
+.got.funcdesc   0x0000000000010ad8        0x0
+ .got.funcdesc  0x0000000000010ad8        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+
+.data1
+ *(.data1)
+
+.got            0x0000000000010ad8        0xc
+ *(.got.plt)
+ .got.plt       0x0000000000010ad8        0xc /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+                0x0000000000010ad8                GLOBAL_OFFSET_TABLE_
+ *(.igot.plt)
+ *(.got)
+ .got           0x0000000000010ae4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+ *(.igot)
+
+.sdata
+ *(.sdata2 .sdata2.* .gnu.linkonce.s2.*)
+ *(.sdata .sdata.* .gnu.linkonce.s.*)
+                0x0000000000010ae4                _edata = .
+                [!provide]                        PROVIDE (edata, .)
+                0x0000000000010ae4                . = .
+                0x0000000000010ae4                __bss_start = .
+
+.sbss
+ *(.sbss2 .sbss2.* .gnu.linkonce.sb2.*)
+ *(.dynsbss)
+ *(.sbss .sbss.* .gnu.linkonce.sb.*)
+ *(.scommon)
+
+.bss            0x0000000000010ae4      0x2b4
+ *(.dynbss)
+ .dynbss        0x0000000000010ae4        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+ *(.bss .bss.* .gnu.linkonce.b.*)
+ .bss           0x0000000000010ae4        0x8 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+                0x0000000000010ae4                __dso_handle
+ .bss           0x0000000000010aec        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crti.o
+ .bss           0x0000000000010aec        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtbegin.o
+ .bss           0x0000000000010aec       0x11 si.o
+                0x0000000000010aec                missle
+                0x0000000000010af2                invaderIndex
+ .bss           0x0000000000010afd        0x0 media/sprite.o
+ .bss           0x0000000000010afd        0x0 media/fastinvader1.o
+ .bss           0x0000000000010afd        0x0 media/fastinvader2.o
+ .bss           0x0000000000010afd        0x0 media/fastinvader3.o
+ .bss           0x0000000000010afd        0x0 media/fastinvader4.o
+ .bss           0x0000000000010afd        0x0 media/shoot.o
+ *fill*         0x0000000000010afd        0x3 
+ .bss           0x0000000000010b00        0x4 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(bft.o)
+                0x0000000000010b00                _bft
+ .bss           0x0000000000010b04        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(client.o)
+ .bss           0x0000000000010b04        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-exit.o)
+ .bss           0x0000000000010b04        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-impure.o)
+ .bss           0x0000000000010b04        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memcpy.o)
+ .bss           0x0000000000010b04        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memset.o)
+ .bss           0x0000000000010b04        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sysclose.o)
+ .bss           0x0000000000010b04        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-trap.o)
+ .bss           0x0000000000010b04       0xff /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(syscalls.o)
+ .bss           0x0000000000010c03        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(panic.o)
+ .bss           0x0000000000010c03        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-__call_atexit.o)
+ .bss           0x0000000000010c03        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-printf.o)
+ .bss           0x0000000000010c03        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sprintf.o)
+ .bss           0x0000000000010c03        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o)
+ .bss           0x0000000000010c03        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sysstat.o)
+ .bss           0x0000000000010c03        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfprintf.o)
+ .bss           0x0000000000010c03        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wsetup.o)
+ *fill*         0x0000000000010c03        0x1 
+ .bss           0x0000000000010c04        0xc /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-__atexit.o)
+                0x0000000000010c04                __atexit_lock
+ .bss           0x0000000000010c10        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-dtoa.o)
+ .bss           0x0000000000010c10        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fflush.o)
+ .bss           0x0000000000010c10       0x18 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-findfp.o)
+ .bss           0x0000000000010c28        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fwalk.o)
+ .bss           0x0000000000010c28        0xc /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-locale.o)
+                0x0000000000010c28                _PathLocale
+                0x0000000000010c2c                __mlocale_changed
+                0x0000000000010c30                __nlocale_changed
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-makebuf.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memchr.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-mprec.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sf_fpclassify.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-stdio.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-strcmp.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-strlen.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfiprintf.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfiprintf.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fclose.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fputwc.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fvwrite.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memmove.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wbuf.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wcrtomb.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wctomb_r.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_ashiftrt.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_ashiftrt_n.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_ashiftlt.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_lshiftrt.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivsi3.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_umoddi3.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_df_to_sf.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udiv_qrnnd_16.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_clz.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_make_sf.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_unpack_df.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_pack_sf.o)
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtend.o
+ .bss           0x0000000000010c34        0x0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtn.o
+ *(COMMON)
+ COMMON         0x0000000000010c34      0x160 si.o
+                0x0000000000010c34                sprite
+                0x0000000000010c38                target
+                0x0000000000010c3c                work
+                0x0000000000010c40                invaders
+                0x0000000000010d8c                width
+                0x0000000000010d90                height
+ COMMON         0x0000000000010d94        0x4 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(client.o)
+                0x0000000000010d94                errno
+                0x0000000000010d98                . = ALIGN ((. != 0x0)?0x4:0x1)
+                0x0000000000010d98                . = ALIGN (0x4)
+                0x0000000000010d98                . = SEGMENT_START ("ldata-segment", .)
+                0x0000000000010d98                . = ALIGN (0x4)
+                0x0000000000010d98                _end = .
+                [!provide]                        PROVIDE (end, .)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x0000000000000000       0x29
+ *(.comment)
+ .comment       0x0000000000000000       0x29 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crt1.o
+                                         0x2a (size before relaxing)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crti.o
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtbegin.o
+ .comment       0x0000000000000029       0x2a si.o
+ .comment       0x0000000000000029       0x2a media/sprite.o
+ .comment       0x0000000000000029       0x2a media/fastinvader1.o
+ .comment       0x0000000000000029       0x2a media/fastinvader2.o
+ .comment       0x0000000000000029       0x2a media/fastinvader3.o
+ .comment       0x0000000000000029       0x2a media/fastinvader4.o
+ .comment       0x0000000000000029       0x2a media/shoot.o
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(bft.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(client.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-exit.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-impure.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sysclose.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(syscalls.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(panic.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-__call_atexit.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-printf.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sprintf.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfprintf.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sysstat.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfprintf.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wsetup.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-__atexit.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-dtoa.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fflush.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-findfp.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fwalk.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-locale.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-makebuf.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memchr.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-mprec.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-sf_fpclassify.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-stdio.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-svfiprintf.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-vfiprintf.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fclose.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fputwc.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-fvwrite.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-memmove.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wbuf.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wcrtomb.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/../../../../sh-elf/lib/m2e/libc.a(lib_a-wctomb_r.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_umoddi3.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_df_to_sf.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_clz.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_make_sf.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_unpack_df.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_pack_sf.o)
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtend.o
+ .comment       0x0000000000000029       0x2a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/crtn.o
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x0000000000000000      0x188
+ *(.debug_aranges)
+ .debug_aranges
+                0x0000000000000000       0x20 si.o
+ .debug_aranges
+                0x0000000000000020       0x18 media/sprite.o
+ .debug_aranges
+                0x0000000000000038       0x18 media/fastinvader1.o
+ .debug_aranges
+                0x0000000000000050       0x18 media/fastinvader2.o
+ .debug_aranges
+                0x0000000000000068       0x18 media/fastinvader3.o
+ .debug_aranges
+                0x0000000000000080       0x18 media/fastinvader4.o
+ .debug_aranges
+                0x0000000000000098       0x18 media/shoot.o
+ .debug_aranges
+                0x00000000000000b0       0x20 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o)
+ .debug_aranges
+                0x00000000000000d0       0x20 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_umoddi3.o)
+ .debug_aranges
+                0x00000000000000f0       0x20 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_df_to_sf.o)
+ .debug_aranges
+                0x0000000000000110       0x18 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_clz.o)
+ .debug_aranges
+                0x0000000000000128       0x20 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_make_sf.o)
+ .debug_aranges
+                0x0000000000000148       0x20 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_unpack_df.o)
+ .debug_aranges
+                0x0000000000000168       0x20 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_pack_sf.o)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info     0x0000000000000000     0x27c8
+ *(.debug_info .gnu.linkonce.wi.*)
+ .debug_info    0x0000000000000000     0x1384 si.o
+ .debug_info    0x0000000000001384       0x71 media/sprite.o
+ .debug_info    0x00000000000013f5       0x70 media/fastinvader1.o
+ .debug_info    0x0000000000001465       0x70 media/fastinvader2.o
+ .debug_info    0x00000000000014d5       0x70 media/fastinvader3.o
+ .debug_info    0x0000000000001545       0x70 media/fastinvader4.o
+ .debug_info    0x00000000000015b5       0x71 media/shoot.o
+ .debug_info    0x0000000000001626      0x419 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o)
+ .debug_info    0x0000000000001a3f      0x429 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_umoddi3.o)
+ .debug_info    0x0000000000001e68      0x22d /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_df_to_sf.o)
+ .debug_info    0x0000000000002095       0xb2 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_clz.o)
+ .debug_info    0x0000000000002147      0x1e0 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_make_sf.o)
+ .debug_info    0x0000000000002327      0x21d /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_unpack_df.o)
+ .debug_info    0x0000000000002544      0x284 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_pack_sf.o)
+
+.debug_abbrev   0x0000000000000000      0xc78
+ *(.debug_abbrev)
+ .debug_abbrev  0x0000000000000000      0x238 si.o
+ .debug_abbrev  0x0000000000000238       0x56 media/sprite.o
+ .debug_abbrev  0x000000000000028e       0x45 media/fastinvader1.o
+ .debug_abbrev  0x00000000000002d3       0x45 media/fastinvader2.o
+ .debug_abbrev  0x0000000000000318       0x45 media/fastinvader3.o
+ .debug_abbrev  0x000000000000035d       0x45 media/fastinvader4.o
+ .debug_abbrev  0x00000000000003a2       0x56 media/shoot.o
+ .debug_abbrev  0x00000000000003f8      0x197 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o)
+ .debug_abbrev  0x000000000000058f      0x1ad /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_umoddi3.o)
+ .debug_abbrev  0x000000000000073c      0x132 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_df_to_sf.o)
+ .debug_abbrev  0x000000000000086e       0x5d /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_clz.o)
+ .debug_abbrev  0x00000000000008cb      0x11a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_make_sf.o)
+ .debug_abbrev  0x00000000000009e5      0x135 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_unpack_df.o)
+ .debug_abbrev  0x0000000000000b1a      0x15e /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_pack_sf.o)
+
+.debug_line     0x0000000000000000      0x7ce
+ *(.debug_line .debug_line.* .debug_line_end)
+ .debug_line    0x0000000000000000      0x1dc si.o
+ .debug_line    0x00000000000001dc       0x2f media/sprite.o
+ .debug_line    0x000000000000020b       0x35 media/fastinvader1.o
+ .debug_line    0x0000000000000240       0x35 media/fastinvader2.o
+ .debug_line    0x0000000000000275       0x35 media/fastinvader3.o
+ .debug_line    0x00000000000002aa       0x35 media/fastinvader4.o
+ .debug_line    0x00000000000002df       0x2e media/shoot.o
+ .debug_line    0x000000000000030d      0x10a /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o)
+ .debug_line    0x0000000000000417      0x11e /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_umoddi3.o)
+ .debug_line    0x0000000000000535       0x73 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_df_to_sf.o)
+ .debug_line    0x00000000000005a8       0x58 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_clz.o)
+ .debug_line    0x0000000000000600       0x70 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_make_sf.o)
+ .debug_line    0x0000000000000670       0xa9 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_unpack_df.o)
+ .debug_line    0x0000000000000719       0xb5 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_pack_sf.o)
+
+.debug_frame    0x0000000000000000      0x2d4
+ *(.debug_frame)
+ .debug_frame   0x0000000000000000      0x224 si.o
+ .debug_frame   0x0000000000000224       0x30 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_df_to_sf.o)
+ .debug_frame   0x0000000000000254       0x30 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_make_sf.o)
+ .debug_frame   0x0000000000000284       0x20 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_unpack_df.o)
+ .debug_frame   0x00000000000002a4       0x30 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_pack_sf.o)
+
+.debug_str      0x0000000000000000     0x10b2
+ *(.debug_str)
+ .debug_str     0x0000000000000000      0xcb9 si.o
+                                        0xd32 (size before relaxing)
+ .debug_str     0x0000000000000cb9       0x22 media/sprite.o
+                                         0xb3 (size before relaxing)
+ .debug_str     0x0000000000000cdb       0x15 media/fastinvader1.o
+                                         0xc3 (size before relaxing)
+ .debug_str     0x0000000000000cf0       0x15 media/fastinvader2.o
+                                         0xc3 (size before relaxing)
+ .debug_str     0x0000000000000d05       0x15 media/fastinvader3.o
+                                         0xc3 (size before relaxing)
+ .debug_str     0x0000000000000d1a       0x15 media/fastinvader4.o
+                                         0xc3 (size before relaxing)
+ .debug_str     0x0000000000000d2f        0xe media/shoot.o
+                                         0xae (size before relaxing)
+ .debug_str     0x0000000000000d3d      0x18c /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o)
+                                        0x227 (size before relaxing)
+ .debug_str     0x0000000000000ec9        0xa /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_umoddi3.o)
+                                        0x227 (size before relaxing)
+ .debug_str     0x0000000000000ed3      0x18d /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_df_to_sf.o)
+                                        0x264 (size before relaxing)
+ .debug_str     0x0000000000001060      0x1a4 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_clz.o)
+ .debug_str     0x0000000000001060       0x1e /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_make_sf.o)
+                                        0x224 (size before relaxing)
+ .debug_str     0x000000000000107e        0xb /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_unpack_df.o)
+                                        0x24e (size before relaxing)
+ .debug_str     0x0000000000001089       0x29 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_pack_sf.o)
+                                        0x266 (size before relaxing)
+
+.debug_loc      0x0000000000000000     0x14ca
+ *(.debug_loc)
+ .debug_loc     0x0000000000000000      0x89b /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o)
+ .debug_loc     0x000000000000089b      0x888 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_umoddi3.o)
+ .debug_loc     0x0000000000001123       0x3b /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_df_to_sf.o)
+ .debug_loc     0x000000000000115e       0x90 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_make_sf.o)
+ .debug_loc     0x00000000000011ee       0xe7 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_unpack_df.o)
+ .debug_loc     0x00000000000012d5      0x1f5 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_pack_sf.o)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.debug_pubtypes
+ *(.debug_pubtypes)
+
+.debug_ranges   0x0000000000000000      0x160
+ *(.debug_ranges)
+ .debug_ranges  0x0000000000000000       0x18 si.o
+ .debug_ranges  0x0000000000000018       0x80 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_udivdi3.o)
+ .debug_ranges  0x0000000000000098       0x98 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_umoddi3.o)
+ .debug_ranges  0x0000000000000130       0x30 /usr/local/sh-elf/lib/gcc/sh-elf/5.0.0/m2e/libgcc.a(_pack_sf.o)
+
+.debug_macro
+ *(.debug_macro)
+
+.gnu.attributes
+ *(.gnu.attributes)
+
+/DISCARD/
+ *(.note.GNU-stack)
+ *(.gnu_debuglink)
+ *(.gnu.lto_*)
+OUTPUT(si elf32-sh)

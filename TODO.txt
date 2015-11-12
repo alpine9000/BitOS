@@ -1,0 +1,16 @@
+TODO
+====
+http://mrale.ph/talks/goto2015/#/178
+o - bemacs readline for buffers
+o - fix up tcsetattr raw mess
+o - window close callback
+o - Make pid_t thread_h like window_h
+o - Handle gdrive errors (https://developers.google.com/drive/web/handle-errors)
+o - use memory_cleanup for all threads - hung :(
+o - clear completed stats[] in io.file (Web)
+o - test spin lock again
+o - get META key working for readline
+o - compile freetype library again
+o - optimise io.js:FileFlags - lots of repeated lookups into io.file.files
+o - cpu.FastSetPC
+

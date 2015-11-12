@@ -1,0 +1,281 @@
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdio.h>
+#include "simulator.h"
+#include "console.h"
+#include "kernel.h"
+#include "peripheral.h"
+#include "gfx.h"
+#include "kernel.h"
+#include "window.h"
+#include "panic.h"
+#include "audio.h"
+
+static const  unsigned console_characterSpacing = gfx_spaceWidth;
+
+
+static unsigned _fb() {
+  return window_getFrameBuffer(thread_getWindow());
+}
+static unsigned _w() {
+  return window_getW(thread_getWindow());
+}
+static unsigned _h() {
+  return window_getH(thread_getWindow());
+}
+static unsigned _x() {
+  return window_getCursorX(thread_getWindow());
+}
+static unsigned _y() {
+  return window_getCursorY(thread_getWindow());
+}
+
+static void _console_processControl(window_h windowH)
+{
+  switch (window_getConsoleControl(windowH)->type) {
+  case CONSOLE_SET_ROW:
+    console_setCursorRow(window_getConsoleControl(windowH)->arg);
+    break;
+  case CONSOLE_SET_COL:
+    console_setCursorCol(window_getConsoleControl(windowH)->arg);
+    break;
+  case CONSOLE_STANDOUT:
+    if (window_getConsoleControl(windowH)->arg) {
+      console_setBehaviour(CONSOLE_BEHAVIOUR_STANDOUT);
+    } else {
+      console_clearBehaviour(CONSOLE_BEHAVIOUR_STANDOUT);
+    }
+    break;
+  case CONSOLE_CLEAR_TO_END_OF_LINE:
+    console_clearToEndOfLine();
+    break;
+  case CONSOLE_RESET:
+    console_reset();
+    break;
+  case CONSOLE_INSERT_AT_CURSOR:
+    for (unsigned i = 0; i < window_getConsoleControl(windowH)->arg; i++) {
+      console_insertAtCursor();
+    }
+    break;
+  case CONSOLE_DELETE_AT_CURSOR:
+    for (unsigned i = 0; i < window_getConsoleControl(windowH)->arg; i++) {
+      console_deleteAtCursor();
+    }
+    break;
+  case CONSOLE_UP:
+    console_setCursorRow(console_getCursorRow()-1);
+    break;
+  case CONSOLE_BACKSPACE:
+    console_backspace();
+    break;
+  }
+
+}
+
+static void _console_output_char(char c)
+{
+  char string[] = {c, 0};
+  unsigned x = _x(), y = _y();
+  window_h windowH = thread_getWindow();
+  unsigned background;
+  unsigned foreground;
+    
+  if (window_getConsoleControl(windowH)->behaviour & CONSOLE_BEHAVIOUR_STANDOUT) {
+    foreground = window_getBackgroundColor(windowH);
+    background = window_getColor(windowH);
+  } else {
+    background = window_getBackgroundColor(windowH);
+    foreground = window_getColor(windowH);
+  }
+
+  if (c != '\n') {
+    gfx_fillRect(_fb(), x, y, window_getCharacterPixelWidth(windowH)+ console_characterSpacing, window_getCharacterPixelHeight(windowH), background); 
+    gfx_drawString(_fb(), x, y, string, foreground);
+    x+=(window_getCharacterPixelWidth(windowH) + console_characterSpacing);
+    if (window_getConsoleControl(windowH)->behaviour & CONSOLE_BEHAVIOUR_AUTO_WRAP) {
+      if (x >= _w()) {
+	x = 0;
+	y += window_getCharacterPixelHeight(windowH);
+      }
+    }
+  } else {
+    x = 0;
+    y+= window_getCharacterPixelHeight(windowH);
+  }
+  
+  if (window_getConsoleControl(windowH)->behaviour & CONSOLE_BEHAVIOUR_AUTO_SCROLL) {
+    if (y >= _h()-window_getCharacterPixelHeight(windowH)) {
+      gfx_bitBlt(_fb(), 0, 0, 0, -window_getCharacterPixelHeight(windowH), _w(), _h(), _fb());
+      gfx_fillRect(_fb(), 0, _h()-window_getCharacterPixelHeight(windowH), _w(), window_getCharacterPixelHeight(windowH), background);
+      y -= window_getCharacterPixelHeight(windowH);
+    }
+  }
+
+  window_setCursor(windowH, x, y);
+}
+
+void _console_write_char(char c) {
+  fds_t *fds = kernel_getFds();
+  if (fds->_stdout == STDOUT_FILENO) {
+    
+    window_h windowH = thread_getWindow();
+
+    if (window_getConsoleControl(windowH)->behaviour & CONSOLE_BEHAVIOUR_AUTO_SCROLL) {
+      peripheral.console.consoleWrite = c;
+    }
+
+    switch (window_getConsoleControl(windowH)->state) {
+    case WAITING_FOR_TYPE:
+      window_getConsoleControl(windowH)->type = c;
+      window_getConsoleControl(windowH)->state++;
+      return;
+    case WAITING_FOR_ARG:
+      window_getConsoleControl(windowH)->arg = c;
+      window_getConsoleControl(windowH)->state = 0;
+      _console_processControl(windowH);
+      return;
+    default:
+      break;
+    }
+
+  switch (c) {
+  case  7: // bell
+    audio_bell();
+    return;
+  case CONSOLE_CONTROL_ESCAPE: // Data link escape
+    window_getConsoleControl(windowH)->state++;
+    return;
+  }
+
+    switch (c) {
+    case 1: //CTRL_A
+      break;
+    case 11: // CTRL_K
+      break;
+    default:
+      _console_output_char(c);
+      break;
+    } 
+    
+
+  } else {
+    write(fds->_stdout, &c, 1);
+  }
+}
+
+unsigned char _console_char_avail() {
+  fds_t *fds = kernel_getFds();
+  if (fds->_stdin == STDIN_FILENO) {
+    if (window_getZ(thread_getWindow()) == 0) {
+      return peripheral.console.consoleReadBufferSize;
+    } else {
+      return 0;
+    }
+  } else {
+    panic("_console_char_avail on file\n");
+    return 0;
+  }
+}
+
+int _console_read_char() {
+  fds_t *fds = kernel_getFds();
+  if (fds->_stdin == STDIN_FILENO) {
+    if (window_getZ(thread_getWindow()) == 0) {
+      return peripheral.console.consoleRead;
+    } else {
+      return -1;
+    }
+  } else {
+    int c;
+    return read(fds->_stdin, &c, 1);
+  }
+}
+
+unsigned console_isKeyDown(unsigned key)
+{
+  peripheral.console.consoleSelectKeyState = key;
+  return peripheral.console.consoleKeyState;
+}
+
+void console_backspace()  {
+  window_setCursor(thread_getWindow(), _x() - (window_getCharacterPixelWidth(window)+console_characterSpacing), _y());
+}
+
+void console_insertAtCursor()
+{
+  unsigned dx = _x()+window_getCharacterPixelWidth(window)+console_characterSpacing;
+  gfx_bitBlt(_fb(), _x(), _y(), dx, _y(), _w()-dx, window_getCharacterPixelHeight(window), _fb());
+}
+
+void console_deleteAtCursor()
+{
+  unsigned dx = _x()+window_getCharacterPixelWidth(window)+console_characterSpacing;
+  gfx_bitBlt(_fb(), dx, _y(), _x(), _y(), _w()-dx, window_getCharacterPixelHeight(window), _fb());
+}
+
+void console_setCursorPos(unsigned col, unsigned row)
+{
+  window_h w = thread_getWindow();
+  
+  unsigned x = col * (window_getCharacterPixelWidth(w)+console_characterSpacing);
+  unsigned y = row * window_getCharacterPixelHeight(w);
+  
+  window_setCursor(w, x, y);
+}
+
+void console_setCursorCol(unsigned col)
+{
+  unsigned x = col * (window_getCharacterPixelWidth(window)+console_characterSpacing);
+  
+  window_setCursorX(thread_getWindow(), x);
+}
+
+void console_setCursorRow(unsigned row)
+{
+  window_h w = thread_getWindow();
+  unsigned y = row * (window_getCharacterPixelHeight(w));
+  
+  window_setCursorY(w, y);
+
+}
+
+unsigned console_getCursorRow()
+{
+  window_h w = thread_getWindow();
+  return window_getCursorY(w) / window_getCharacterPixelHeight(w);
+}
+
+void console_clearToEndOfLine()
+{
+  gfx_fillRect(_fb(), _x(), _y(), _w()-_x(), window_getCharacterPixelHeight(window), window_getBackgroundColor(thread_getWindow())); 
+}
+
+
+unsigned console_getColumns()
+{
+  window_h w = thread_getWindow();
+  return  window_getW(w) / (window_getCharacterPixelWidth(w)+console_characterSpacing) + 1;
+}
+
+
+unsigned console_getLines()
+{
+  window_h w = thread_getWindow();
+  return window_getH(w) / (window_getCharacterPixelHeight(w));
+}
+
+void console_reset()
+{
+  console_setCursorPos(0, 0);
+  gfx_fillRect(_fb(), _x(), _y(), _w(), _h(), window_getBackgroundColor(thread_getWindow())); 
+}
+
+void console_clearBehaviour(unsigned mask)
+{
+  window_getConsoleControl(thread_getWindow())->behaviour &= ~mask;
+}
+
+void console_setBehaviour(unsigned mask)
+{
+  window_getConsoleControl(thread_getWindow())->behaviour |= mask;
+}

@@ -1,0 +1,178 @@
+BitOS - The operating system for the BitMachine SH7058 emulator 
+===============================================================
+Copyright (C) Enable Software Pty Ltd 2014
+
+Please refer to COPYING.bitos for software license details for all files except those listed below:
+
+libbitmachine/argv.c - Copyright (C) 1992, 2001 Free Software Foundation, Inc (GNU Library General Public License v2 - LICENSES/LGPL-2.0.txt)
+libbitmachine/malloc.c - Written by Doug Lea and released to the public domain
+newlib-2.0.0-r/* - Copyright (C) 1991 Free Software Foundation, Inc. (GNU LIBRARY GENERAL PUBLIC LICENSE v2 - newlib-2.0.0-r/COPYING)
+readline-6.3-src/* Copyright (C) 2007 Free Software Foundation, Inc. (GNU GENERAL PUBLIC LICENSE v3 - readline-6.3-src/COPYING)
+apps/wolf/wolf.cpp Copyright (c) 2004-2007, Lode Vandevenne. (Simplified BSD License)
+apps/wolf/media/*  Copyright (C) Id Software, Inc. (LIMITED USE SOFTWARE LICENSE AGREEMENT - apps/wolf/media/LICENSE.DOC)
+apps/bemacs/* Various authors, released to the public domain (apps/bemacs/README.original)
+
+Notes:
+------
+o Built on OSX Mavericks 10.10.3
+o Assumes the BitOS tree is in ~/Projects/BitOS
+o Don't cut&paste - untested
+o * indicates a non terminal command
+
+(1) install xcode
+==================
+*Install xcode from app store
+xcode-select --install
+
+(2) install wget
+================
+*Download http://ftp.gnu.org/gnu/wget/wget-1.16.tar.xz
+mkdir ~/Projects
+mkdir ~/Projects/bitos-build/
+mkdir ~/Projects/bitos-build/src
+cd ~/Projects/bitos-build/src
+tar zxfv ~/Downloads/wget-1.16.tar.xz
+mkdir ~/Projects/bitos-build/wget
+cd  ~/Projects/bitos-build/wget
+../src/wget-1.16/configure --without-ssl
+make
+sudo make install
+
+(3) osx gcc (5.1.0)
+===================
+svn checkout svn://gcc.gnu.org/svn/gcc/tags/gcc_5_1_0_release ~/Projects/bitos-build/src/gcc-5.1.0
+cd ~/Projects/bitos-build/src/gcc-5.1.0
+./contrib/download_prerequisites
+mkdir ~/Projects/bitos-build/osx-gcc-5.1.0
+cd ~/Projects/bitos-build/osx-gcc-5.1.0
+../src/gcc-5.1.0/configure --prefix=/usr/local --enable-languages=c,c++
+make -j 4
+sudo make install
+
+(4) sh-elf cross bintuils
+=========================
+mkdir ~/Projects/bitos-build/src/binutils
+cd ~/Projects/bitos-build/src/binutils
+git clone git://sourceware.org/git/binutils-gdb.git .
+mkdir ~/Projects/bitos-build/binutils
+cd ~/Projects/bitos-build/binutils
+../src/binutils/configure --target=sh-elf --prefix=/usr/local/sh-elf --disable-nls --disable-werror
+make
+sudo make install
+
+(5) sh-elf cross gcc (5.1.0) stage 1
+====================================
+mkdir ~/Projects/bitos-build/gcc-5.1.0
+cd ~/Projects/bitos-build/gcc-5.1.0
+../src/gcc-5.1.0/configure --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp --disable-libstdcxx
+make -j 4
+sudo make install
+
+(6) newlib 2.0.0
+================
+export PATH=$PATH:/usr/local/sh-elf/bin
+mkdir ~/Projects/bitos-build/newlib-2.0.0-r
+cd ~/Projects/bitos-build/newlib-2.0.0-r
+../../BitOS/newlib-2.0.0-r/configure --prefix=/usr/local/sh-elf --target=sh-elf --enable-newlib-multithread CFLAGS=-DMALLOC_PROVIDED target_alias=sh-elf
+make
+sudo make install
+cd /usr/local/sh-elf/sh-elf/lib/m2e
+sudo mv libc.a libc.a.newlib
+sudo ln -sf ~/Projects/BitOS/libbitmachine/libc-bitos.a libc.a
+sudo cp ~/Projects/BitOS/newlib-override/sys/* /usr/local/sh-elf/sh-elf/include/sys/
+cd ~/Projects/BitOS/libbitmachine/libc
+rm *
+sh-elf-ar -x /usr/local/sh-elf/sh-elf/lib/m2e/libc.a.newlib 
+
+(7) sh-elf cross gcc (5.1.0) stage 2
+====================================
+cd ~/Projects/bitos-build/gcc-5.1.0
+../src/gcc-5.1.0/configure --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp
+make -j 4
+sudo make install
+
+(8) BitOS stage 1
+=================
+cd ~/Projects/BitOS
+make elf
+sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crt1.o /usr/local/sh-elf/lib/gcc/sh-elf/5.1.0/m2e/crt1.o
+sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crtbegin.o /usr/local/sh-elf/lib/gcc/sh-elf/5.1.0/m2e/crtbegin.o 
+sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crtend.o /usr/local/sh-elf/lib/gcc/sh-elf/5.1.0/m2e/crtend.o
+sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crti.o /usr/local/sh-elf/lib/gcc/sh-elf/5.1.0/m2e/crti.o 
+sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crtn.o /usr/local/sh-elf/lib/gcc/sh-elf/5.1.0/m2e/crtn.o
+
+(9) readline
+============
+mkdir ~/Projects/bitos-build/readline-6.3
+cd ~/Projects/bitos-build/readline-6.3
+../../BitOS/readline-6.3-src/configure --prefix="/usr/local/sh-elf" --host=sh-elf CFLAGS="-Os -D_POSIX_VERSION -m2e -pie " bash_cv_wcwidth_broken=no  --disable-shared -disable-multibyte --disable-largefile
+sudo make install
+
+(10) BitOS stage 2
+===================
+cd ~/Projects/BitOS
+make 
+
+(11) gcc.bitos (5.1.0)
+======================
+mkdir ~/Projects/bitos-build/gcc-5.1.0.bitos
+cd  ~/Projects/bitos-build/gcc-5.1.0.bitos
+../src/gcc-5.1.0/configure --host=sh-elf --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp CFLAGS="-O2 -g -m2e -pie" CXXFLAGS="-O2 -m2e -pie -fpermissive -g" --disable-libstdcxx --enable-checking=release
+make
+(doesn't work - need to edit a makefile to remove CXXFLAGS from host build)
+
+emacs build-x86_64-apple-darwin14.3.0/libcpp/Makefile
+
+ALL_CXXFLAGS = $(CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
+        $(CPPFLAGS) $(PICFLAG)
+
+== becomes ==
+
+ALL_CXXFLAGS = $(_CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
+        $(CPPFLAGS) $(PICFLAG)
+make -j 4
+
+
+(12) gcc.bitos.O3 (pre 5.1.0)
+=========================
+mkdir ~/Projects/bitos-build/gcc-5.1.0.bitos.O3
+cd  ~/Projects/bitos-build/gcc-5.1.0.bitos.O3
+../src/gcc-5.1.0/configure --host=sh-elf --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp CFLAGS="-O3 -g -m2e -pie" CXXFLAGS="-O3 -m2e -pie -fpermissive -g" --disable-libstdcxx --enable-checking=release 
+make
+(doesn't work - need to edit a makefile to remove CXXFLAGS from host build)
+
+emacs build-x86_64-apple-darwin14.3.0/libcpp/Makefile
+
+ALL_CXXFLAGS = $(CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
+        $(CPPFLAGS) $(PICFLAG)
+
+== becomes ==
+
+ALL_CXXFLAGS = $(_CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
+        $(CPPFLAGS) $(PICFLAG)
+
+cp ../gcc-trunk.bitos/gcc/options-save.o gcc
+
+
+(13) bintuils.bitos
+==================
+mkdir ~/Projects/bitos-build/binutils.bitos
+cd ~/Projects/bitos-build/binutils.bitos
+../src/binutils/configure --host=sh-elf --target=sh-elf --prefix=/usr/local --disable-nls --disable-nls --disable-werror CFLAGS="-O2 -m2e -pie"
+make all-gas all-ld
+
+(8) Setting local filesystem
+============================
+
+Make sure local.zip is in your ~/BitFS folder on your google drive.
+
+Then from the chrome console run:
+
+InitialiseBitFS()
+
+this takes a long time to create all the local files.
+
+
+
+
+
