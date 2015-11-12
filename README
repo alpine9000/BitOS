@@ -2,7 +2,7 @@ BitOS - The operating system for the BitMachine SH7058 emulator
 ===============================================================
 Copyright (C) Enable Software Pty Ltd 2014
 
-Please refer to COPYING.bitos for software license details for all files except those listed below:
+Please refer to LICENSE for software license details for all files except those listed below:
 
 libbitmachine/argv.c - Copyright (C) 1992, 2001 Free Software Foundation, Inc (GNU Library General Public License v2 - LICENSES/LGPL-2.0.txt)
 libbitmachine/malloc.c - Written by Doug Lea and released to the public domain
