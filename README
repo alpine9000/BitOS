@@ -18,6 +18,7 @@ Notes:
 o Built on OSX Mavericks 10.10.3 and OSX El Capitan 10.11.1
 o Don't cut&paste - untested
 o * indicates a non terminal command
+o You need a google drive with a folder called ~/Google Drive/BitFS that syncs from your build machine
 
 (1) install xcode
 ==================
@@ -168,16 +169,32 @@ make all-gas all-ld
 cd ~/Projects/BitOS
 make local.zip
 
-(8) Setting local filesystem
+(15) Setting local filesystem
+=============================
+* Navigate to https://alpine9000.github.io/BitMachine/ (Chrome works best)
+* Menu "Drive" -> "Initialise Filesystem from Google Grive"
+
+(16) Rebuild bitos in BitMachine
+================================
+* Navigate to https://alpine9000.github.io/BitMachine/ (Chrome works best)
+* Menu "Drive" -> "Boot BitOS from Google Drive"
+b (Takes a long time)
+* Menu "Drive" -> "Boot BitOS from Local"
+
+You are now running bitos built on bitos (-:
+
+(17) Make a change to the OS
 ============================
+* Navigate to https://alpine9000.github.io/BitMachine/ (Chrome works best)
+* Menu "Drive" -> "Boot BitOS from Google Drive"
+bsh
+bemacs /usr/local/src/BitOS/libbitmachine/shell.c (Change the version number)
+* Follow step 16 (Rebuild bitos in BitMachine)
+version
 
-Make sure local.zip is in your ~/BitFS folder on your google drive.
 
-Then from the chrome console run:
 
-InitialiseBitFS()
 
-this takes a long time to create all the local files.
 
 
 
