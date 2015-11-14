@@ -51,12 +51,12 @@ sudo make install
 
 (4) sh-elf cross bintuils
 =========================
-mkdir ~/Projects/bitos-build/src/binutils
-cd ~/Projects/bitos-build/src/binutils
-git clone git://sourceware.org/git/binutils-gdb.git .
+cd ~/Projects/bitos-build/src/
+wget http://ftp.gnu.org/gnu/binutils/binutils-2.25.tar.gz
+tar zxfv binutils-2.25.tar.gz
 mkdir ~/Projects/bitos-build/binutils
 cd ~/Projects/bitos-build/binutils
-../src/binutils/configure --target=sh-elf --prefix=/usr/local/sh-elf --disable-nls --disable-werror
+../src/binutils-2.25/configure --target=sh-elf --prefix=/usr/local/sh-elf --disable-nls --disable-werror
 make
 sudo make install
 
@@ -136,7 +136,7 @@ make -j 4
 
 
 (12) gcc.bitos.O3 (pre 5.2.0)
-=========================
+============================
 mkdir ~/Projects/bitos-build/gcc-5.2.0.bitos.O3
 cd  ~/Projects/bitos-build/gcc-5.2.0.bitos.O3
 ../src/gcc-5.2.0/configure --host=sh-elf --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp CFLAGS="-O3 -g -m2e -pie" CXXFLAGS="-O3 -m2e -pie -fpermissive -g" --disable-libstdcxx --enable-checking=release 
@@ -160,8 +160,13 @@ cp ../gcc-trunk.bitos/gcc/options-save.o gcc
 ==================
 mkdir ~/Projects/bitos-build/binutils.bitos
 cd ~/Projects/bitos-build/binutils.bitos
-../src/binutils/configure --host=sh-elf --target=sh-elf --prefix=/usr/local --disable-nls --disable-nls --disable-werror CFLAGS="-O2 -m2e -pie"
+../src/binutils-2.25/configure --host=sh-elf --target=sh-elf --prefix=/usr/local --disable-nls --disable-nls --disable-werror CFLAGS="-O2 -m2e -pie"
 make all-gas all-ld
+
+(14) make local.zip
+===================
+cd ~/Projects/BitOS
+make local.zip
 
 (8) Setting local filesystem
 ============================
