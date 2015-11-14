@@ -15,8 +15,7 @@ bin2c.c - Written by sandro AT sigala DOT it - BEER-WARE LICENSE
 
 Notes:
 ------
-o Built on OSX Mavericks 10.10.3
-o Assumes the BitOS tree is in ~/Projects/BitOS
+o Built on OSX Mavericks 10.10.3 and OSX El Capitan 10.11.1
 o Don't cut&paste - untested
 o * indicates a non terminal command
 
@@ -71,6 +70,8 @@ sudo make install
 
 (6) newlib 2.0.0
 ================
+cd ~/Projects
+git clone https://github.com/alpine9000/BitOS.git
 export PATH=$PATH:/usr/local/sh-elf/bin
 mkdir ~/Projects/bitos-build/newlib-2.0.0-r
 cd ~/Projects/bitos-build/newlib-2.0.0-r
@@ -82,7 +83,7 @@ sudo mv libc.a libc.a.newlib
 sudo ln -sf ~/Projects/BitOS/libbitmachine/libc-bitos.a libc.a
 sudo cp ~/Projects/BitOS/newlib-override/sys/* /usr/local/sh-elf/sh-elf/include/sys/
 cd ~/Projects/BitOS/libbitmachine/libc
-rm *
+rm *.o
 sh-elf-ar -x /usr/local/sh-elf/sh-elf/lib/m2e/libc.a.newlib 
 
 (7) sh-elf cross gcc (5.2.0) stage 2
