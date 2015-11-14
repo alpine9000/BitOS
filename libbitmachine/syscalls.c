@@ -249,6 +249,12 @@ int closedir(DIR *dirp)
 }
 
 
+long double strtold(const char *restrict nptr, char **restrict endptr)
+{
+  panic("strtold - not implemented");
+  return 0;
+}
+
 int  utime(const char *path, const struct utimbuf *times)
 {
   panic("utime - not implemented");

@@ -115,7 +115,8 @@ $(BIN_FILE): $(ELF_FILE)
 -include $(ALL_OBJS:%.o=%.d) 
 
 TOOLS_BASE=~/Projects/bitos-build
-GCC_BASE=$(TOOLS_BASE)/gcc-5.2.0.bitos.O3
+#GCC_BASE=$(TOOLS_BASE)/gcc-5.2.0.bitos.O3
+GCC_BASE=$(TOOLS_BASE)/gcc-5.2.0.bitos
 BINUTILS_BASE = $(TOOLS_BASE)/binutils.bitos
 relink-tools:	
 	-rm $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus
@@ -131,14 +132,35 @@ relink-tools:
 	sh-elf-strip ~/Google\ Drive/BitFS/bin/ar ~/Google\ Drive/BitFS/bin/as ~/Google\ Drive/BitFS/bin/ld
 
 local.zip:
+	-rm -rf ~/Projects/bitos-build/local
+	sh-elf-strip $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus
+	cp $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus ~/Google\ Drive/BitFS/bin/
+	-rm $(BINUTILS_BASE)/gas/as-new $(BINUTILS_BASE)/ld/ld-new $(BINUTILS_BASE)/binutils/ar
+	make -C $(BINUTILS_BASE) all-gas all-ld
+	make -C $(BINUTILS_BASE)/binutils ar
+	cp $(BINUTILS_BASE)/binutils/ar ~/Google\ Drive/BitFS/bin/ar
+	cp $(BINUTILS_BASE)/gas/as-new ~/Google\ Drive/BitFS/bin/as
+	cp $(BINUTILS_BASE)/ld/ld-new ~/Google\ Drive/BitFS/bin/ld
+	sh-elf-strip ~/Google\ Drive/BitFS/bin/ar ~/Google\ Drive/BitFS/bin/as ~/Google\ Drive/BitFS/bin/ld
+	-mkdir ~/Projects/bitos-build/local/
+	-mkdir ~/Projects/bitos-build/local/bin
+	cp -r /usr/local/sh-elf ~/Projects/bitos-build/local
+	rm -r ~/Projects/bitos-build/local/sh-elf/share
+	rm -r ~/Projects/bitos-build/local/sh-elf/bin
+	rm -r ~/Projects/bitos-build/local/sh-elf/libexec
+	rm -r ~/Projects/bitos-build/local/sh-elf/sh-elf/bin
+	rm -r ~/Projects/bitos-build/local/sh-elf/sh-elf/lib/ml
+	rm -r ~/Projects/bitos-build/local/sh-elf/sh-elf/lib/*.*
 	-rm -rf ~/Projects/bitos-build/local/src/BitOS
-	cp -r ~/Projects/BitOS ~/Projects/bitos-build/local/src/
+	mkdir ~/Projects/bitos-build/local/src
+	cp -r ~/Projects/BitOS ~/Projects/bitos-build/local/src/BitOS/
+	rm -rf ~/Projects/bitos-build/local/src/BitOS/.git
 	-rm -rf  ~/Projects/bitos-build/local/src/BitOS/newlib-2.0.0-r
 	cp ~/Projects/BitOS/libbitmachine/libc-bitos.a ~/Projects/bitos-build/local/sh-elf/sh-elf/lib/m2e/libc.a
 	-rm ~/Projects/bitos-build/local.zip
 	cp ~/Google\ Drive/BitFS/bin/* ~/Projects/bitos-build/local/bin/
 	cd ~/Projects/bitos-build/; zip -r local.zip local
 	cp ~/Projects/bitos-build/local.zip ~/Google\ Drive/BitFS
-	cp ~/Projects/bitos-build/local.zip ~/Google\ Drive/Projects/BitMachine/Web/BitFS
+	#cp ~/Projects/bitos-build/local.zip ~/Google\ Drive/Projects/BitMachine/Web/BitFS
 
 full: gdrive web relink-tools local.zip

@@ -115,7 +115,7 @@ static int link_(char* filename)
   char base[PATH_MAX];
 
   filename_base(filename, base);
-  sprintf(buffer, "ld -pie /usr/local/sh-elf/lib/gcc/sh-elf/5.1.0/m2e/crt1.o %s  /usr/local/sh-elf/sh-elf/lib/m2e/libc.a /usr/local/sh-elf/lib/gcc/sh-elf/5.1.0/m2e/libgcc.a -o /usr/local/bin/%s",filename, base);
+  sprintf(buffer, "ld -pie /usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e/crt1.o %s  /usr/local/sh-elf/sh-elf/lib/m2e/libc.a /usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e/libgcc.a -o /usr/local/bin/%s",filename, base);
   printf(buffer);
   printf("\n");
   return process_load(buffer);
@@ -148,8 +148,8 @@ static int build_compile(unsigned force, char* filename, char* cc1flags, char* c
 
 static int build_files(int force, char** files)
 {
-  const char* CC1FLAGS="-D_KERNEL_ASSERTS -D_KERNEL_BUILD -O3 -Wfatal-errors -Werror -Wall -Wextra -Wno-unused-parameter -I. -m2e -funit-at-a-time -falign-jumps -quiet -imultilib m2e -iprefix /usr/local/sh-elf/5.1.0/lib/gcc/sh-elf/5.1.0  -I/usr/local/src/BitOS -I/usr/local/src/BitOS/libbitmachine";
-  const char* CXXFLAGS="-D_KERNEL_BUILD -O3 -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -Wno-char-subscripts  -m2e -funit-at-a-time -falign-jumps -quiet -imultilib m2e -iprefix /usr/local/sh-elf/sh-elf/include/c++/5.1.0/sh-elf/ -I/usr/local/src/BitOS -I/usr/local/src/BitOS/libbitmachine ";
+  const char* CC1FLAGS="-D_KERNEL_ASSERTS -D_KERNEL_BUILD -O3 -Wfatal-errors -Werror -Wall -Wextra -Wno-unused-parameter -I. -m2e -funit-at-a-time -falign-jumps -quiet -imultilib m2e -iprefix /usr/local/sh-elf/5.2.0/lib/gcc/sh-elf/5.2.0  -I/usr/local/src/BitOS -I/usr/local/src/BitOS/libbitmachine";
+  const char* CXXFLAGS="-D_KERNEL_BUILD -O3 -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -Wno-char-subscripts  -m2e -funit-at-a-time -falign-jumps -quiet -imultilib m2e -iprefix /usr/local/sh-elf/sh-elf/include/c++/5.2.0/sh-elf/ -I/usr/local/src/BitOS -I/usr/local/src/BitOS/libbitmachine ";
 
   for (int i = 0; files[i] != 0; i++) {
     if (!build_compile(force, files[i], (char*)CC1FLAGS, (char*)CXXFLAGS)) {
@@ -175,7 +175,7 @@ static int build_elf(char** files, char* output)
   const unsigned bufMax = 4096;
   char buffer[bufMax];
 
-  snprintf(buffer, bufMax, "ld -L. -L/usr/local/sh-elf/sh-elf/lib/m2e  -L/usr/local/sh-elf/lib/gcc/sh-elf/5.1.0/m2e -L/usr/local/sh-elf/lib -T start.l -no-keep-memory -o %s ", output);
+  snprintf(buffer, bufMax, "ld -L. -L/usr/local/sh-elf/sh-elf/lib/m2e  -L/usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e -L/usr/local/sh-elf/lib -T start.l -no-keep-memory -o %s ", output);
 
   build_appendObjectFiles(files, buffer, bufMax);    
 

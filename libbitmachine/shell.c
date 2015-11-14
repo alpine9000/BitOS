@@ -80,7 +80,7 @@ static unsigned numBuiltins = sizeof(builtins)/sizeof(builtin_t);
 
 static void version(int argc, char** argv)
 {
-  printf("BitOS version 1.01\n");
+  printf("BitOS version 1.02\n");
 }
 
 static char *basename(char *path)
