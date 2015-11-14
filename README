@@ -136,7 +136,7 @@ make -j 4
 
 
 (12) gcc.bitos.O3 (pre 5.2.0)
-=========================
+============================
 mkdir ~/Projects/bitos-build/gcc-5.2.0.bitos.O3
 cd  ~/Projects/bitos-build/gcc-5.2.0.bitos.O3
 ../src/gcc-5.2.0/configure --host=sh-elf --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp CFLAGS="-O3 -g -m2e -pie" CXXFLAGS="-O3 -m2e -pie -fpermissive -g" --disable-libstdcxx --enable-checking=release 
@@ -162,6 +162,11 @@ mkdir ~/Projects/bitos-build/binutils.bitos
 cd ~/Projects/bitos-build/binutils.bitos
 ../src/binutils-2.25/configure --host=sh-elf --target=sh-elf --prefix=/usr/local --disable-nls --disable-nls --disable-werror CFLAGS="-O2 -m2e -pie"
 make all-gas all-ld
+
+(14) make local.zip
+===================
+cd ~/Projects/BitOS
+make local.zip
 
 (8) Setting local filesystem
 ============================
