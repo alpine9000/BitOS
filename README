@@ -27,11 +27,11 @@ xcode-select --install
 
 (2) install wget
 ================
-*Download http://ftp.gnu.org/gnu/wget/wget-1.16.tar.xz
 mkdir ~/Projects
 mkdir ~/Projects/bitos-build/
 mkdir ~/Projects/bitos-build/src
 cd ~/Projects/bitos-build/src
+ftp ftp://ftp.gnu.org/gnu/wget/wget-1.16.tar.xz
 tar zxfv ~/Downloads/wget-1.16.tar.xz
 mkdir ~/Projects/bitos-build/wget
 cd  ~/Projects/bitos-build/wget
