@@ -125,7 +125,7 @@ cd  ~/Projects/bitos-build/gcc-5.2.0.bitos
 make
 (doesn't work - need to edit a makefile to remove CXXFLAGS from host build)
 
-emacs build-x86_64-apple-darwin14.3.0/libcpp/Makefile
+emacs build-x86_64-apple-darwin15.0.0/libcpp/Makefile
 
 ALL_CXXFLAGS = $(CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
         $(CPPFLAGS) $(PICFLAG)
@@ -145,7 +145,7 @@ cd  ~/Projects/bitos-build/gcc-5.2.0.bitos.O3
 make
 (doesn't work - need to edit a makefile to remove CXXFLAGS from host build)
 
-emacs build-x86_64-apple-darwin14.3.0/libcpp/Makefile
+emacs build-x86_64-apple-darwin15.0.0/libcpp/Makefile
 
 ALL_CXXFLAGS = $(CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
         $(CPPFLAGS) $(PICFLAG)
