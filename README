@@ -20,13 +20,14 @@ o Don't cut&paste - untested
 o * indicates a non terminal command
 o You need a google drive with a folder called ~/Google Drive/BitFS that syncs from your build machine
 
-(1) install xcode
-==================
 *Install xcode from app store
+
+#(1) install xcode command line tools
+#====================================
 xcode-select --install
 
-(2) install wget
-================
+#(2) install wget
+#================
 mkdir ~/Projects
 mkdir ~/Projects/bitos-build/
 mkdir ~/Projects/bitos-build/src
@@ -39,8 +40,8 @@ cd  ~/Projects/bitos-build/wget
 make
 sudo make install
 
-(3) osx gcc (5.2.0)
-===================
+#(3) osx gcc (5.2.0)
+#===================
 svn checkout svn://gcc.gnu.org/svn/gcc/tags/gcc_5_2_0_release ~/Projects/bitos-build/src/gcc-5.2.0
 cd ~/Projects/bitos-build/src/gcc-5.2.0
 ./contrib/download_prerequisites
@@ -50,8 +51,8 @@ cd ~/Projects/bitos-build/osx-gcc-5.2.0
 make -j 4
 sudo make install
 
-(4) sh-elf cross bintuils
-=========================
+#(4) sh-elf cross bintuils
+#=========================
 cd ~/Projects/bitos-build/src/
 wget http://ftp.gnu.org/gnu/binutils/binutils-2.25.tar.gz
 tar zxfv binutils-2.25.tar.gz
@@ -61,16 +62,16 @@ cd ~/Projects/bitos-build/binutils
 make
 sudo make install
 
-(5) sh-elf cross gcc (5.2.0) stage 1
-====================================
+#(5) sh-elf cross gcc (5.2.0) stage 1
+#====================================
 mkdir ~/Projects/bitos-build/gcc-5.2.0
 cd ~/Projects/bitos-build/gcc-5.2.0
 ../src/gcc-5.2.0/configure --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp --disable-libstdcxx
 make -j 4
 sudo make install
 
-(6) newlib 2.0.0
-================
+#(6) newlib 2.0.0
+#================
 cd ~/Projects
 git clone https://github.com/alpine9000/BitOS.git
 export PATH=$PATH:/usr/local/sh-elf/bin
@@ -87,15 +88,15 @@ cd ~/Projects/BitOS/libbitmachine/libc
 rm *.o
 sh-elf-ar -x /usr/local/sh-elf/sh-elf/lib/m2e/libc.a.newlib 
 
-(7) sh-elf cross gcc (5.2.0) stage 2
-====================================
+#(7) sh-elf cross gcc (5.2.0) stage 2
+#====================================
 cd ~/Projects/bitos-build/gcc-5.2.0
 ../src/gcc-5.2.0/configure --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp
 make -j 4
 sudo make install
 
-(8) BitOS stage 1
-=================
+#(8) BitOS stage 1
+#=================
 cd ~/Projects/BitOS
 make elf
 sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crt1.o /usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e/crt1.o
@@ -104,15 +105,15 @@ sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crtend.o /usr/local/sh-elf/
 sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crti.o /usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e/crti.o 
 sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crtn.o /usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e/crtn.o
 
-(9) readline
-============
+#(9) readline
+#============
 mkdir ~/Projects/bitos-build/readline-6.3
 cd ~/Projects/bitos-build/readline-6.3
 ../../BitOS/readline-6.3-src/configure --prefix="/usr/local/sh-elf" --host=sh-elf CFLAGS="-Os -D_POSIX_VERSION -m2e -pie " bash_cv_wcwidth_broken=no  --disable-shared -disable-multibyte --disable-largefile
 sudo make install
 
-(10) BitOS stage 2
-===================
+#(10) BitOS stage 2
+#===================
 cd ~/Projects/BitOS
 make 
 
