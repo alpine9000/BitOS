@@ -5,7 +5,7 @@ Copyright (C) Enable Software Pty Ltd 2014
 
 BitOS is a very basic newlib based operating system. BitMachine is browser based emulator that emulates a basic SH7058 "like" computer.
 
-The operating system emulates support for file IO, graphics, keyboard, mouse and sound. The most significant thing is can do is it's able to recompile itself using GCC (sans newlib).
+The operating system emulates file I?O, graphics, keyboard, mouse and sound. The most significant thing is can do is recompile itself using GCC (sans newlib).
 
 It was hacked together to excerise the BitMachine SH7058 instruction set emulation.
 
