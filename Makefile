@@ -153,9 +153,12 @@ local.zip:
 	rm -r ~/Projects/bitos-build/local/sh-elf/sh-elf/lib/*.*
 	-rm -rf ~/Projects/bitos-build/local/src/BitOS
 	mkdir ~/Projects/bitos-build/local/src
-	cp -r ~/Projects/BitOS ~/Projects/bitos-build/local/src/BitOS/
+	cp -r ~/Projects/BitOS ~/Projects/bitos-build/local/src/BitOS
+	cp -r ~/Projects/BitOS ~/Projects/bitos-build/local/src/BitOS.2/
 	rm -rf ~/Projects/bitos-build/local/src/BitOS/.git
+	rm -rf ~/Projects/bitos-build/local/src/BitOS2/.git
 	-rm -rf  ~/Projects/bitos-build/local/src/BitOS/newlib-2.0.0-r
+	-rm -rf  ~/Projects/bitos-build/local/src/BitOS.2/newlib-2.0.0-r
 	cp ~/Projects/BitOS/libbitmachine/libc-bitos.a ~/Projects/bitos-build/local/sh-elf/sh-elf/lib/m2e/libc.a
 	-rm ~/Projects/bitos-build/local.zip
 	cp ~/Google\ Drive/BitFS/bin/* ~/Projects/bitos-build/local/bin/

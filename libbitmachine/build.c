@@ -245,7 +245,7 @@ void build2(int argc, char** argv)
   }
 
 
-  build_bitos(force, "/usr/local/src/BitOS", "/usr/local/src/BitOS/bitos-local-2.elf");
+  build_bitos(force, "/usr/local/src/BitOS.2", "/usr/local/src/BitOS.2/bitos-local.elf");
 }
 
 

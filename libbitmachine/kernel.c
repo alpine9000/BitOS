@@ -428,6 +428,16 @@ void kernel_die(int status)
 
 void kernel_threadBlocked()
 {
+  register unsigned r1 __asm__("r1");
+  
+  __asm__ volatile (
+		    "stc sr,r1\n"
+		    :::"r1", "memory");
+  
+  if ((r1 & 0xF0) == 0xF0) { // Already disabled
+    panic("kernel_threadBlocked: called with interupts disabled");
+  }
+  
   __asm__ volatile("trapa #36":::"memory");
 }
 

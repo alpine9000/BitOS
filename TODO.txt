@@ -1,3 +1,8 @@
+Concurrent GCC build:
+Uncaught Error: Filesystem has not been initialized.
+filer.js:714 (Filer.prototype.rm)
+
+
 TODO
 ====
 http://mrale.ph/talks/goto2015/#/178
