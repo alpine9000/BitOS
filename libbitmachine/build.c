@@ -207,6 +207,7 @@ static void build_bitos(unsigned force, char* srcdir, char* output)
 
   sprintf(libdir, "%s/libbitmachine", srcdir);
   
+  printf("cd %s\n", libdir);
   chdir(libdir);
   if (build_files(force, libfiles) == 0) {
     return;
