@@ -179,10 +179,14 @@ typedef struct {
 } video_ram_t;
 
 #ifdef _KERNEL_BUILD
+
 extern volatile peripheral_t peripheral;
 extern volatile video_ram_t videoRam;
+
 #else
+
 #define peripheral (*((volatile peripheral_t*)0x10000000))
 #define videoRam (*((volatile video_ram_t*)0x20000000))
+
 #endif
 

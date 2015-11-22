@@ -27,8 +27,9 @@ ELF_FILE = bin/bitos.elf
 LIB_BITMACHINE=./libbitmachine
 BSH=./apps/bsh
 BEMACS=./apps/bemacs
+SI=./apps/si
 
-all: $(LIB_BITMACHINE) $(BSH) $(BEMACS) $(ELF_FILE) 
+all: $(LIB_BITMACHINE) $(BSH) $(BEMACS) $(SI) $(ELF_FILE) 
 
 elf: $(LIB_BITMACHINE) $(ELF_FILE) 
 
@@ -48,6 +49,7 @@ $(LIB_BITMACHINE):
 $(BSH):
 	make  -C $(BSH)
 	make  -C $(BEMACS)
+	make  -C $(SI)
 
 .SECONDARY:
 %.rgba: %.png
@@ -115,8 +117,8 @@ $(BIN_FILE): $(ELF_FILE)
 -include $(ALL_OBJS:%.o=%.d) 
 
 TOOLS_BASE=~/Projects/bitos-build
-#GCC_BASE=$(TOOLS_BASE)/gcc-5.2.0.bitos.O3
-GCC_BASE=$(TOOLS_BASE)/gcc-5.2.0.bitos
+GCC_BASE=$(TOOLS_BASE)/gcc-5.2.0.bitos.O3
+#GCC_BASE=$(TOOLS_BASE)/gcc-5.2.0.bitos
 BINUTILS_BASE = $(TOOLS_BASE)/binutils.bitos
 relink-tools:	
 	-rm $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus
@@ -130,6 +132,8 @@ relink-tools:
 	cp $(BINUTILS_BASE)/gas/as-new ~/Google\ Drive/BitFS/bin/as
 	cp $(BINUTILS_BASE)/ld/ld-new ~/Google\ Drive/BitFS/bin/ld
 	sh-elf-strip ~/Google\ Drive/BitFS/bin/ar ~/Google\ Drive/BitFS/bin/as ~/Google\ Drive/BitFS/bin/ld
+
+PATH := $(PATH):/usr/local/sh-elf/bin
 
 local.zip:
 	-rm -rf ~/Projects/bitos-build/local
@@ -145,7 +149,8 @@ local.zip:
 	cp $(BINUTILS_BASE)/ld/ld-new  ~/Projects/bitos-build/local/bin/ld
 	cp ~/Projects/BitOS/apps/bemacs/bemacs ~/Projects/bitos-build/local/bin
 	cp ~/Projects/BitOS/apps/bsh/bsh ~/Projects/bitos-build/local/bin
-	#cp ~/Projects/BitOS/apps/si/si ~/Projects/bitos-build/local/bin	       sh-elf-strip ~/Projects/bitos-build/local/bin/*
+	cp ~/Projects/BitOS/apps/si/si ~/Projects/bitos-build/local/bin	       
+	$(STRIP) ~/Projects/bitos-build/local/bin/*
 	cp ~/Projects/BitOS/bin/bitos.elf ~/Projects/bitos-build/local/bin
 	cp -r /usr/local/sh-elf ~/Projects/bitos-build/local
 	rm -r ~/Projects/bitos-build/local/sh-elf/share

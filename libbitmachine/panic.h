@@ -1,5 +1,6 @@
 #pragma once
 
-void panic(char* message);
+void 
+panic(char* message);
 
 

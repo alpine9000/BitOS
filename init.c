@@ -16,12 +16,12 @@ void runShell()
   thread_window(window);
   shell(); 
   window_close(window);
-  die(0);
+  kernel_die(0);
 }
 
 void go()
 {
-  spawn(&runShell, argv_build("shell"), 0); 
+  kernel_spawn(&runShell, argv_build("shell"), 0); 
   window_loop();
 }
 

@@ -15,8 +15,9 @@
 extern char heap[__MEMORY_HEAP_SIZE];
 unsigned _memory_total = sizeof(heap);
 
-extern void *  dlmalloc(size_t size);
-extern void dlfree(void *ptr);
+extern void* dlmalloc(size_t size);
+extern void  dlfree(void *ptr);
+extern void* dlrealloc(void *ptr, size_t size);
 
 #define _memory_lock() unsigned ___ints_disabled = kernel_disableInts()
 #define _memory_unlock() kernel_enableInts(___ints_disabled)
@@ -27,6 +28,10 @@ extern void dlfree(void *ptr);
 void* memory_sbrk(ptrdiff_t incr)
 {
   //  _sbrk_lock();
+  if (incr < 0) {
+    panic("memory_sbrk: negative incr");
+  }
+
   static char *heap_end;
   char *prev_heap_end;
 
@@ -46,8 +51,7 @@ void* memory_malloc(size_t size)
 {
   _memory_lock();
   
-  void* ptr = malloc(size);
-
+  void* ptr = dlmalloc(size);
   
   peripheral.malloc.mallocSize = size;
   peripheral.malloc.pid = kernel_getPid();
@@ -60,21 +64,19 @@ void* memory_malloc(size_t size)
 
 void memory_free(void *ptr)
 {
-  //_memory_lock();
+  _memory_lock();
 
-  free(ptr);
-  
-  //  _memory_unlock();
+  peripheral.malloc.freeAddress = (unsigned)ptr;
+
+  dlfree(ptr);
+
+  _memory_unlock();
 }
 
 void* memory_realloc(void* ptr, size_t size)
 {
-
-
-  void* newPtr = realloc(ptr, size);
-
   _memory_lock();
-
+  void* newPtr = dlrealloc(ptr, size);
   peripheral.malloc.freeAddress = (unsigned)ptr;
   peripheral.malloc.mallocSize = size;
   peripheral.malloc.pid = kernel_getPid();
@@ -100,7 +102,7 @@ void memory_cleanupThread(unsigned pid)
     unsigned address;
     while ((address = peripheral.malloc.mallocAddress) != 0) {
       if (!kernel_getIsActiveImage((void*)address)) {
-	free((void*)address);
+	memory_free((void*)address);
       } 
     }
 
@@ -110,44 +112,30 @@ void memory_cleanupThread(unsigned pid)
 
 void* malloc(size_t size)
 {
-  _memory_lock();
-  void* result =  dlmalloc(size);
-  _memory_unlock();
-  return result;
+  return memory_malloc(size);
 }
 
 
-void * calloc(size_t count, size_t size)
+/*void * calloc(size_t count, size_t size)
 {						
-  _memory_lock();
-  char* ptr = dlmalloc(size*count);
-  _memory_unlock();
+  char* ptr = memory_malloc(size*count);
 
   memset(ptr, 0, size*count);
   return ptr;
-}
+  }*/
 
 
 void free(void *ptr)
 {
-  _memory_lock();
-
-  peripheral.malloc.freeAddress = (unsigned)ptr;
-
-  dlfree(ptr);
-
-  _memory_unlock();
+  memory_free(ptr);
 }
 
-extern void* dlrealloc(void *ptr, size_t size);
+
 void *realloc(void *ptr, size_t size)
 {
-  _memory_lock();
-  void* result = dlrealloc(ptr, size);
-  _memory_unlock();
-
-  return result;
+  return memory_realloc(ptr, size);
 }
+
 
 void malloc_abort(void)
 {

@@ -5,32 +5,64 @@
 
 #ifdef _KERNEL_BUILD
 
-
 extern unsigned console_color;
 extern unsigned console_backgroundColor;
 
-int _console_read_char();
-void _console_write_char(char c);
-unsigned char _console_char_avail();
-void console_setColor(unsigned char r, unsigned char g, unsigned char b);
-unsigned console_isKeyDown(unsigned key);
-void console_backspace(void);
-void console_setCursorPos(unsigned col, unsigned row);
-void console_setCursorCol(unsigned col);
-void console_setCursorRow(unsigned row);
-unsigned console_getCursorRow();
-void console_insertAtCursor();
-void console_deleteAtCursor();
-void console_clearToEndOfLine();
-unsigned console_getColumns();
-unsigned console_getLines();
-void console_reset();
-void console_setBehaviour(unsigned mask);
-void console_clearBehaviour(unsigned mask);
+int
+_console_read_char();
+
+void 
+_console_write_char(char c);
+
+unsigned char 
+_console_char_avail();
+
+void 
+console_setColor(unsigned char r, unsigned char g, unsigned char b);
+
+unsigned 
+console_isKeyDown(unsigned key);
+
+void 
+console_backspace(void);
+
+void 
+console_setCursorPos(unsigned col, unsigned row);
+
+void 
+console_setCursorCol(unsigned col);
+
+void 
+console_setCursorRow(unsigned row);
+
+unsigned 
+console_getCursorRow();
+
+void 
+console_insertAtCursor();
+
+void 
+console_deleteAtCursor();
+
+void 
+console_clearToEndOfLine();
+
+unsigned 
+console_getColumns();
+
+unsigned 
+console_getLines();
+
+void 
+console_reset();
+
+void 
+console_setBehaviour(unsigned mask);
+
+void 
+console_clearBehaviour(unsigned mask);
 
 #else
-
-
 
 #define _console_read_char() _bft->_console_read_char()
 #define _console_write_char(x) _bft->_console_write_char(x)

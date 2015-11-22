@@ -7,53 +7,102 @@ struct tms;
 
 #ifdef _KERNEL_BUILD
 
-#define lock(x)  kernel_spinLock(x)
-#define unlock(x)  kernel_unlock(x)
-#define spawn(x, v, f) kernel_spawn(x, v, f)
-#define die(x) kernel_die(x)
 #define thread_blocked() kernel_threadBlocked()
 #define thread_window(w) kernel_setThreadInfo(KERNEL_THREAD_WINDOW, (unsigned)w)
 #define thread_getWindow() kernel_getThreadWindow()
 
-unsigned kernel_times (struct tms *tp);
-char* kernel_getcwd(char *buf, unsigned size);
+unsigned 
+kernel_times (struct tms *tp);
 
-void kernel_stats();
-extern void _kernel_resume_asm(unsigned int *sp);
-extern unsigned _kernel_atomic_lock_asm(void* ptr);
+char* 
+kernel_getcwd(char *buf, unsigned size);
 
+void 
+kernel_stats();
 
-void     kernel_enableInts(unsigned enable);
-unsigned kernel_disableInts();
-void     kernel_init(void(*ptr)(int argc, char** argv));
-int      kernel_spawn(void (*entry)(int argc, char**argv),  char**argv, fds_t* fds);
-int      kernel_load( unsigned* image, unsigned imageSize, void (*entry)(int,char**), char** argv, fds_t* fds, int clone_cwd);
-void     kernel_die(int status);
-void     kernel_spinLock(void* ptr);
-void     kernel_unlock(void* ptr);
-void     kernel_threadBlocked();
+void 
+kernel_enableInts(unsigned enable);
 
-int      kernel_setThreadInfo(thread_info_t type, unsigned info);
+unsigned 
+kernel_disableInts();
 
-window_h      kernel_getThreadWindow();
-unsigned kernel_getPid();
-fds_t*   kernel_getFds();
-int      kernel_getExitStatus(unsigned pid);
-int      kernel_getPidForStdout(unsigned fd);
-unsigned kernel_getIsActiveImage(void* ptr);
-int      kernel_getIsThreadAlive(unsigned pid);
+void     
+kernel_init(void(*ptr)(int argc, char** argv));
 
-void _kernel_newlib_lock_init_recursive(_LOCK_RECURSIVE_T* lock);
-void _kernel_newlib_lock_close_recursive(_LOCK_RECURSIVE_T* lock);
-unsigned _kernel_newlib_lock_acquire_recursive(_LOCK_RECURSIVE_T* lock);
-unsigned _kernel_newlib_lock_try_acquire_recursive(_LOCK_RECURSIVE_T* lock);
-void _kernel_newlib_lock_release_recursive(_LOCK_RECURSIVE_T* lock);
+int      
+kernel_spawn(void (*entry)(int argc, char**argv),  char**argv, fds_t* fds);
 
-void _kernel_newlib_lock_init(unsigned* lock);
-void _kernel_newlib_lock_close(unsigned* lock);
-unsigned _kernel_newlib_lock_acquire(unsigned* lock);
-unsigned _kernel_newlib_lock_try_acquire(unsigned* lock);
-void _kernel_newlib_lock_release(unsigned* lock);
+int      
+kernel_load( unsigned* image, unsigned imageSize, void (*entry)(int,char**), char** argv, fds_t* fds, int clone_cwd);
+
+void     
+kernel_die(int status);
+
+void     
+kernel_spinLock(void* ptr);
+
+void     
+kernel_unlock(void* ptr);
+
+void     
+kernel_threadBlocked();
+
+void     
+kernel_nop();
+
+int      
+kernel_setThreadInfo(thread_info_t type, unsigned info);
+
+window_h      
+kernel_getThreadWindow();
+
+unsigned 
+kernel_getPid();
+
+fds_t*   
+kernel_getFds();
+
+int      
+kernel_getExitStatus(unsigned pid);
+
+int      
+kernel_getPidForStdout(unsigned fd);
+
+unsigned 
+kernel_getIsActiveImage(void* ptr);
+
+int      
+kernel_getIsThreadAlive(unsigned pid);
+
+void 
+_kernel_newlib_lock_init_recursive(_LOCK_RECURSIVE_T* lock);
+
+void 
+_kernel_newlib_lock_close_recursive(_LOCK_RECURSIVE_T* lock);
+
+unsigned 
+_kernel_newlib_lock_acquire_recursive(_LOCK_RECURSIVE_T* lock);
+
+unsigned 
+_kernel_newlib_lock_try_acquire_recursive(_LOCK_RECURSIVE_T* lock);
+
+void 
+_kernel_newlib_lock_release_recursive(_LOCK_RECURSIVE_T* lock);
+
+void 
+_kernel_newlib_lock_init(unsigned* lock);
+
+void 
+_kernel_newlib_lock_close(unsigned* lock);
+
+unsigned 
+_kernel_newlib_lock_acquire(unsigned* lock);
+
+unsigned 
+_kernel_newlib_lock_try_acquire(unsigned* lock);
+
+void 
+_kernel_newlib_lock_release(unsigned* lock);
 
 //#define KTRACE
 

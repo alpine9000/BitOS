@@ -1,5 +1,7 @@
 #pragma once
 
+// (B)itOS (F)unction (T)able
+
 #include <sys/lock.h>
 #include <termios.h>
 #include "types.h"

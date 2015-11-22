@@ -4,13 +4,26 @@
 
 #ifdef _KERNEL_BUILD
 
-void audio_execute(unsigned channel);
-void audio_selectChannel(unsigned channel);
-void audio_setType(audio_type_t type);
-void audio_setAddress(unsigned *address);
-void audio_setLength(unsigned length);
-void audio_frequency(unsigned frequency);
-void audio_bell();
+void 
+audio_execute(unsigned channel);
+
+void 
+audio_selectChannel(unsigned channel);
+
+void 
+audio_setType(audio_type_t type);
+
+void 
+audio_setAddress(unsigned *address);
+
+void 
+audio_setLength(unsigned length);
+
+void 
+audio_frequency(unsigned frequency);
+
+void 
+audio_bell();
 
 #else
 
