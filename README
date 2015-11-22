@@ -162,7 +162,7 @@ ALL_CXXFLAGS = $(CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
 ALL_CXXFLAGS = $(_CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
         $(CPPFLAGS) $(PICFLAG)
 
-cp ../gcc-trunk.bitos/gcc/options-save.o gcc
+make
 
 
 (13) bintuils.bitos
@@ -199,6 +199,19 @@ bsh
 bemacs /usr/local/src/BitOS/libbitmachine/shell.c (Change the version number)
 * Follow step 16 (Rebuild bitos in BitMachine)
 version
+
+Other Things To Try
+===================
+
+bsh - simple shell with readline
+bemacs - emacs "like" editor (Ersatz emacs - https://github.com/stangelandcl/ersatz-emacs)
+rwolf - simple raycasting demo (http://lodev.org/cgtutor/raycasting.html)
+si - Start of a Space Invaders tribute
+bcc - BitOS front end to GCC
+ps - See some process information
+free - See some memory usage stats
+ls/dir/cat/rm/mkdir/pwd/mv/cp - simple unix commands
+kernel - boot a new kernel
 
 
 
