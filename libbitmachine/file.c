@@ -146,7 +146,7 @@ static int _file_read_stdin (int file, char *ptr, int len)
     return i;
 }
 
-static int _file_read(int file, char *ptr, int len)
+static int _file_read (int file, char *ptr, int len)
 {
   if (file == STDIN_FILENO) {
     return _file_read_stdin(file, ptr, len);
@@ -171,7 +171,7 @@ static int _file_read(int file, char *ptr, int len)
   }
 }
 
-int file_read(int fd, char *ptr, int len)
+int file_read (int fd, char *ptr, int len)
 {
   int val;
   do {
@@ -183,7 +183,7 @@ int file_read(int fd, char *ptr, int len)
   return val;
 }
 
-static int _file_writeStdout( int file, char *ptr, int len)
+static int _file_write_stdout ( int file, char *ptr, int len)
 {
   int i = 0;
   for (i = 0; i < len; i++) {
@@ -193,10 +193,10 @@ static int _file_writeStdout( int file, char *ptr, int len)
   return len;
 }
 
-int file_write( int file, char *ptr, int len)
+int file_write ( int file, char *ptr, int len)
 {
   if (file == STDOUT_FILENO || file == STDERR_FILENO) {
-    return _file_writeStdout(file, ptr, len);
+    return _file_write_stdout(file, ptr, len);
   } else {
     _file_lock();
     peripheral.file.fd = file;
@@ -272,7 +272,7 @@ int file_isatty(int file)
 }
 
 
-int file_fstat(int file, struct stat *st)
+int file_fstat (int file, struct stat *st)
 {
   if (file == STDIN_FILENO || file == STDOUT_FILENO || file == STDERR_FILENO) {
     st->st_mode = S_IFCHR;
@@ -292,13 +292,13 @@ int file_fstat(int file, struct stat *st)
   }
 }
 
-int _file_creat(const char *path,int mode) {
+int _file_creat (const char *path,int mode) {
   panic("_file_creat - not implemented");
   return -1;
 }
 
 
-int file_lseek(int file, int ptr, int dir) 
+int file_lseek (int file, int ptr, int dir) 
 {
   _file_lock();
   peripheral.file.fd = file;

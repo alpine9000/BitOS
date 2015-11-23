@@ -12,8 +12,6 @@
 
 extern void* malloc(unsigned);
 extern void free(void*ptr);
-extern void _kernel_resume_asm(unsigned int *sp);
-extern unsigned _kernel_atomic_lock_asm(void* ptr);
 
 #define _thread_max 5
 #define _thread_historyMax 10 
@@ -214,7 +212,6 @@ static inline unsigned _kernel_disableInts()
 	  :
 	  :
           :"r0", "memory");
-
   return 1;
 }
 
@@ -441,8 +438,7 @@ void kernel_threadBlocked()
     panic("kernel_threadBlocked: called with interupts disabled");
   }
   
-  //__asm__ volatile("trapa #36":::"memory");
-  peripheral.simulator.yield = 1;
+  __asm__ volatile("trapa #36":::"memory");
 }
 
 
@@ -553,7 +549,6 @@ int kernel_getPidForStdout(unsigned fd)
     }
   }
 
-  _threadTable_unlock();
   return -1;
 }
 
@@ -701,9 +696,4 @@ unsigned _kernel_newlib_lock_try_acquire(unsigned* lock)
 void _kernel_newlib_lock_release(unsigned* lock) 
 {
   *lock = 0;
-}
-
-void kernel_nop()
-{
-
 }

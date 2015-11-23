@@ -49,7 +49,7 @@ void gfx_setVideoResolution(unsigned fb, unsigned short x, unsigned short y, uns
 
 unsigned gfx_createFrameBuffer(unsigned w, unsigned h)
 {
-  kernel_spinLock(&frameBufferAllocator_lock);
+  lock(&frameBufferAllocator_lock);
   
   unsigned fb = PERIPHERAL_MAX_FRAMEBUFFERS;
   for (int i = 1; i < PERIPHERAL_MAX_FRAMEBUFFERS; i++) {
@@ -63,7 +63,7 @@ unsigned gfx_createFrameBuffer(unsigned w, unsigned h)
   if (fb >= PERIPHERAL_MAX_FRAMEBUFFERS) {
     panic("gfx_createFrameBuffer - frame buffers exhausted\n");
   }
-  kernel_unlock(&frameBufferAllocator_lock);
+  unlock(&frameBufferAllocator_lock);
   gfx_setVideoResolution(fb, w, h, 1);
   dirty();
   return fb;
@@ -71,9 +71,9 @@ unsigned gfx_createFrameBuffer(unsigned w, unsigned h)
 
 void gfx_releaseFrameBuffer(unsigned fb)
 {
-  kernel_spinLock(&frameBufferAllocator_lock);
+  lock(&frameBufferAllocator_lock);
   frameBufferAllocator[fb] = -1;
-  kernel_unlock(&frameBufferAllocator_lock);
+  unlock(&frameBufferAllocator_lock);
 }
 
 void gfx_clearScreen(unsigned fb, unsigned color)
@@ -227,14 +227,14 @@ void gfx_drawCharRetro(unsigned fb, int x, int y, char c, unsigned color, unsign
 }
 
 void gfx_drawChar(unsigned fb, int x, int y, char c, unsigned color, unsigned char size) {
-  kernel_spinLock(&frameBufferAllocator_lock);
+  lock(&frameBufferAllocator_lock);
   peripheral.pcg.fb = fb;
   peripheral.pcg.x = x;
   peripheral.pcg.y = y;
   char text[2] = {c,0};
   peripheral.pcg.color = color;
   peripheral.pcg.text = (unsigned)text;
-  kernel_unlock(&frameBufferAllocator_lock);
+  unlock(&frameBufferAllocator_lock);
   dirty();
 }
 

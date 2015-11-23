@@ -38,7 +38,7 @@ void _exit(int status)
   // newlib does seem to close stdout if it hasn't been used, so we do this in the case stdout is an empty pipe that will have a blocked listener waiting on it
   extern int close(int);
   close(STDOUT_FILENO);
-  kernel_die(status);
+  die(status);
   for(;;);
 }
 

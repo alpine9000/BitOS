@@ -273,7 +273,7 @@ unsigned window_charAvailable(window_h window)
 
 window_h window_create(char* title, unsigned x, unsigned y, unsigned w, unsigned h)
 {
-  kernel_spinLock(&windowTable.lock);
+  lock(&windowTable.lock);
   for (unsigned i = 0; i < WINDOWS_MAX; i++) {
     if (windowTable.windows[i].state == WINDOW_DEAD) {
       windowTable.windows[i].title = title;
@@ -290,12 +290,12 @@ window_h window_create(char* title, unsigned x, unsigned y, unsigned w, unsigned
       windowTable.windows[i].consoleControl.behaviour = CONSOLE_BEHAVIOUR_AUTO_WRAP | CONSOLE_BEHAVIOUR_AUTO_SCROLL;
       _window_add_to_z(i);
       window_toTop(_window_handle(i));
-      kernel_unlock(&windowTable.lock);
+      unlock(&windowTable.lock);
       return _window_handle(i);
     }
   }
 
-  kernel_unlock(&windowTable.lock);
+  unlock(&windowTable.lock);
   return 0;
 }
 
@@ -304,10 +304,10 @@ void window_close(window_h window)
 {
   window_t* entry = &windowTable.windows[_window_index(window)];
   gfx_releaseFrameBuffer(entry->frameBuffer);
-  kernel_spinLock(&windowTable.lock);
+  lock(&windowTable.lock);
   entry->state = WINDOW_DEAD;
   _window_remove_from_z(window);
-  kernel_unlock(&windowTable.lock);
+  unlock(&windowTable.lock);
   window_fullRefresh = 1;
 }
 

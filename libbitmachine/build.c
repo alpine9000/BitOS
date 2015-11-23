@@ -203,7 +203,7 @@ static void build_bitos(unsigned force, char* srcdir, char* output)
 {
   char libdir[PATH_MAX];
   char* files[] = { "apps/wolf/wolf.cpp" , "media/martini.c", "vector.c", "init.c",  0};
-  char* libfiles[] = { "kernel.c", "start.s", "syscall.s", "kernel_asm.S", "kernel_client_asm.S", "cpp.c", "glcdfont.c", "gfx.c", "console.c", "audio.c", "simulator.c", "interrupts.c", "file.c",  "window.c", "malloc.c", "memory.c", "syscalls.c", "bft_kernel.c", "panic.c", "argv.c", "process.c", "shell.c", "build.c", 0};
+  char* libfiles[] = { "start.s", "syscall.s", "kernel_asm.S", "kernel_client_asm.S", "cpp.c", "glcdfont.c", "gfx.c", "console.c", "audio.c", "simulator.c", "interrupts.c", "file.c", "kernel.c", "window.c", "malloc.c", "memory.c", "syscalls.c", "bft_kernel.c", "panic.c", "argv.c", "process.c", "shell.c", "build.c", 0};
 
   sprintf(libdir, "%s/libbitmachine", srcdir);
   
