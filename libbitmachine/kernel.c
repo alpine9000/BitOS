@@ -13,8 +13,8 @@
 extern void* malloc(unsigned);
 extern void free(void*ptr);
 
-#define _thread_max 5
-#define _thread_historyMax 10 
+#define _thread_max 10
+#define _thread_historyMax 20 
 
 //#define _thread_stack_size_bytes  (0x2800000)
 #define _thread_stack_size_bytes  (0x200000)
@@ -57,6 +57,7 @@ static unsigned nextPid = 1;
 static _thread_entry_t threadTable[_thread_max];
 static _thread_history_t threadHistory[_thread_historyMax];
 static unsigned int currentThread;
+static volatile unsigned kernel_threadMax = _thread_max;
 
 static inline unsigned _kernel_disableInts();
 static inline void _kernel_enableInts(unsigned);
@@ -194,6 +195,8 @@ static unsigned _kernel_isArgvAddress(char* address, char** vector)
 }
 
 
+unsigned long interruptDisabler = 0;
+
 static inline unsigned _kernel_disableInts()
 {
   register unsigned r0 __asm__("r0");
@@ -212,6 +215,8 @@ static inline unsigned _kernel_disableInts()
 	  :
 	  :
           :"r0", "memory");
+
+//  interruptDisabler = currentThread;
   return 1;
 }
 
@@ -230,6 +235,10 @@ static inline  void _kernel_enableInts(unsigned enable)
     panic("_kernel_enableInts: already enabled");
   }
 #endif
+
+  // if (interruptDisabler != currentThread) {
+    //  panic("kernel_enableInts: interruptDisabler != currentThread");
+  // }
 
     __asm__ volatile ("stc sr,r0\n"
 		      "and #0xFFFFFF0F,r0\n"
@@ -275,6 +284,8 @@ void _from_asm_kernel_blocked(unsigned int *sp)
 void _from_asm_kernel_kill(int status, int context)
 {
   _thread_entry_t *entry = &threadTable[currentThread];
+  unsigned long currentThreadSave = currentThread;
+  currentThread = 0;
 
   unsigned i;
   for (i = 0; i < _thread_historyMax; i++) {
@@ -308,6 +319,8 @@ void _from_asm_kernel_kill(int status, int context)
   entry->state = _THREAD_DEAD;
   entry->pid = 0;
   memset(&entry->fd, 0, sizeof(entry->fd));
+
+  currentThread = currentThreadSave;
 
   _kernel_schedule();
 
