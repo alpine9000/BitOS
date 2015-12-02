@@ -301,6 +301,12 @@ void _from_asm_kernel_kill(int status, int context)
   }    
   
    
+
+  if (entry->argv != 0) {
+      argv_free(entry->argv);
+      entry->argv = 0;
+  }
+
   if (entry->image != 0) {
     free(entry->image);
     entry->image = 0;
@@ -311,10 +317,7 @@ void _from_asm_kernel_kill(int status, int context)
   
   //  memory_cleanupThread(entry->pid); 
 
-  if (entry->argv != 0) {
-      argv_free(entry->argv);
-      entry->argv = 0;
-  }
+
   
   entry->state = _THREAD_DEAD;
   entry->pid = 0;
