@@ -84,7 +84,7 @@ __kernel_tick_asm:
     fmov.s fr15,@-r15
     mov r15, r4
     mov.l kernel_tick,r0
-    jsr @r0
+    jmp @r0
     nop
     rte
     nop
@@ -136,7 +136,7 @@ __kernel_blocked_asm:
     fmov.s fr15,@-r15
     mov r15, r4
     mov.l kernel_blocked,r0
-    jsr @r0
+    jmp @r0
     nop
     rte
     nop
