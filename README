@@ -213,7 +213,11 @@ free - See some memory usage stats
 ls/dir/cat/rm/mkdir/pwd/mv/cp - simple unix commands
 kernel - boot a new kernel
 
-
+Some BitMachine stuff to try from the javascript console
+========================================================
+kernel.init() // Enable memory checking and stack tracing
+kernel.PrintThreadTable() // Prints information about the running threads
+kernel.kernel.DumpStack() // Shows the stack traces of each thread
 
 
 
