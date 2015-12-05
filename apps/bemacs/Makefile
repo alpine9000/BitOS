@@ -37,7 +37,7 @@ all: $(ELF_FILE)
 
 .SECONDARY:
 $(ELF_FILE): $(OBJ_FILES) ../../libbitmachine/libc-bitos.a
-	$(CC) -m2e $(LDFLAGS) -pie -o $(ELF_FILE) $(OBJ_FILES) $(LIBS) 
+	$(CC) -m2e $(LDFLAGS) -Wl,-Map -Wl,a.map -pie -o $(ELF_FILE) $(OBJ_FILES) $(LIBS) 
 	cp $(ELF_FILE) ~/Google\ Drive/BitFS/bin/
 
 clean:
