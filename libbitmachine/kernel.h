@@ -23,6 +23,8 @@ extern void _kernel_resume_asm(unsigned int *sp);
 extern unsigned _kernel_atomic_lock_asm(void* ptr);
 
 
+unsigned kernel_enterKernelMode();
+void     kernel_exitKernelMode(unsigned ___ints_disabled);
 void     kernel_enableInts(unsigned enable);
 unsigned kernel_disableInts();
 void     kernel_init(void(*ptr)(int argc, char** argv));

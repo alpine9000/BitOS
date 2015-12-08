@@ -69,7 +69,11 @@ FILE* process_open(char* command)
 {
   _process_info_t info;
   if (_process_load(command, &info)) {
+
+    unsigned x = kernel_enterKernelMode();
     FILE* fp = fopen("/dev/pipe", "rw");  
+    kernel_exitKernelMode(x);
+
     fds_t fds = {STDIN_FILENO, fileno(fp), STDERR_FILENO};
     
     kernel_load(info.image, info.imageSize, info.entry, info.argv, &fds, 1);

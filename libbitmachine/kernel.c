@@ -57,6 +57,7 @@ static unsigned nextPid = 1;
 static _thread_entry_t threadTable[_thread_max];
 static _thread_history_t threadHistory[_thread_historyMax];
 static unsigned int currentThread;
+static unsigned int currentThreadSave;
 static volatile unsigned kernel_threadMax = _thread_max;
 
 static inline unsigned _kernel_disableInts();
@@ -65,6 +66,21 @@ static inline void _kernel_enableInts(unsigned);
 #define _threadTable_lock() unsigned ___ints_disabled = _kernel_disableInts()
 #define _threadTable_unlock() _kernel_enableInts(___ints_disabled)
 
+
+unsigned kernel_enterKernelMode()
+{
+  unsigned ___ints_disabled = _kernel_disableInts();
+  currentThreadSave = currentThread;
+  currentThread = 0;
+  return ___ints_disabled;
+
+}
+
+void kernel_exitKernelMode(unsigned ___ints_disabled)
+{
+  currentThread = currentThreadSave;
+  _kernel_enableInts(___ints_disabled);  
+}
 
 static void _kernel_schedule_from_blocked()
 {
