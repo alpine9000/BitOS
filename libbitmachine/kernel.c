@@ -13,7 +13,7 @@
 extern void* malloc(unsigned);
 extern void free(void*ptr);
 
-#define _thread_max 10
+#define _thread_max 8
 #define _thread_historyMax 20 
 
 //#define _thread_stack_size_bytes  (0x2800000)
