@@ -47,14 +47,14 @@ cd  ~/Projects/bitos-build/wget
 make
 sudo make install
 
-#(3) osx gcc (5.2.0)
+#(3) osx gcc (5.3.0)
 #===================
-svn checkout svn://gcc.gnu.org/svn/gcc/tags/gcc_5_2_0_release ~/Projects/bitos-build/src/gcc-5.2.0
-cd ~/Projects/bitos-build/src/gcc-5.2.0
+svn checkout svn://gcc.gnu.org/svn/gcc/tags/gcc_5_3_0_release ~/Projects/bitos-build/src/gcc-5.3.0
+cd ~/Projects/bitos-build/src/gcc-5.3.0
 ./contrib/download_prerequisites
-mkdir ~/Projects/bitos-build/osx-gcc-5.2.0
-cd ~/Projects/bitos-build/osx-gcc-5.2.0
-../src/gcc-5.2.0/configure --prefix=/usr/local --enable-languages=c,c++
+mkdir ~/Projects/bitos-build/osx-gcc-5.3.0
+cd ~/Projects/bitos-build/osx-gcc-5.3.0
+../src/gcc-5.3.0/configure --prefix=/usr/local --enable-languages=c,c++
 make -j 4
 sudo make install
 
@@ -69,11 +69,11 @@ cd ~/Projects/bitos-build/binutils
 make
 sudo make install
 
-#(5) sh-elf cross gcc (5.2.0) stage 1
+#(5) sh-elf cross gcc (5.3.0) stage 1
 #====================================
-mkdir ~/Projects/bitos-build/gcc-5.2.0
-cd ~/Projects/bitos-build/gcc-5.2.0
-../src/gcc-5.2.0/configure --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp --disable-libstdcxx
+mkdir ~/Projects/bitos-build/gcc-5.3.0
+cd ~/Projects/bitos-build/gcc-5.3.0
+../src/gcc-5.3.0/configure --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp --disable-libstdcxx
 make -j 4
 sudo make install
 
@@ -95,10 +95,10 @@ cd ~/Projects/BitOS/libbitmachine/libc
 rm *.o
 sh-elf-ar -x /usr/local/sh-elf/sh-elf/lib/m2e/libc.a.newlib 
 
-#(7) sh-elf cross gcc (5.2.0) stage 2
+#(7) sh-elf cross gcc (5.3.0) stage 2
 #====================================
-cd ~/Projects/bitos-build/gcc-5.2.0
-../src/gcc-5.2.0/configure --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp
+cd ~/Projects/bitos-build/gcc-5.3.0
+../src/gcc-5.3.0/configure --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp
 make -j 4
 sudo make install
 
@@ -106,11 +106,11 @@ sudo make install
 #=================
 cd ~/Projects/BitOS
 make elf
-sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crt1.o /usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e/crt1.o
-sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crtbegin.o /usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e/crtbegin.o 
-sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crtend.o /usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e/crtend.o
-sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crti.o /usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e/crti.o 
-sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crtn.o /usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e/crtn.o
+sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crt1.o /usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e/crt1.o
+sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crtbegin.o /usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e/crtbegin.o 
+sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crtend.o /usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e/crtend.o
+sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crti.o /usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e/crti.o 
+sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crtn.o /usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e/crtn.o
 
 #(9) readline
 #============
@@ -124,11 +124,11 @@ sudo make install
 cd ~/Projects/BitOS
 make 
 
-(11) gcc.bitos (5.2.0)
+(11) gcc.bitos (5.3.0)
 ======================
-mkdir ~/Projects/bitos-build/gcc-5.2.0.bitos
-cd  ~/Projects/bitos-build/gcc-5.2.0.bitos
-../src/gcc-5.2.0/configure --host=sh-elf --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp CFLAGS="-O2 -g -m2e -pie" CXXFLAGS="-O2 -m2e -pie -fpermissive -g" --disable-libstdcxx --enable-checking=release
+mkdir ~/Projects/bitos-build/gcc-5.3.0.bitos
+cd  ~/Projects/bitos-build/gcc-5.3.0.bitos
+../src/gcc-5.3.0/configure --host=sh-elf --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp CFLAGS="-O2 -g -m2e -pie" CXXFLAGS="-O2 -m2e -pie -fpermissive -g" --disable-libstdcxx --enable-checking=release
 make
 (doesn't work - need to edit a makefile to remove CXXFLAGS from host build)
 
@@ -144,11 +144,11 @@ ALL_CXXFLAGS = $(_CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
 make -j 4
 
 
-(12) gcc.bitos.O3 (pre 5.2.0) - not used atm
+(12) gcc.bitos.O3 (pre 5.3.0) - not used atm
 ============================================
-mkdir ~/Projects/bitos-build/gcc-5.2.0.bitos.O3
-cd  ~/Projects/bitos-build/gcc-5.2.0.bitos.O3
-../src/gcc-5.2.0/configure --host=sh-elf --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp CFLAGS="-O3 -g -m2e -pie" CXXFLAGS="-O3 -m2e -pie -fpermissive -g" --disable-libstdcxx --enable-checking=release 
+mkdir ~/Projects/bitos-build/gcc-5.3.0.bitos.O3
+cd  ~/Projects/bitos-build/gcc-5.3.0.bitos.O3
+../src/gcc-5.3.0/configure --host=sh-elf --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp CFLAGS="-O3 -g -m2e -pie" CXXFLAGS="-O3 -m2e -pie -fpermissive -g" --disable-libstdcxx --enable-checking=release 
 make
 (doesn't work - need to edit a makefile to remove CXXFLAGS from host build)
 
