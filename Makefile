@@ -10,7 +10,7 @@ TOOLS_BASE=~/Projects/bitos-build
 
 CFLAGS=-g -O3 -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -D_KERNEL_BUILD  -I/usr/local/sh-elf/include -I. -I./libbitmachine -m2e  -funit-at-a-time -falign-jumps -fdelete-null-pointer-checks  #-fdata-sections -ffunction-sections -fno-function-cse 
 CPPFLAGS = -D_KERNEL_BUILD -O3 -Wall -Werror -Wextra -Wno-unused-parameter -Wno-char-subscripts  -m2e -funit-at-a-time -falign-jumps  -I./libbitmachine #-D_POSIX_C_SOURCE -D_XOPEN_SOURCE 
-LDFLAGS= -L$(LIB_PATH)sh-elf/lib/m2e/ -L/usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e/ -L/usr/local/sh-elf/lib
+LDFLAGS= -L$(LIB_PATH)sh-elf/lib/m2e/ -L/usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e/ -L/usr/local/sh-elf/lib
 
 LIBS =  /usr/local/sh-elf/sh-elf/lib/m2e/crt0.o -L.  -L./libbitmachine  --start-group -lwolf -lbitmachine -lc-kernel -lm -lgcc --end-group
 
@@ -117,7 +117,7 @@ $(BIN_FILE): $(ELF_FILE)
 
 
 #GCC_BASE=$(TOOLS_BASE)/gcc-5.2.0.bitos.O3
-GCC_BASE=$(TOOLS_BASE)/gcc-5.2.0.bitos
+GCC_BASE=$(TOOLS_BASE)/gcc-5.3.0.bitos
 BINUTILS_BASE = $(TOOLS_BASE)/binutils.bitos
 relink-tools:	
 	-rm $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus

@@ -99,6 +99,11 @@ int file_open (char *name, int flags, int* _errno)
   char path[PATH_MAX];
   file_realpath(name, path);
 
+  if (strncmp(name, "/dev/urandom", 12) == 0) {
+    *_errno = ENOENT;
+    return -1;
+  }
+
   _file_lock();
   volatile int fd = (volatile int)peripheral.file.fd;
   peripheral.file.fd = fd;
