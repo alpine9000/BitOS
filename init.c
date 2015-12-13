@@ -4,6 +4,8 @@
 #include "window.h"
 #include "argv.h"
 
+extern char ** gitversion;
+static char* version=GITVERSION;
 
 extern void memory_cleanupThread(unsigned);
 extern void shell();
@@ -27,6 +29,7 @@ void go()
 
 int main()
 {
+  gitversion = &version;
   gfx_init();
   window_init();
   kernel_init(&go); 

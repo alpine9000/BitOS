@@ -24,6 +24,7 @@
 
 void shell_exec(char* cmd);
 
+
 extern void wolf();
 extern void build(int argc, char** argv);
 extern void build2(int argc, char** argv);
@@ -78,9 +79,11 @@ static builtin_t builtins[] = {
 
 static unsigned numBuiltins = sizeof(builtins)/sizeof(builtin_t);
 
+char **gitversion = 0;
+
 static void version(int argc, char** argv)
 {
-  printf("BitOS version 1.02\n");
+  printf("BitOS version %s\n", *gitversion);
 }
 
 static char *basename(char *path)

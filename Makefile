@@ -7,8 +7,9 @@ LD=$(ELF_PATH)sh-elf-ld
 STRIP=$(ELF_PATH)sh-elf-strip -g
 BITOS_PATH=~/Projects/BitOS
 TOOLS_BASE=~/Projects/bitos-build
+GITVERSION := $(shell git describe --abbrev=41 --dirty --always --tags)
 
-CFLAGS=-g -O3 -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -D_KERNEL_BUILD  -I/usr/local/sh-elf/include -I. -I./libbitmachine -m2e  -funit-at-a-time -falign-jumps -fdelete-null-pointer-checks  #-fdata-sections -ffunction-sections -fno-function-cse 
+CFLAGS=-DGITVERSION=\"$(GITVERSION)\" -g -O3 -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -D_KERNEL_BUILD  -I/usr/local/sh-elf/include -I. -I./libbitmachine -m2e  -funit-at-a-time -falign-jumps -fdelete-null-pointer-checks  #-fdata-sections -ffunction-sections -fno-function-cse 
 CPPFLAGS = -D_KERNEL_BUILD -O3 -Wall -Werror -Wextra -Wno-unused-parameter -Wno-char-subscripts  -m2e -funit-at-a-time -falign-jumps  -I./libbitmachine #-D_POSIX_C_SOURCE -D_XOPEN_SOURCE 
 LDFLAGS= -L$(LIB_PATH)sh-elf/lib/m2e/ -L/usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e/ -L/usr/local/sh-elf/lib
 
