@@ -148,7 +148,7 @@ static int build_compile(unsigned force, char* filename, char* cc1flags, char* c
 
 static int build_files(int force, char** files)
 {
-  const char* CC1FLAGS="-D_KERNEL_ASSERTS -D_KERNEL_BUILD -O3 -Wfatal-errors -Werror -Wall -Wextra -Wno-unused-parameter -I. -m2e -funit-at-a-time -falign-jumps -quiet -imultilib m2e -iprefix /usr/local/sh-elf/5.2.0/lib/gcc/sh-elf/5.2.0  -I/usr/local/src/BitOS -I/usr/local/src/BitOS/libbitmachine";
+  const char* CC1FLAGS="-DGITVERSION=\\\"local\\\" -D_KERNEL_BUILD -O3 -Wfatal-errors -Werror -Wall -Wextra -Wno-unused-parameter -I. -m2e -funit-at-a-time -falign-jumps -quiet -imultilib m2e -iprefix /usr/local/sh-elf/5.2.0/lib/gcc/sh-elf/5.2.0  -I/usr/local/src/BitOS -I/usr/local/src/BitOS/libbitmachine";
   const char* CXXFLAGS="-D_KERNEL_BUILD -O3 -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -Wno-char-subscripts  -m2e -funit-at-a-time -falign-jumps -quiet -imultilib m2e -iprefix /usr/local/sh-elf/sh-elf/include/c++/5.2.0/sh-elf/ -I/usr/local/src/BitOS -I/usr/local/src/BitOS/libbitmachine ";
 
   for (int i = 0; files[i] != 0; i++) {

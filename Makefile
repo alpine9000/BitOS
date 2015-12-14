@@ -30,7 +30,11 @@ LIB_BITMACHINE=./libbitmachine
 BSH=./apps/bsh
 BEMACS=./apps/bemacs
 
+
 all: $(LIB_BITMACHINE) $(BSH) $(BEMACS) $(ELF_FILE) 
+
+version:
+	@echo $(GITVERSION)
 
 elf: $(LIB_BITMACHINE) $(ELF_FILE) 
 
