@@ -20,7 +20,7 @@ int main(int argc, char**argv)
   unsigned w = (gfx_fontWidth+gfx_spaceWidth)*80, h = gfx_fontHeight*24;
   window_h window = window_create("bsh", 20, 20, w, h);
   gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
-  thread_window(window);
+  kernel_setThreadWindow(window);
 #endif
 
   fds_t* fds = kernel_getFds();
@@ -53,7 +53,7 @@ int main(int argc, char**argv)
       shell_exec(line);
       write_history("~/bsh_history");
     }
-    thread_blocked();
+    kernel_threadBlocked();
   }
 
 #ifdef OPEN_WINDOW

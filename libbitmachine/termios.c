@@ -13,7 +13,8 @@
 #ifdef DEBUG_TERMIOS
 #define printf _bft->simulator_printf
 #else
-static void ___do_nothing(const char * format, ...)
+static void 
+___do_nothing(const char * format, ...)
 {
 
 }
@@ -23,7 +24,8 @@ static void ___do_nothing(const char * format, ...)
 
 //https://www.gnu.org/software/termutils/manual/termcap-1.3/text/termcap.txt
 
-int tputs(const char *str, int affcnt, int (*_putc)(int))
+int 
+tputs(const char *str, int affcnt, int (*_putc)(int))
 {
   if (strcmp(str, "le") == 0) {
     _putc(CONSOLE_CONTROL_ESCAPE);
@@ -104,7 +106,8 @@ int tputs(const char *str, int affcnt, int (*_putc)(int))
 }
 
 
-int tcsetattr(int fildes, int optional_actions, const struct termios *termios_p)
+int 
+tcsetattr(int fildes, int optional_actions, const struct termios *termios_p)
 {
   printf("tcsetattr %d %x\n", fildes, optional_actions);
   printf("c_iflag = %x\n", termios_p->c_iflag);
@@ -117,19 +120,22 @@ int tcsetattr(int fildes, int optional_actions, const struct termios *termios_p)
   return 1;
 }
 
-int tcflow(int fildes, int action)
+int 
+tcflow(int fildes, int action)
 {
   panic("tcflow");
   return 0;
 }
 
-int tcflush(int fildes, int action)
+int 
+tcflush(int fildes, int action)
 {
   panic("tcflush");
   return 0;
 }
 
-char *tgoto(const char *cap, int col, int row)
+char *
+tgoto(const char *cap, int col, int row)
 {
   static char buffer[255];
   //  strcpy(buffer, cap);
@@ -139,7 +145,8 @@ char *tgoto(const char *cap, int col, int row)
 }
 
 
-int tcgetattr(int fd, struct termios *termios_p)
+int 
+tcgetattr(int fd, struct termios *termios_p)
 {
   printf("tcgetattr\n");
   memset(termios_p, 0xFFFF, sizeof(struct termios));
@@ -147,7 +154,8 @@ int tcgetattr(int fd, struct termios *termios_p)
   return 1;
 }
 
-int tgetnum(char *id)
+int 
+tgetnum(char *id)
 {
   printf("tgetnum %s\n", id);
   if (strcmp(id, "co") == 0) {
@@ -164,20 +172,21 @@ int tgetnum(char *id)
 }
 
 
-char *tgetstr(char *id, char **area)
+char *
+tgetstr(char *id, char **area)
 {
   
   if (strcmp(id, "kl") == 0) { // Left key
-    static char val[] =  {0x80 | 37, 0};
+    static char val[] =  {(char)0x80 | 37, 0};
     return val;
   } else if (strcmp(id, "kr") == 0) { // Right key
-    static char val[] =  {0x80 | 39, 0};
+    static char val[] =  {(char)0x80 | 39, 0};
     return val;
   } else if (strcmp(id, "ku") == 0) { // Up key
-    static char val[] =  {0x80 | 36, 0};
+    static char val[] =  {(char)0x80 | 36, 0};
     return val;
   } else if (strcmp(id, "kd") == 0) { // Down key
-    static char val[] =  {0x80 | 40, 0};
+    static char val[] =  {(char)0x80 | 40, 0};
     return val;
   } else if (strcmp(id, "km") == 0) { // Meta ?
     //return 0;
@@ -187,7 +196,8 @@ char *tgetstr(char *id, char **area)
 }
 
 
-int tgetflag(char *id)
+int 
+tgetflag(char *id)
 {
 
   
@@ -200,14 +210,16 @@ int tgetflag(char *id)
   return 0;
 }
 
-int tgetent(char *bp, const char *name)
+int 
+tgetent(char *bp, const char *name)
 {
   //printf("tgetent %s\n", name);
   return 1;
 }
 
 
-void cfmakeraw(struct termios *termios_p)
+void 
+cfmakeraw(struct termios *termios_p)
 {
   termios_p->raw = 1;
 }

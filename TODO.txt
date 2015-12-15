@@ -5,7 +5,6 @@ o - file locking
 o - bemacs readline for buffers
 o - fix up tcsetattr raw mess
 o - window close callback
-o - Make pid_t thread_h like window_h
 o - Handle gdrive errors (https://developers.google.com/drive/web/handle-errors)
 o - use memory_cleanup for all threads - hung :(
 o - clear completed stats[] in io.file (Web)

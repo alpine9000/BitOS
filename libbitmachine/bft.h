@@ -14,10 +14,10 @@ typedef struct {
   void (*kernel_threadBlocked)();
   void (*kernel_spinLock)(void* ptr);
   void (*kernel_unlock)(void* ptr);
-  unsigned (*kernel_pid)();
+  thread_h (*kernel_tid)();
   void (*kernel_die)(int status);
   window_h (*kernel_getThreadWindow)(void);
-  int (*kernel_spawn)(void (*entry)(int argc, char**argv),  char**argv, fds_t* fds);
+  thread_h (*kernel_spawn)(void (*entry)(int argc, char**argv),  char**argv, fds_t* fds);
   void (*kernel_stats)();
   fds_t* (*kernel_getFds)(void);
   void (*malloc_stats)();
@@ -55,9 +55,9 @@ typedef struct {
   void (*console_clearToEndOfLine)();
   void (*console_reset)();
 
-  int (*process_spawn)(char* command);
-  int (*process_load)(char* commandLine);
-  int (*process_wait)(unsigned pid);
+  int (*thread_spawn)(char* command);
+  int (*thread_load)(char* commandLine);
+  int (*thread_wait)(thread_h tid);
 
 
   void (*_bitos_lock_init_recursive)(_LOCK_RECURSIVE_T* lock);

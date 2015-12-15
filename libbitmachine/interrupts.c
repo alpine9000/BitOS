@@ -40,8 +40,8 @@
 #define _SYS_malloc        memory_malloc
 #define _SYS_free          memory_free
 #define _SYS_realloc       memory_realloc
-#define _SYS_popen         process_open
-#define _SYS_pclose        process_close
+#define _SYS_popen         thread_open
+#define _SYS_pclose        thread_close
 #define _SYS_times         kernel_times
 #define _SYS_stat          file_stat
 #define _SYS_opendir       file_opendir
@@ -54,7 +54,7 @@
 #define _SYS_wait          _notImplemented
 #define _SYS_mkdir         file_mkdir
 #define _SYS_gtod          simulator_gtod
-#define	_SYS_getpid	   kernel_getPid
+#define	_SYS_getpid	   kernel_getTid
 #define _SYS_rename        file_rename
 
 int _notImplemented()

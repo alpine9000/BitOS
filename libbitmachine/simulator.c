@@ -4,57 +4,67 @@
 #include "peripheral.h"
 
 
-void simulator_stop()
+void 
+simulator_stop()
 {
   peripheral.simulator.stop = 1;
   peripheral.simulator.yield = 1;
 }
 
-void simulator_yield()
+void 
+simulator_yield()
 {
   peripheral.simulator.yield = 1;
 }
 
-void simulator_startStopWatch()
+void 
+simulator_startStopWatch()
 {
   peripheral.simulator.startStopWatch = 1;
 }
 
-void simulator_stopStopWatch()
+void 
+simulator_stopStopWatch()
 {
   peripheral.simulator.stopStopWatch = 1;
 }
 
-unsigned simulator_stopWatchElapsed()
+unsigned 
+simulator_stopWatchElapsed()
 {
   return peripheral.simulator.stopWatchElapsed;
 }
 
-unsigned simulator_timeSeconds()
+unsigned 
+simulator_timeSeconds()
 {
   return peripheral.time.seconds;
 }
 
-unsigned simulator_timeMicroSeconds()
+unsigned 
+simulator_timeMicroSeconds()
 {
   return peripheral.time.useconds;
 }
 
 
-unsigned simulator_elapsedMilliSeconds()
+unsigned 
+simulator_elapsedMilliSeconds()
 {
   return peripheral.time.elapsedMilliSeconds;
 }
 
 
-int simulator_gtod(struct timeval *tv, void *tz)
+int 
+simulator_gtod(struct timeval *tv, void *tz)
 {
   tv->tv_sec = simulator_timeSeconds();;
   tv->tv_usec = simulator_timeMicroSeconds();;
   return 0;
 }
 
-int simulator_printf(const char * format, ...)
+int 
+simulator_printf(const char * format, ...)
 {
   char buffer[4096];
   va_list argList;

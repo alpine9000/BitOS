@@ -33,7 +33,7 @@ static char* states[] = {
 };
 
 typedef struct {
-  unsigned pid;
+  thread_h tid;
   unsigned state;
   unsigned *sp;
   window_h window;
@@ -48,12 +48,12 @@ typedef struct {
 
 typedef struct {
   int exitStatus;
-  unsigned pid;
+  thread_h tid;
   unsigned _stdout;
 } _thread_history_t;
 
 int errno;
-static unsigned nextPid = 1;
+static unsigned nextTid = 1;
 static _thread_entry_t threadTable[_thread_max];
 static _thread_history_t threadHistory[_thread_historyMax];
 static unsigned int currentThread;
@@ -67,7 +67,8 @@ static inline void _kernel_enableInts(unsigned);
 #define _threadTable_unlock() _kernel_enableInts(___ints_disabled)
 
 
-unsigned kernel_enterKernelMode()
+unsigned 
+kernel_enterKernelMode()
 {
   unsigned ___ints_disabled = _kernel_disableInts();
   currentThreadSave = currentThread;
@@ -76,7 +77,8 @@ unsigned kernel_enterKernelMode()
 
 }
 
-void kernel_exitKernelMode(unsigned ___ints_disabled)
+void
+kernel_exitKernelMode(unsigned ___ints_disabled)
 {
   currentThread = currentThreadSave;
   _kernel_enableInts(___ints_disabled);  
@@ -129,10 +131,10 @@ static void _kernel_schedule()
 }
 
 
-static unsigned _kernel_thread(unsigned int threadIndex, unsigned* image, unsigned imageSize, void(* ptr)(int,char**),  char**argv, fds_t* fds)
+static thread_h _kernel_thread(unsigned int threadIndex, unsigned* image, unsigned imageSize, void(* ptr)(int,char**),  char**argv, fds_t* fds)
 {
   _thread_entry_t *entry = &threadTable[threadIndex];
-  entry->pid = nextPid++;
+  entry->tid = (thread_h)nextTid++;
   entry->argc = argv_argc(argv);
   entry->argv = argv;
   entry->image = image;
@@ -159,7 +161,7 @@ static unsigned _kernel_thread(unsigned int threadIndex, unsigned* image, unsign
   
   entry->sp = (unsigned int*)&entry->thread_stack[(_thread_stack_size_words)-38];
 
-  return entry->pid;
+  return entry->tid;
 }
 
 
@@ -176,11 +178,12 @@ static int _kernel_allocate_thread()
 }
 
 
-static int _kernel_setThreadInfo(unsigned threadIndex, thread_info_t type, unsigned info)
+static int
+_kernel_setThreadInfo(unsigned threadIndex, thread_info_t type, unsigned info)
 {
   _thread_entry_t *entry = &threadTable[threadIndex];
   switch (type) {
-  case  KERNEL_THREAD_WINDOW:
+  case KERNEL_THREAD_WINDOW:
     entry->window = (window_h)info;
     return 1;
   case KERNEL_CURRENT_WORKING_DIRECTORY:
@@ -192,7 +195,8 @@ static int _kernel_setThreadInfo(unsigned threadIndex, thread_info_t type, unsig
 }
 
 
-static unsigned _kernel_isArgvAddress(char* address, char** vector)
+static unsigned 
+_kernel_isArgvAddress(char* address, char** vector)
 {
   register char **scan;
   
@@ -211,9 +215,8 @@ static unsigned _kernel_isArgvAddress(char* address, char** vector)
 }
 
 
-unsigned long interruptDisabler = 0;
-
-static inline unsigned _kernel_disableInts()
+static inline unsigned 
+_kernel_disableInts()
 {
   register unsigned r0 __asm__("r0");
 
@@ -232,12 +235,12 @@ static inline unsigned _kernel_disableInts()
 	  :
           :"r0", "memory");
 
-//  interruptDisabler = currentThread;
   return 1;
 }
 
 
-static inline  void _kernel_enableInts(unsigned enable)
+static inline void 
+_kernel_enableInts(unsigned enable)
 {
   if (enable) {
 
@@ -252,10 +255,6 @@ static inline  void _kernel_enableInts(unsigned enable)
   }
 #endif
 
-  // if (interruptDisabler != currentThread) {
-    //  panic("kernel_enableInts: interruptDisabler != currentThread");
-  // }
-
     __asm__ volatile ("stc sr,r0\n"
 		      "and #0xFFFFFF0F,r0\n"
 		      "ldc r0,sr"
@@ -267,7 +266,8 @@ static inline  void _kernel_enableInts(unsigned enable)
 
 
 /* called from kernel_asm.S via simulated clock tick - level 15 interrupt (ints disabled) */
-void _from_asm_kernel_tick(unsigned int *sp)
+void 
+_from_asm_kernel_tick(unsigned int *sp)
 {
   threadTable[currentThread].sp = sp;
   threadTable[currentThread].state = _THREAD_WAIT;
@@ -283,7 +283,8 @@ void _from_asm_kernel_tick(unsigned int *sp)
 
 
 /* called from kernel_asm.S via INT_TRAPA36 - ints disabled before this is called */
-void _from_asm_kernel_blocked(unsigned int *sp)
+void 
+_from_asm_kernel_blocked(unsigned int *sp)
 {
   threadTable[currentThread].sp = sp;
   ktrace_thread_blocked();
@@ -297,17 +298,18 @@ void _from_asm_kernel_blocked(unsigned int *sp)
 
 
 /* called from kernel_asm.S via INT_TRAPA37 - ints disabled before this is called */
-void _from_asm_kernel_kill(int status, int context)
+void 
+_from_asm_kernel_kill(int status, int context)
 {
   _thread_entry_t *entry = &threadTable[currentThread];
-  unsigned long currentThreadSave = currentThread;
+  unsigned long _currentThreadSave = currentThread;
   currentThread = 0;
 
   unsigned i;
   for (i = 0; i < _thread_historyMax; i++) {
-    if (threadHistory[i].pid == 0) {
+    if (threadHistory[i].tid == 0) {
       threadHistory[i].exitStatus = status;
-      threadHistory[i].pid = entry->pid;
+      threadHistory[i].tid = entry->tid;
       threadHistory[i]._stdout = entry->fd._stdout;
       break;
     }
@@ -328,18 +330,18 @@ void _from_asm_kernel_kill(int status, int context)
     entry->image = 0;
     // I think we might be able to call this for everyone now as only "client" allocations are tracked
     // We only want to do this if we are in "client" world, otherwise we will be free'ing shared crap
-        memory_cleanupThread(entry->pid); // TODO: this is not the definitive way to say we are in client world [ better way will be to only save client mallocs' ]
+        memory_cleanupThread(entry->tid); // TODO: this is not the definitive way to say we are in client world [ better way will be to only save client mallocs' ]
   }
   
-  //  memory_cleanupThread(entry->pid); 
+  //  memory_cleanupThread(entry->tid); 
 
 
   
   entry->state = _THREAD_DEAD;
-  entry->pid = 0;
+  entry->tid = 0;
   memset(&entry->fd, 0, sizeof(entry->fd));
 
-  currentThread = currentThreadSave;
+  currentThread = _currentThreadSave;
 
   _kernel_schedule();
 
@@ -351,7 +353,8 @@ void _from_asm_kernel_kill(int status, int context)
 }
 
 
-void kernel_init(void(*ptr)(int argc, char** argv))
+void 
+kernel_init(void(*ptr)(int argc, char** argv))
 {
   ktrace_reset();
   currentThread = 0;
@@ -364,13 +367,14 @@ void kernel_init(void(*ptr)(int argc, char** argv))
 }
 
 
-int kernel_getIsThreadAlive(unsigned pid)
+int 
+kernel_getIsThreadAlive(thread_h tid)
 {
   _threadTable_lock();
 
   int result = 0;
   for (unsigned i = 0; i < _thread_max; i++) {
-    if (threadTable[i].pid == pid) {
+    if (threadTable[i].tid == tid) {
       result = threadTable[i].state != _THREAD_DEAD;    
       break;
     }
@@ -382,7 +386,8 @@ int kernel_getIsThreadAlive(unsigned pid)
 }
 
 
-unsigned kernel_getIsActiveImage(void* ptr)
+unsigned
+kernel_getIsActiveImage(void* ptr)
 {
    for (int i = 0; i < _thread_max; i++) {
     _thread_entry_t *entry = &threadTable[i];     
@@ -398,19 +403,22 @@ unsigned kernel_getIsActiveImage(void* ptr)
 }
 
 
-unsigned kernel_disableInts()
+unsigned
+kernel_disableInts()
 {
   return _kernel_disableInts();
 }
 
 
-void kernel_enableInts(unsigned enable)
+void
+kernel_enableInts(unsigned enable)
 {
   _kernel_enableInts(enable);
 }
 
 
-int kernel_setThreadInfo(thread_info_t type, unsigned info)
+int
+kernel_setThreadInfo(thread_info_t type, unsigned info)
 {
   _threadTable_lock();
   int result = _kernel_setThreadInfo(currentThread, type, info);
@@ -419,28 +427,30 @@ int kernel_setThreadInfo(thread_info_t type, unsigned info)
 }
 
 
-int kernel_spawn(void (*entry)(int, char**argv), char**argv, fds_t* fds)
+thread_h
+kernel_spawn(void (*entry)(int, char**argv), char**argv, fds_t* fds)
 {
   _threadTable_lock();
   int threadIndex = _kernel_allocate_thread();
-  int pid = -1;
+  thread_h tid = INVALID_THREAD;
   if (threadIndex > 0) {
-    pid = _kernel_thread(threadIndex, 0, 0,  entry,  argv, fds);
+    tid = _kernel_thread(threadIndex, 0, 0,  entry,  argv, fds);
     //_kernel_disableInts();
   }
   _threadTable_unlock();
 
-  return pid;
+  return tid;
 }
 
 
-int kernel_load(unsigned* image, unsigned imageSize, void (*entry)(int,char**),  char** argv, fds_t* fds, int clone_cwd)
+thread_h
+kernel_load(unsigned* image, unsigned imageSize, void (*entry)(int,char**),  char** argv, fds_t* fds, int clone_cwd)
 {
   _threadTable_lock();
   int threadIndex = _kernel_allocate_thread();
-  int pid = -1;
+  thread_h tid = INVALID_THREAD;
   if (threadIndex > 0) {
-    pid = _kernel_thread(threadIndex, image, imageSize, entry, argv, fds);
+    tid = _kernel_thread(threadIndex, image, imageSize, entry, argv, fds);
     if (clone_cwd) {
       strncpy(threadTable[threadIndex].cwd, threadTable[currentThread].cwd, PATH_MAX);      
     }
@@ -448,17 +458,19 @@ int kernel_load(unsigned* image, unsigned imageSize, void (*entry)(int,char**), 
   }
   _threadTable_unlock();
 
-  return pid;
+  return tid;
 }
 
 
-void kernel_die(int status)
+void
+kernel_die(int status)
 {
   __asm__ volatile("trapa #37":::"memory");
 }
 
 
-void kernel_threadBlocked()
+void
+kernel_threadBlocked()
 {
   register unsigned r1 __asm__("r1");
   
@@ -474,7 +486,8 @@ void kernel_threadBlocked()
 }
 
 
-void kernel_spinLock(void* ptr)
+void
+kernel_spinLock(void* ptr)
 {
   for(;;) {
     if ( _kernel_atomic_lock_asm(ptr)) {
@@ -486,13 +499,15 @@ void kernel_spinLock(void* ptr)
 }
 
 
-void kernel_unlock(void* ptr)
+void
+kernel_unlock(void* ptr)
 {
   *(char *)ptr = 0;
 }
 
 
-window_h kernel_getThreadWindow()
+window_h
+kernel_getThreadWindow()
 {
   _threadTable_lock();
   window_h result = threadTable[currentThread].window;
@@ -501,16 +516,18 @@ window_h kernel_getThreadWindow()
 }
 
 
-unsigned kernel_getPid()
+thread_h
+kernel_getTid()
 {
   _threadTable_lock();
-  unsigned pid = threadTable[currentThread].pid;
+  thread_h tid = threadTable[currentThread].tid;
   _threadTable_unlock();
-  return pid;
+  return tid;
 }
 
 
-fds_t* kernel_getFds()
+fds_t*
+kernel_getFds()
 {
   _threadTable_lock();
   fds_t* fds = &threadTable[currentThread].fd;
@@ -519,7 +536,8 @@ fds_t* kernel_getFds()
 }
 
 
-char* kernel_getcwd(char *buf, unsigned size)
+char*
+kernel_getcwd(char *buf, unsigned size)
 {
   if (buf == 0) {
     buf = malloc(PATH_MAX);
@@ -531,7 +549,8 @@ char* kernel_getcwd(char *buf, unsigned size)
 }
 
 
-unsigned kernel_times (struct tms *tp)
+unsigned
+kernel_times (struct tms *tp)
 {
   /*  struct tms {
     clock_t tms_utime;
@@ -562,37 +581,39 @@ unsigned kernel_times (struct tms *tp)
 }
 
 
-int kernel_getPidForStdout(unsigned fd)
+thread_h
+kernel_getTidForStdout(unsigned fd)
 {
   _threadTable_lock();
   for (unsigned i = 0; i < _thread_max; i++) {
     if (threadTable[i].fd._stdout == (int)fd) {
-      int pid = threadTable[i].pid;
+      thread_h tid = threadTable[i].tid;
       _threadTable_unlock();
-      return pid;
+      return tid;
     }
   }
 
   for (unsigned i = 0; i < _thread_historyMax; i++) {
-    if (threadHistory[i].pid  != 0 && threadHistory[i]._stdout == fd) {
-      int pid = threadHistory[i].pid;
+    if (threadHistory[i].tid  != 0 && threadHistory[i]._stdout == fd) {
+      thread_h tid = threadHistory[i].tid;
       _threadTable_unlock();
-      return pid;
+      return tid;
     }
   }
 
-  return -1;
+  return INVALID_THREAD;
 }
 
 
-int kernel_getExitStatus(unsigned pid)
+int
+kernel_getExitStatus(thread_h tid)
 {
   _threadTable_lock();
   int exitStatus = -1;
   for (unsigned i = 0; i < _thread_historyMax; i++) {
     _thread_history_t *entry = &threadHistory[i];
-    if (entry->pid == pid) {
-      entry->pid = 0;
+    if (entry->tid == tid) {
+      entry->tid = 0;
       exitStatus =  entry->exitStatus;
       break;
     }
@@ -603,7 +624,8 @@ int kernel_getExitStatus(unsigned pid)
 }
 
 
-void kernel_stats()
+void
+kernel_stats()
 {
   _threadTable_lock();
   for (int i = 0; i < _thread_max; i++) {
@@ -615,21 +637,23 @@ void kernel_stats()
 	  name = entry->argv[0];
 	}
       }
-      printf("%d: %s %d i: %X %X s: %X %X %X %s\n", entry->pid,  states[entry->state], entry->fd._stdout, (unsigned)entry->image, (unsigned)(entry->image) + entry->imageSize, (unsigned)&entry->thread_stack[0], (unsigned)entry->sp, (unsigned)((char*)&entry->thread_stack[0])+_thread_stack_size_bytes, name);
+      printf("%d: %s %d i: %X %X s: %X %X %X %s\n", (int)entry->tid,  states[entry->state], entry->fd._stdout, (unsigned)entry->image, (unsigned)(entry->image) + entry->imageSize, (unsigned)&entry->thread_stack[0], (unsigned)entry->sp, (unsigned)((char*)&entry->thread_stack[0])+_thread_stack_size_bytes, name);
       //    }
   }
   _threadTable_unlock();
 }
 
 
-void _exit(int c)
+void 
+_exit(int c)
 {
   panic("_exit: exit called in kernel_context");
   for(;;);
 }
 
 
-void _kernel_newlib_lock_init_recursive(_LOCK_RECURSIVE_T* lock) 
+void 
+_kernel_newlib_lock_init_recursive(_LOCK_RECURSIVE_T* lock) 
 {
   lock->thread = 0;
   lock->count = 0;
@@ -637,7 +661,8 @@ void _kernel_newlib_lock_init_recursive(_LOCK_RECURSIVE_T* lock)
 }
 
 
-void _kernel_newlib_lock_close_recursive(_LOCK_RECURSIVE_T* lock)
+void 
+_kernel_newlib_lock_close_recursive(_LOCK_RECURSIVE_T* lock)
 {
   lock->thread = 0;
   lock->count = 0;
@@ -645,15 +670,16 @@ void _kernel_newlib_lock_close_recursive(_LOCK_RECURSIVE_T* lock)
 }
 
 
-unsigned _kernel_newlib_lock_acquire_recursive(_LOCK_RECURSIVE_T* lock)
+unsigned 
+_kernel_newlib_lock_acquire_recursive(_LOCK_RECURSIVE_T* lock)
 {
-  unsigned pid = kernel_getPid();
+  thread_h tid = kernel_getTid();
   for (;;) {
     kernel_spinLock(&lock->lock);
     if (lock->thread == 0) {
-      lock->thread = pid;
+      lock->thread = (unsigned)tid;
     }
-    if (lock->thread == pid) {
+    if (lock->thread == (unsigned)tid) {
       lock->count++;
       kernel_unlock(&lock->lock);
       return lock->count;
@@ -663,29 +689,31 @@ unsigned _kernel_newlib_lock_acquire_recursive(_LOCK_RECURSIVE_T* lock)
 }
 
  
-unsigned _kernel_newlib_lock_try_acquire_recursive(_LOCK_RECURSIVE_T* lock)
+unsigned 
+_kernel_newlib_lock_try_acquire_recursive(_LOCK_RECURSIVE_T* lock)
 {
   panic("_kernel_newlib_lock_try_acquire_recursive: not implemented");
   return 0;
 }
 
 
-void _kernel_newlib_lock_release_recursive(_LOCK_RECURSIVE_T* lock)
+void 
+_kernel_newlib_lock_release_recursive(_LOCK_RECURSIVE_T* lock)
 {
 #ifdef _KERNEL_ASSERTS
-  unsigned pid = kernel_getPid();
+  thread_h tid = kernel_getTid();
 #endif
 
   kernel_spinLock(&lock->lock);
 
 #ifdef _KERNEL_ASSERTS
-  if (lock->thread != pid) {
+  if (lock->thread != (unsigned)tid) {
     if (lock->count == 0) { //? Never locked maybe ?
-      // panic("_kernel_newlib_lock_release_recursive: lock->thread != pid (count = 0)");
+      // panic("_kernel_newlib_lock_release_recursive: lock->thread != tid (count = 0)");
       kernel_unlock(&lock->lock);
       return;
     }
-    panic("_kernel_newlib_lock_release_recursive: lock->thread != pid");
+    panic("_kernel_newlib_lock_release_recursive: lock->thread != tid");
   }
 #endif
 
@@ -698,19 +726,22 @@ void _kernel_newlib_lock_release_recursive(_LOCK_RECURSIVE_T* lock)
 }
 
 
-void _kernel_newlib_lock_init(unsigned* lock)
+void 
+_kernel_newlib_lock_init(unsigned* lock)
 {
   *lock = 0;
 }
 
 
-void _kernel_newlib_lock_close(unsigned* lock) 
+void 
+_kernel_newlib_lock_close(unsigned* lock) 
 {
   panic("_kernel_newlib_lock_close:  not implemented");
 }
 
 
-unsigned _kernel_newlib_lock_acquire(unsigned* lock) 
+unsigned 
+_kernel_newlib_lock_acquire(unsigned* lock) 
 {
   kernel_spinLock(lock);
 
@@ -718,7 +749,8 @@ unsigned _kernel_newlib_lock_acquire(unsigned* lock)
 }
 
 
-unsigned _kernel_newlib_lock_try_acquire(unsigned* lock) 
+unsigned 
+_kernel_newlib_lock_try_acquire(unsigned* lock) 
 {
   panic("_kernel_newlib_lock_try_acquire: not implemented");
   return 0;

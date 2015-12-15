@@ -14,23 +14,38 @@
 static const  unsigned console_characterSpacing = gfx_spaceWidth;
 
 
-static unsigned _fb() {
-  return window_getFrameBuffer(thread_getWindow());
-}
-static unsigned _w() {
-  return window_getW(thread_getWindow());
-}
-static unsigned _h() {
-  return window_getH(thread_getWindow());
-}
-static unsigned _x() {
-  return window_getCursorX(thread_getWindow());
-}
-static unsigned _y() {
-  return window_getCursorY(thread_getWindow());
+static unsigned 
+_fb() 
+{
+  return window_getFrameBuffer(kernel_getThreadWindow());
 }
 
-static void _console_processControl(window_h windowH)
+static unsigned 
+_w() 
+{
+  return window_getW(kernel_getThreadWindow());
+}
+
+static unsigned 
+_h() 
+{
+  return window_getH(kernel_getThreadWindow());
+}
+
+static unsigned 
+_x() 
+{
+  return window_getCursorX(kernel_getThreadWindow());
+}
+
+static unsigned 
+_y() 
+{
+  return window_getCursorY(kernel_getThreadWindow());
+}
+
+static void 
+_console_processControl(window_h windowH)
 {
   switch (window_getConsoleControl(windowH)->type) {
   case CONSOLE_SET_ROW:
@@ -72,11 +87,12 @@ static void _console_processControl(window_h windowH)
 
 }
 
-static void _console_output_char(char c)
+static void 
+_console_output_char(char c)
 {
   char string[] = {c, 0};
   unsigned x = _x(), y = _y();
-  window_h windowH = thread_getWindow();
+  window_h windowH = kernel_getThreadWindow();
   unsigned background;
   unsigned foreground;
     
@@ -114,11 +130,13 @@ static void _console_output_char(char c)
   window_setCursor(windowH, x, y);
 }
 
-void _console_write_char(char c) {
+void 
+_console_write_char(char c) 
+{
   fds_t *fds = kernel_getFds();
   if (fds->_stdout == STDOUT_FILENO) {
     
-    window_h windowH = thread_getWindow();
+    window_h windowH = kernel_getThreadWindow();
 
     if (window_getConsoleControl(windowH)->behaviour & CONSOLE_BEHAVIOUR_AUTO_SCROLL) {
       peripheral.console.consoleWrite = c;
@@ -163,10 +181,12 @@ void _console_write_char(char c) {
   }
 }
 
-unsigned char _console_char_avail() {
+unsigned char 
+_console_char_avail() 
+{
   fds_t *fds = kernel_getFds();
   if (fds->_stdin == STDIN_FILENO) {
-    if (window_getZ(thread_getWindow()) == 0) {
+    if (window_getZ(kernel_getThreadWindow()) == 0) {
       return peripheral.console.consoleReadBufferSize;
     } else {
       return 0;
@@ -177,10 +197,12 @@ unsigned char _console_char_avail() {
   }
 }
 
-int _console_read_char() {
+int 
+_console_read_char() 
+{
   fds_t *fds = kernel_getFds();
   if (fds->_stdin == STDIN_FILENO) {
-    if (window_getZ(thread_getWindow()) == 0) {
+    if (window_getZ(kernel_getThreadWindow()) == 0) {
       return peripheral.console.consoleRead;
     } else {
       return -1;
@@ -191,31 +213,37 @@ int _console_read_char() {
   }
 }
 
-unsigned console_isKeyDown(unsigned key)
+unsigned 
+console_isKeyDown(unsigned key)
 {
   peripheral.console.consoleSelectKeyState = key;
   return peripheral.console.consoleKeyState;
 }
 
-void console_backspace()  {
-  window_setCursor(thread_getWindow(), _x() - (window_getCharacterPixelWidth(window)+console_characterSpacing), _y());
+void 
+console_backspace()  
+{
+  window_setCursor(kernel_getThreadWindow(), _x() - (window_getCharacterPixelWidth(window)+console_characterSpacing), _y());
 }
 
-void console_insertAtCursor()
+void 
+console_insertAtCursor()
 {
   unsigned dx = _x()+window_getCharacterPixelWidth(window)+console_characterSpacing;
   gfx_bitBlt(_fb(), _x(), _y(), dx, _y(), _w()-dx, window_getCharacterPixelHeight(window), _fb());
 }
 
-void console_deleteAtCursor()
+void 
+console_deleteAtCursor()
 {
   unsigned dx = _x()+window_getCharacterPixelWidth(window)+console_characterSpacing;
   gfx_bitBlt(_fb(), dx, _y(), _x(), _y(), _w()-dx, window_getCharacterPixelHeight(window), _fb());
 }
 
-void console_setCursorPos(unsigned col, unsigned row)
+void 
+console_setCursorPos(unsigned col, unsigned row)
 {
-  window_h w = thread_getWindow();
+  window_h w = kernel_getThreadWindow();
   
   unsigned x = col * (window_getCharacterPixelWidth(w)+console_characterSpacing);
   unsigned y = row * window_getCharacterPixelHeight(w);
@@ -223,59 +251,67 @@ void console_setCursorPos(unsigned col, unsigned row)
   window_setCursor(w, x, y);
 }
 
-void console_setCursorCol(unsigned col)
+void 
+console_setCursorCol(unsigned col)
 {
   unsigned x = col * (window_getCharacterPixelWidth(window)+console_characterSpacing);
   
-  window_setCursorX(thread_getWindow(), x);
+  window_setCursorX(kernel_getThreadWindow(), x);
 }
 
-void console_setCursorRow(unsigned row)
+void 
+console_setCursorRow(unsigned row)
 {
-  window_h w = thread_getWindow();
+  window_h w = kernel_getThreadWindow();
   unsigned y = row * (window_getCharacterPixelHeight(w));
   
   window_setCursorY(w, y);
 
 }
 
-unsigned console_getCursorRow()
+unsigned 
+console_getCursorRow()
 {
-  window_h w = thread_getWindow();
+  window_h w = kernel_getThreadWindow();
   return window_getCursorY(w) / window_getCharacterPixelHeight(w);
 }
 
-void console_clearToEndOfLine()
+void 
+console_clearToEndOfLine()
 {
-  gfx_fillRect(_fb(), _x(), _y(), _w()-_x(), window_getCharacterPixelHeight(window), window_getBackgroundColor(thread_getWindow())); 
+  gfx_fillRect(_fb(), _x(), _y(), _w()-_x(), window_getCharacterPixelHeight(window), window_getBackgroundColor(kernel_getThreadWindow())); 
 }
 
 
-unsigned console_getColumns()
+unsigned 
+console_getColumns()
 {
-  window_h w = thread_getWindow();
+  window_h w = kernel_getThreadWindow();
   return  window_getW(w) / (window_getCharacterPixelWidth(w)+console_characterSpacing) + 1;
 }
 
 
 unsigned console_getLines()
 {
-  window_h w = thread_getWindow();
+  window_h w = kernel_getThreadWindow();
   return window_getH(w) / (window_getCharacterPixelHeight(w));
 }
 
-void console_reset()
+void 
+console_reset()
 {
   console_setCursorPos(0, 0);
-  gfx_fillRect(_fb(), _x(), _y(), _w(), _h(), window_getBackgroundColor(thread_getWindow())); 
+  gfx_fillRect(_fb(), _x(), _y(), _w(), _h(), window_getBackgroundColor(kernel_getThreadWindow())); 
 }
 
-void console_clearBehaviour(unsigned mask)
+void 
+console_clearBehaviour(unsigned mask)
 {
-  window_getConsoleControl(thread_getWindow())->behaviour &= ~mask;
+  window_getConsoleControl(kernel_getThreadWindow())->behaviour &= ~mask;
 }
 
-void console_setBehaviour(unsigned mask)
+void 
+console_setBehaviour(unsigned mask)
 {
-  window_getConsoleControl(thread_getWindow())->behaviour |= mask;
+  window_getConsoleControl(kernel_getThreadWindow())->behaviour |= mask;
 }

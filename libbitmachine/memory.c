@@ -15,9 +15,14 @@
 extern char heap[__MEMORY_HEAP_SIZE];
 unsigned _memory_total = sizeof(heap);
 
-extern void *  dlmalloc(size_t size);
-extern void dlfree(void *ptr);
-extern void* dlrealloc(void *ptr, size_t size);
+extern void *  
+dlmalloc(size_t size);
+
+extern void 
+dlfree(void *ptr);
+
+extern void* 
+dlrealloc(void *ptr, size_t size);
 
 #define _memory_lock() unsigned ___ints_disabled = kernel_disableInts()
 #define _memory_unlock() kernel_enableInts(___ints_disabled)
@@ -25,7 +30,8 @@ extern void* dlrealloc(void *ptr, size_t size);
 #define _sbrk_lock() unsigned ___ints_disabled = kernel_disableInts()
 #define _sbrk_unlock() kernel_enableInts(___ints_disabled)
 
-void* memory_sbrk(ptrdiff_t incr)
+void* 
+memory_sbrk(ptrdiff_t incr)
 {
   //  _sbrk_lock();
   static char *heap_end;
@@ -43,14 +49,15 @@ void* memory_sbrk(ptrdiff_t incr)
   return (caddr_t) prev_heap_end;
 }
 
-void* memory_malloc(size_t size)
+void* 
+memory_malloc(size_t size)
 {
   _memory_lock();
   
   void* ptr = dlmalloc(size);
   
   peripheral.malloc.mallocSize = size;
-  peripheral.malloc.pid = kernel_getPid();
+  peripheral.malloc.pid = (unsigned)kernel_getTid();
   peripheral.malloc.mallocAddress = (unsigned)ptr;
 
   _memory_unlock();
@@ -58,7 +65,8 @@ void* memory_malloc(size_t size)
   return ptr;
 }
 
-void memory_free(void *ptr)
+void 
+memory_free(void *ptr)
 {
   _memory_lock();
   
@@ -69,7 +77,8 @@ void memory_free(void *ptr)
   _memory_unlock();
 }
 
-void* memory_realloc(void* ptr, size_t size)
+void* 
+memory_realloc(void* ptr, size_t size)
 {
   _memory_lock();
 
@@ -77,7 +86,7 @@ void* memory_realloc(void* ptr, size_t size)
 
   peripheral.malloc.freeAddress = (unsigned)ptr;
   peripheral.malloc.mallocSize = size;
-  peripheral.malloc.pid = kernel_getPid();
+  peripheral.malloc.pid = (unsigned)kernel_getTid();
   peripheral.malloc.mallocAddress = (unsigned)newPtr;
   _memory_unlock();
 
@@ -85,17 +94,19 @@ void* memory_realloc(void* ptr, size_t size)
 }
 
 
-void *_sbrk_r(struct _reent *ptr, ptrdiff_t incr)
+void *
+_sbrk_r(struct _reent *ptr, ptrdiff_t incr)
 {
   return memory_sbrk(incr);
 }
 
 // ints disabled by ISR before only call to this
-void memory_cleanupThread(unsigned pid)
+void 
+memory_cleanupThread(thread_h tid)
 {
-  if (pid != 0) {
+  if (tid != 0) {
 
-    peripheral.malloc.list = pid;
+    peripheral.malloc.list = (unsigned)tid;
     
     unsigned address;
     while ((address = peripheral.malloc.mallocAddress) != 0) {
@@ -104,11 +115,12 @@ void memory_cleanupThread(unsigned pid)
       } 
     }
 
-    peripheral.malloc.freePid = pid;
+    peripheral.malloc.freePid = (unsigned)tid;
   }
 }
 
-void* malloc(size_t size)
+void* 
+malloc(size_t size)
 {
   return memory_malloc(size);
 }
@@ -125,7 +137,8 @@ void* malloc(size_t size)
   }*/
 
 
-void free(void *ptr)
+void 
+free(void *ptr)
 {
   memory_free(ptr);
 }

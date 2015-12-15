@@ -24,9 +24,10 @@ typedef struct {
   char** argv;
   unsigned *image;
   unsigned imageSize;
-} _process_info_t;
+} _thread_info_t;
 
-static int _process_load(char* command, _process_info_t* info)
+static int 
+_thread_load(char* command, _thread_info_t* info)
 {
   char buffer[PATH_MAX];
   char** argv = argv_build((char*)command);
@@ -65,10 +66,11 @@ static int _process_load(char* command, _process_info_t* info)
   return 1;
 }
 
-FILE* process_open(char* command)
+FILE* 
+thread_open(char* command)
 {
-  _process_info_t info;
-  if (_process_load(command, &info)) {
+  _thread_info_t info;
+  if (_thread_load(command, &info)) {
 
     unsigned x = kernel_enterKernelMode();
     FILE* fp = fopen("/dev/pipe", "rw");  
@@ -84,35 +86,37 @@ FILE* process_open(char* command)
   return 0;
 }
 
-int process_close(FILE* stream)
+int 
+thread_close(FILE* stream)
 {
   unsigned fd = fileno(stream);
-  int pid = kernel_getPidForStdout(fd);
-  int status = kernel_getExitStatus(pid);
+  thread_h tid = kernel_getTidForStdout(fd);
+  int status = kernel_getExitStatus(tid);
 
   fclose(stream);
 
   return status;
 }
 
-int process_spawn(char* command)
+thread_h 
+thread_spawn(char* command)
 {
-  _process_info_t info;
-  if (_process_load(command, &info)) {
+  _thread_info_t info;
+  if (_thread_load(command, &info)) {
     return kernel_load(info.image, info.imageSize, info.entry, info.argv, 0, 1);
   }
-  return -1;
+  return INVALID_THREAD;
 }
 
 
-int process_load(char* commandLine)
+int thread_load(char* commandLine)
 { 
   FILE *fp = popen(commandLine, "r");
 
   for(;fp != 0;) {
     char c;
     if (read(fileno(fp), &c, 1) <= 0) {
-      thread_blocked();
+      kernel_threadBlocked();
       break;
     }
     printf("%c", c);
@@ -126,12 +130,13 @@ int process_load(char* commandLine)
   return 0;
 }
 
-int process_wait(unsigned pid)
+int 
+thread_wait(thread_h tid)
 {
-  while (kernel_getIsThreadAlive(pid)) {
-    thread_blocked();
+  while (kernel_getIsThreadAlive(tid)) {
+    kernel_threadBlocked();
   }
 
-  return kernel_getExitStatus(pid);
+  return kernel_getExitStatus(tid);
 }
 

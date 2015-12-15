@@ -36,12 +36,12 @@ unsigned short missleSpeed = 1;
 
 unsigned target, work, sprite, width, height;
 
-void initInvader(short x, short y, unsigned char sprite)
+void initInvader(short x, short y, unsigned char _sprite)
 {
   invader_t *i = &  invaders[invaderIndex++];
   i->x = x;
   i->y = y;
-  i->sprite = sprite;
+  i->sprite = _sprite;
   i->state = 0;
 }
 
@@ -136,16 +136,16 @@ void preRender()
   unsigned *ptr = (unsigned*) &sprite_rgba;
   unsigned short x, y;
 
-  unsigned short height = (invaderH*NUM_INVADERS)+missleH;
+  unsigned short _height = (invaderH*NUM_INVADERS)+missleH;
 
-  for (y = 0; y < height; y++) {
+  for (y = 0; y < _height; y++) {
     for (x = 0; x < invaderW; x++) {
       drawRGBA(x, y, ptr++);
     }
   }
 
   //gfx_setFrameBuffer(OFFSCREEN1);
-  gfx_fillRect(work, 0, 0, width, height, 0xFF000000);
+  gfx_fillRect(work, 0, 0, width, _height, 0xFF000000);
   gfx_drawStringRetro(work, 5, 1, "SCORE<1> HI-SCORE SCORE<2>", 0xFFFFFFFF, 1, 3);
 
 }
@@ -220,7 +220,7 @@ int main(int agrc, char* argv[])
   unsigned w = 217, h = 248;
   window_h window = window_create("Space Invaders", 0, 0, w, h);
   gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
-  thread_window(window);
+  kernel_setThreadWindow(window);
 
   width = w;
   height = h;
@@ -266,6 +266,6 @@ int main(int agrc, char* argv[])
     moveMissle();
 
 
-    thread_blocked();
+    kernel_threadBlocked();
   }
 }

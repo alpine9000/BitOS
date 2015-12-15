@@ -1,16 +1,25 @@
 #pragma once
 
 #include <stdio.h>
+#include "types.h"
 
 #ifdef _KERNEL_BUILD
 
-FILE* process_open(char* command);
-int process_close(FILE* fp);
+FILE* 
+thread_open(char* command);
+
+int 
+thread_close(FILE* fp);
 
 #endif
 
-int process_spawn(char* command);
-int process_load(char* commandLine);
-int process_wait(unsigned pid);
+int 
+thread_spawn(char* command);
+
+int 
+thread_load(char* commandLine);
+
+int 
+thread_wait(thread_h pid);
 
 

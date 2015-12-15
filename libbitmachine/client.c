@@ -9,70 +9,84 @@
 
 int errno;
 
-void kernel_threadBlocked() {
+void 
+kernel_threadBlocked() 
+{
   _bft->kernel_threadBlocked();
 }
 
-void kernel_spinLock(void* ptr)
+void 
+kernel_spinLock(void* ptr)
 {
   _bft->kernel_spinLock(ptr);
 }
 
-void kernel_unlock(void* ptr)
+void 
+kernel_unlock(void* ptr)
 {
   _bft->kernel_unlock(ptr);
 }
 
-unsigned kernel_pid()
+thread_h 
+kernel_tid()
 {
-  return _bft->kernel_pid();
+  return _bft->kernel_tid();
 }
 
-void kernel_die(int status)
+void 
+kernel_die(int status)
 {
   _bft->kernel_die(status);
 }
 
-int process_spawn(char* command)
+int 
+thread_spawn(char* command)
 {
-  return _bft->process_spawn(command);
+  return _bft->thread_spawn(command);
 }
 
-int process_wait(unsigned pid)
+int 
+thread_wait(thread_h tid)
 {
-  return _bft->process_wait(pid);
+  return _bft->thread_wait(tid);
 }
 
-int process_load(char* commandLine)
+int 
+thread_load(char* commandLine)
 {
-  return _bft->process_load(commandLine);
+  return _bft->thread_load(commandLine);
 }
 
-long  pathconf(const char *path, int name)
-{
-  return 0;
-}
-
-
-long  fpathconf(int fildes, int name)
+long  
+pathconf(const char *path, int name)
 {
   return 0;
 }
 
-void wolf()
+
+long  
+fpathconf(int fildes, int name)
+{
+  return 0;
+}
+
+void 
+wolf()
 {
 
 }
 
 /* I am guessing these are needed because clients use these without the header that redefines them */
 
-void *  malloc(size_t size)
+void *  
+malloc(size_t size)
 {
   return (void*)__trap34(SYS_malloc, size);
 }
 
 
-void * calloc(size_t count, size_t size)
+void * 
+calloc(size_t count, size_t size)
 {
   char* ptr = (char*)__trap34(SYS_malloc, size*count);
 
@@ -81,13 +95,15 @@ void * calloc(size_t count, size_t size)
 }
 
 
-void free(void *ptr)
+void 
+free(void *ptr)
 {
   __trap34(SYS_free, ptr);
 }
 
 
-void *realloc(void *ptr, size_t size)
+void *
+realloc(void *ptr, size_t size)
 {
   return (void*)__trap34(SYS_realloc, ptr, size);
 }

@@ -6,7 +6,8 @@
 #include <sys/time.h>
 #include "process.h"
 
-static char* filename_base(char* filename, char *buffer)
+static char* 
+filename_base(char* filename, char *buffer)
 {
   strcpy(buffer, filename);
   for (int i = strlen(filename); i > 0; --i) {
@@ -19,7 +20,8 @@ static char* filename_base(char* filename, char *buffer)
   return buffer;
 }
 
-static char* filename_ext(char* filename)
+static char* 
+filename_ext(char* filename)
 {
   char* ext = strrchr(filename, '.');
   if (!ext) {
@@ -30,7 +32,8 @@ static char* filename_ext(char* filename)
 }
 
 
-static struct timeval* timeval_subtract (struct timeval *result, struct timeval *x, struct timeval *y)
+static struct timeval* 
+timeval_subtract (struct timeval *result, struct timeval *x, struct timeval *y)
 {
   /* Perform the carry for the later subtraction by updating y. */
   if (x->tv_usec < y->tv_usec) {
@@ -54,7 +57,8 @@ static struct timeval* timeval_subtract (struct timeval *result, struct timeval 
 }
 
 
-static int build_needsBuild(char* src, char* dest)
+static int 
+build_needsBuild(char* src, char* dest)
 {
   struct stat st_src, st_dest;
 
@@ -65,7 +69,8 @@ static int build_needsBuild(char* src, char* dest)
   }
 }
 
-static int build_compileSource(unsigned force, char* filename, char* compiler, char* flags)
+static int 
+build_compileSource(unsigned force, char* filename, char* compiler, char* flags)
 {
   char source[PATH_MAX];
   char dest[PATH_MAX];
@@ -80,14 +85,15 @@ static int build_compileSource(unsigned force, char* filename, char* compiler, c
     sprintf(command, "%s %s %s -o %s -dumpbase %s -auxbase-strip %s", compiler, flags, source, dest, source, dest);
     printf(command);
     printf("\n");
-    return process_load(command);
+    return thread_load(command);
   } else {
     printf("%s is up to date\n", dest);
     return 1;
   }
 }
 
-static int build_assemble(unsigned force, char* filename)
+static int 
+build_assemble(unsigned force, char* filename)
 {
   char source[PATH_MAX];
   char dest[PATH_MAX];
@@ -102,26 +108,28 @@ static int build_assemble(unsigned force, char* filename)
     sprintf(command, "as %s -o %s", source, dest);
     printf(command);
     printf("\n");
-    return process_load(command);
+    return thread_load(command);
   } else {
     printf("%s is up to date\n", dest);
     return 1;
   }
 }
 
-static int link_(char* filename)
+static int 
+link_(char* filename)
 {
   char buffer[1024];
   char base[PATH_MAX];
 
   filename_base(filename, base);
-  sprintf(buffer, "ld -pie /usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e/crt1.o %s  /usr/local/sh-elf/sh-elf/lib/m2e/libc.a /usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e/libgcc.a -o /usr/local/bin/%s",filename, base);
+  sprintf(buffer, "ld -pie /usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e/crt1.o %s  /usr/local/sh-elf/sh-elf/lib/m2e/libc.a /usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e/libgcc.a -o /usr/local/bin/%s",filename, base);
   printf(buffer);
   printf("\n");
-  return process_load(buffer);
+  return thread_load(buffer);
 }
 
-static int build_compile(unsigned force, char* filename, char* cc1flags, char* cxxflags)
+static int 
+build_compile(unsigned force, char* filename, char* cc1flags, char* cxxflags)
 {
   char buffer[PATH_MAX];
   char base[PATH_MAX];
@@ -146,10 +154,11 @@ static int build_compile(unsigned force, char* filename, char* cc1flags, char* c
 }
 
 
-static int build_files(int force, char** files)
+static int 
+build_files(int force, char** files)
 {
-  const char* CC1FLAGS="-DGITVERSION=\\\"local\\\" -D_KERNEL_BUILD -O3 -Wfatal-errors -Werror -Wall -Wextra -Wno-unused-parameter -I. -m2e -funit-at-a-time -falign-jumps -quiet -imultilib m2e -iprefix /usr/local/sh-elf/5.2.0/lib/gcc/sh-elf/5.2.0  -I/usr/local/src/BitOS -I/usr/local/src/BitOS/libbitmachine";
-  const char* CXXFLAGS="-D_KERNEL_BUILD -O3 -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -Wno-char-subscripts  -m2e -funit-at-a-time -falign-jumps -quiet -imultilib m2e -iprefix /usr/local/sh-elf/sh-elf/include/c++/5.2.0/sh-elf/ -I/usr/local/src/BitOS -I/usr/local/src/BitOS/libbitmachine ";
+  const char* CC1FLAGS="-DGITVERSION=\\\"local\\\" -D_KERNEL_BUILD -O3 -I. -m2e -funit-at-a-time -falign-jumps -quiet -imultilib m2e -iprefix /usr/local/sh-elf/5.3.0/lib/gcc/sh-elf/5.3.0  -I/usr/local/src/BitOS -I/usr/local/src/BitOS/libbitmachine";
+ const char* CXXFLAGS="-D_KERNEL_BUILD -O3 -m2e -funit-at-a-time -falign-jumps -quiet -imultilib m2e -iprefix /usr/local/sh-elf/sh-elf/include/c++/5.3.0/sh-elf/ -I/usr/local/src/BitOS -I/usr/local/src/BitOS/libbitmachine ";
 
   for (int i = 0; files[i] != 0; i++) {
     if (!build_compile(force, files[i], (char*)CC1FLAGS, (char*)CXXFLAGS)) {
@@ -160,7 +169,8 @@ static int build_files(int force, char** files)
   return 1;
 }
 
-static void build_appendObjectFiles(char** files, char* buffer, unsigned bufMax)
+static void 
+build_appendObjectFiles(char** files, char* buffer, unsigned bufMax)
 {
   for (int i = 0; files[i] != 0; i++) {
     char basename[PATH_MAX];
@@ -170,22 +180,24 @@ static void build_appendObjectFiles(char** files, char* buffer, unsigned bufMax)
   }
 }
 
-static int build_elf(char** files, char* output)
+static int 
+build_elf(char** files, char* output)
 {
   const unsigned bufMax = 4096;
   char buffer[bufMax];
 
-  snprintf(buffer, bufMax, "ld -L. -L/usr/local/sh-elf/sh-elf/lib/m2e  -L/usr/local/sh-elf/lib/gcc/sh-elf/5.2.0/m2e -L/usr/local/sh-elf/lib -T start.l -no-keep-memory -o %s ", output);
+  snprintf(buffer, bufMax, "ld -L. -L/usr/local/sh-elf/sh-elf/lib/m2e  -L/usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e -L/usr/local/sh-elf/lib -T start.l -no-keep-memory -o %s ", output);
 
   build_appendObjectFiles(files, buffer, bufMax);    
 
   strncat(buffer, "/usr/local/sh-elf/sh-elf/lib/m2e/crt0.o -L. -Llibbitmachine  --start-group -lwolf -lbitmachine -lc-kernel -lm -lgcc --end-group", bufMax);
 
   printf("%s\n", buffer);
-  return process_load(buffer);
+  return thread_load(buffer);
 }
 
-static int build_library(unsigned force, char* library, char** files)
+static int 
+build_library(unsigned force, char* library, char** files)
 {
   const unsigned bufMax = 4096;
   char buffer[bufMax];
@@ -195,11 +207,12 @@ static int build_library(unsigned force, char* library, char** files)
   build_appendObjectFiles(files, buffer, bufMax);
 
   printf("%s\n", buffer);
-  return process_load(buffer);
+  return thread_load(buffer);
 }
 
 
-static void build_bitos(unsigned force, char* srcdir, char* output)
+static void 
+build_bitos(unsigned force, char* srcdir, char* output)
 {
   char libdir[PATH_MAX];
   char* files[] = { "apps/wolf/wolf.cpp" , "media/martini.c", "vector.c", "init.c",  0};
@@ -226,7 +239,8 @@ static void build_bitos(unsigned force, char* srcdir, char* output)
   build_elf(files, output);
 }
 
-void build(int argc, char** argv)
+void 
+build(int argc, char** argv)
 {
   unsigned force = 0;
 
@@ -237,7 +251,8 @@ void build(int argc, char** argv)
   build_bitos(force, "/usr/local/src/BitOS", "/usr/local/src/BitOS/bin/bitos.elf");
 }
 
-void build2(int argc, char** argv)
+void 
+build2(int argc, char** argv)
 {
   unsigned force = 0;
 
@@ -250,7 +265,8 @@ void build2(int argc, char** argv)
 }
 
 
-void bcc(int argc, char** argv)
+void 
+bcc(int argc, char** argv)
 {
   if (argc != 2) {
     printf("usage: %s file (then get ready for a long wait)\n", argv[0]);

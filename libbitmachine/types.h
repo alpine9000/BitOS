@@ -3,6 +3,8 @@
 // These types are here becaue things like window.h include bft.h and bft.h needs these types.
 
 typedef void* window_h;
+typedef void* thread_h;
+#define INVALID_THREAD ((thread_h)0xFFFFFFFF)
 
 typedef enum {
   KERNEL_THREAD_WINDOW,
@@ -14,7 +16,7 @@ typedef enum {
   AUDIO_TYPE_SAWTOOTH = 1,
   AUDIO_TYPE_SQUARE = 2,
   AUDIO_TYPE_TRIANGLE = 3,
-  AUDIO_TYPE_BUFFER = 4,
+  AUDIO_TYPE_BUFFER = 4
 } audio_type_t;
 
 typedef struct {
@@ -35,8 +37,7 @@ typedef enum {
   CONSOLE_INSERT_AT_CURSOR,
   CONSOLE_DELETE_AT_CURSOR,
   CONSOLE_UP,
-  CONSOLE_BACKSPACE,
-
+  CONSOLE_BACKSPACE
 } console_control_type_t;
 
 typedef enum {

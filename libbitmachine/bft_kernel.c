@@ -8,7 +8,8 @@
 #include "simulator.h"
 #include "file.h"
 
-extern void dlmalloc_stats(void);
+extern void 
+dlmalloc_stats(void);
 
 // Changing this (except adding to the end) will stop all current client binaries from working.
 
@@ -23,7 +24,7 @@ _bft_t __bft  = {
   &kernel_threadBlocked,
   &kernel_spinLock,
   &kernel_unlock,
-  &kernel_getPid,
+  &kernel_getTid,
   &kernel_die,
   &kernel_getThreadWindow,
   &kernel_spawn,
@@ -64,9 +65,9 @@ _bft_t __bft  = {
   &console_clearToEndOfLine,
   &console_reset,
 
-  &process_spawn,
-  &process_load,
-  &process_wait,
+  &thread_spawn,
+  &thread_load,
+  &thread_wait,
 
   &_kernel_newlib_lock_init_recursive,
   &_kernel_newlib_lock_close_recursive,
@@ -90,7 +91,8 @@ _bft_t __bft  = {
 
 _bft_t* _bft = &__bft;
 
-_bft_t* bft_get()
+_bft_t* 
+bft_get()
 {
   return &__bft;
 }

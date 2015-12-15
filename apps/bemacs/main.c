@@ -63,7 +63,7 @@ int main (int argc, char *argv[])
   unsigned w = (gfx_fontWidth+gfx_spaceWidth)*80, h = gfx_fontHeight*40;
   window_h window = window_create(argv[0], gfx_getVideoWidth()-w-10, 0, w, h);
   gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
-  thread_window(window);
+  kernel_setThreadWindow(window);
 
   breadline_init();
 
@@ -377,7 +377,7 @@ int quit (int f, int n)
     {
       vttidy ();
       breadline_exit();
-      window_close(thread_getWindow());
+      window_close(kernel_getThreadWindow());
 
       exit (0);
     }

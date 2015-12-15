@@ -49,7 +49,8 @@ extern "C" {
 
 extern "C" {
   void itoa(int n, char s[]);
-};
+}
+
 char fps_buf[20];
 unsigned fps_count = 10;
 
@@ -175,7 +176,7 @@ void wolfcpp(window_h window, unsigned target)
   texture_map_t texture;
   texture_map_t darkTexture;
 
-  screen(target, w,h,1, "Raycaster");
+  screen(target, _w, _h,1, "Raycaster");
 
   extern unsigned char eagle_rgba[];
   extern unsigned char redbrick_rgba[];
@@ -211,10 +212,10 @@ void wolfcpp(window_h window, unsigned target)
   //start the main loop
   while (1)
   {
-    for(int x = 0; x < w; x++)
+    for(int x = 0; x < _w; x++)
     {
       //calculate ray position and direction 
-      double cameraX = 2 * x / double(w) - 1; //x-coordinate in camera space
+      double cameraX = 2 * x / double(_w) - 1; //x-coordinate in camera space
       double rayPosX = posX;
       double rayPosY = posY;
       double rayDirX = dirX + planeX * cameraX;
@@ -286,13 +287,13 @@ void wolfcpp(window_h window, unsigned target)
       else           perpWallDist = fabs((mapY - rayPosY + (1 - stepY) / 2) / rayDirY);
         
       //Calculate height of line to draw on screen
-      int lineHeight = abs(int(h / perpWallDist));
+      int lineHeight = abs(int(_h / perpWallDist));
        
       //calculate lowest and highest pixel to fill in current stripe
-      int drawStart = -lineHeight / 2 + h / 2;
+      int drawStart = -lineHeight / 2 + _h / 2;
       if(drawStart < 0) drawStart = 0;
-      int drawEnd = lineHeight / 2 + h / 2;
-      if(drawEnd >= h) drawEnd = h - 1;
+      int drawEnd = lineHeight / 2 + _h / 2;
+      if(drawEnd >= _h) drawEnd = _h - 1;
       //texturing calculations
       int texNum = worldMap[mapX][mapY] - 1; //1 subtracted from it so that texture 0 can be used!
        
@@ -309,7 +310,7 @@ void wolfcpp(window_h window, unsigned target)
 
       //peripheral.videoAddressX = x;
 
-      const double dh = (double)h/2.0;
+      const double dh = (double)_h/2.0;
       const double lh2 = (double)lineHeight/2.0;
       texture_map_t* tptr;
       if (side) {
@@ -414,7 +415,7 @@ void wolfcpp(window_h window, unsigned target)
     gfx_setFrameFrameBufferDirty(target_fb);
 
 #ifndef FLOOR
-    gfx_bitBlt(work_fb, 0, 0, 0, 0, w/scale, h/scale, background_fb);
+    gfx_bitBlt(work_fb, 0, 0, 0, 0, _w/scale, _h/scale, background_fb);
     //    peripheral.video[1].blt.bltFromSrcWith = background_fb;
 #endif
     gfx_loadData(work_fb);
@@ -464,7 +465,7 @@ void wolfcpp(window_h window, unsigned target)
     }
     //simulator_yield();
     //    gfx_vsync();
-    thread_blocked();
+    kernel_threadBlocked();
   }
 }
 
@@ -476,8 +477,8 @@ extern "C" {
 #endif
   {
    
-    window_h window = window_create((char*)"Wolf2", 0, 0, w, h);
-    thread_window(window);
+    window_h window = window_create((char*)"Wolf2", 0, 0, _w, _h);
+    kernel_setThreadWindow(window);
 #ifdef _KERNEL_BUILD
     window_enableCursor(window, 0);
 #endif

@@ -49,7 +49,8 @@ typedef struct {
 unsigned window_fullRefresh = 1;
 static window_table_t windowTable;
 
-static inline int _window_index(window_h window)
+static inline int 
+_window_index(window_h window)
 {
   for (int i = 0; i < WINDOWS_MAX; ++i) {
     if (windowTable.windows[i].handle == window) {
@@ -59,17 +60,20 @@ static inline int _window_index(window_h window)
   return -1;
 }
 
-console_control_t* window_getConsoleControl(window_h window)
+console_control_t* 
+window_getConsoleControl(window_h window)
 {
   return &windowTable.windows[_window_index(window)].consoleControl;
 }
 
-static inline window_h _window_handle(int index)
+static inline window_h 
+_window_handle(int index)
 {
   return windowTable.windows[index].handle;
 }
 
-static void window_move(window_h window, int x, int y)
+static void 
+window_move(window_h window, int x, int y)
 {
   if (y < 0) {
     y = 0;
@@ -80,7 +84,8 @@ static void window_move(window_h window, int x, int y)
 }
 
 
-static void window_composite(unsigned fb)
+static void 
+window_composite(unsigned fb)
 {
   gfx_alpha(fb, 255);
 
@@ -158,7 +163,8 @@ static void window_composite(unsigned fb)
   }
 }
 
-static int window_fromCoord(int x, int y)
+static int 
+window_fromCoord(int x, int y)
 {
   for (int i = 0; i < WINDOWS_MAX; ++i) {
     int wi = windowTable.zIndex[i];
@@ -176,7 +182,8 @@ static int window_fromCoord(int x, int y)
   return -1;
 }
 
-static void _window_add_to_z(unsigned windowIndex)
+static void 
+_window_add_to_z(unsigned windowIndex)
 {
   for (int i = 0; i < WINDOWS_MAX; i++) {
     if (windowTable.zIndex[i] == -1) {
@@ -186,7 +193,8 @@ static void _window_add_to_z(unsigned windowIndex)
   }
 }
 
-static void _window_remove_from_z(window_h window)
+static void 
+_window_remove_from_z(window_h window)
 {
   int current = window_getZ(window);
   for (int i = current; i>= 0 &&  i <  WINDOWS_MAX-1; i++) {
@@ -194,7 +202,8 @@ static void _window_remove_from_z(window_h window)
   }
 }
 
-void window_loop()
+void 
+window_loop()
 {
   int w = -1;
   int ox, oy;
@@ -225,7 +234,8 @@ void window_loop()
 
 
 
-void window_init()
+void 
+window_init()
 {
   windowTable.titleFrameBuffer =  gfx_createFrameBufferFromData(1, 8, (unsigned*)&martini_rgba);
   
@@ -234,7 +244,8 @@ void window_init()
   }
 }
 
-void window_toTop(window_h window) {
+void 
+window_toTop(window_h window) {
   int current = window_getZ(window);
   for (int i = current; i >  0; i--) {
     if (i > 0) {
@@ -245,7 +256,8 @@ void window_toTop(window_h window) {
 }
 
 
-unsigned window_isKeyDown(window_h window, unsigned key)
+unsigned 
+window_isKeyDown(window_h window, unsigned key)
 {
   if (windowTable.zIndex[0] == _window_index(window)) {
     return console_isKeyDown(key);
@@ -254,7 +266,8 @@ unsigned window_isKeyDown(window_h window, unsigned key)
   }
 }
 
-int window_readChar(window_h window) {
+int 
+window_readChar(window_h window) {
   if (windowTable.zIndex[0] == _window_index(window)) {
     return _console_read_char();
   } else {
@@ -262,7 +275,8 @@ int window_readChar(window_h window) {
   }
 }
 
-unsigned window_charAvailable(window_h window)
+unsigned 
+window_charAvailable(window_h window)
 {
   if (windowTable.zIndex[0] == _window_index(window)) {
     return _console_char_avail();
@@ -271,9 +285,10 @@ unsigned window_charAvailable(window_h window)
   }
 }
 
-window_h window_create(char* title, unsigned x, unsigned y, unsigned w, unsigned h)
+window_h 
+window_create(char* title, unsigned x, unsigned y, unsigned w, unsigned h)
 {
-  lock(&windowTable.lock);
+  kernel_spinLock(&windowTable.lock);
   for (unsigned i = 0; i < WINDOWS_MAX; i++) {
     if (windowTable.windows[i].state == WINDOW_DEAD) {
       windowTable.windows[i].title = title;
@@ -290,72 +305,82 @@ window_h window_create(char* title, unsigned x, unsigned y, unsigned w, unsigned
       windowTable.windows[i].consoleControl.behaviour = CONSOLE_BEHAVIOUR_AUTO_WRAP | CONSOLE_BEHAVIOUR_AUTO_SCROLL;
       _window_add_to_z(i);
       window_toTop(_window_handle(i));
-      unlock(&windowTable.lock);
+      kernel_unlock(&windowTable.lock);
       return _window_handle(i);
     }
   }
 
-  unlock(&windowTable.lock);
+  kernel_unlock(&windowTable.lock);
   return 0;
 }
 
 
-void window_close(window_h window)
+void 
+window_close(window_h window)
 {
   window_t* entry = &windowTable.windows[_window_index(window)];
   gfx_releaseFrameBuffer(entry->frameBuffer);
-  lock(&windowTable.lock);
+  kernel_spinLock(&windowTable.lock);
   entry->state = WINDOW_DEAD;
   _window_remove_from_z(window);
-  unlock(&windowTable.lock);
+  kernel_unlock(&windowTable.lock);
   window_fullRefresh = 1;
 }
 
-unsigned window_getW(window_h window)
+unsigned 
+window_getW(window_h window)
 {
   return windowTable.windows[_window_index(window)].w;
 }
 
-unsigned window_getCursorX(window_h window)
+unsigned 
+window_getCursorX(window_h window)
 {
   return windowTable.windows[_window_index(window)].cursorX;
 }
 
-unsigned window_getCursorY(window_h window)
+unsigned 
+window_getCursorY(window_h window)
 {
   return windowTable.windows[_window_index(window)].cursorY;
 }
 
-void window_setCursor(window_h window, unsigned x, unsigned y)
+void 
+window_setCursor(window_h window, unsigned x, unsigned y)
 {
   windowTable.windows[_window_index(window)].cursorX = x;
   windowTable.windows[_window_index(window)].cursorY = y;
   gfx_setFrameFrameBufferDirty(windowTable.windows[_window_index(window)].frameBuffer);
 }
 
-void window_setCursorX(window_h window, unsigned x)
+void 
+window_setCursorX(window_h window, unsigned x)
 {
   windowTable.windows[_window_index(window)].cursorX = x;
   gfx_setFrameFrameBufferDirty(windowTable.windows[_window_index(window)].frameBuffer);
 }
 
-void window_setCursorY(window_h window, unsigned y)
+void 
+window_setCursorY(window_h window, unsigned y)
 {
   windowTable.windows[_window_index(window)].cursorY = y;
   gfx_setFrameFrameBufferDirty(windowTable.windows[_window_index(window)].frameBuffer);
 }
 
-unsigned window_getH(window_h window)
+unsigned 
+window_getH(window_h window)
 {
   return windowTable.windows[_window_index(window)].h;
 }
 
-int window_getFrameBuffer(window_h window)
+int 
+window_getFrameBuffer(window_h window)
 {
   return windowTable.windows[_window_index(window)].frameBuffer;
 }
 
-int window_getZ(window_h window)
+int 
+window_getZ(window_h window)
 {
   int index = _window_index(window);
   for (int i = 0; i < WINDOWS_MAX; i++) {
@@ -366,17 +391,20 @@ int window_getZ(window_h window)
   return -1;
 }
 
-unsigned window_getColor(window_h window)
+unsigned 
+window_getColor(window_h window)
 {
   return windowColor;
 }
 
-unsigned window_getBackgroundColor(window_h window)
+unsigned 
+window_getBackgroundColor(window_h window)
 {
   return windowBackgroundColor;
 }
 
-void window_enableCursor(window_h window, unsigned enabled)
+void 
+window_enableCursor(window_h window, unsigned enabled)
 {
   windowTable.windows[_window_index(window)].cursorOn = enabled;
 }

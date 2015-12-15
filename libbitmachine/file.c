@@ -15,7 +15,8 @@
 #define _file_lock() unsigned ___ints_disabled = kernel_disableInts()
 #define _file_unlock() kernel_enableInts(___ints_disabled)
 
-static char *file_realpath(const char *path, char *resolved_path) 
+static char *
+file_realpath(const char *path, char *resolved_path) 
 {
   char buffer[PATH_MAX];
 
@@ -76,7 +77,8 @@ static char *file_realpath(const char *path, char *resolved_path)
   return resolved_path;  
 }
 
-int file_chdir(char* path)
+int
+file_chdir(char* path)
 {
   char _path[PATH_MAX];
   file_realpath(path, _path);
@@ -84,7 +86,8 @@ int file_chdir(char* path)
   return 0;
 }
 
-static int file_loaded(int fd)
+static int
+file_loaded(int fd)
 {
   _file_lock();
   peripheral.file.fd = fd; 
@@ -94,7 +97,8 @@ static int file_loaded(int fd)
 }
 
 
-int file_open (char *name, int flags, int* _errno)
+int
+file_open(char *name, int flags, int* _errno)
 {
   char path[PATH_MAX];
   file_realpath(name, path);
@@ -115,7 +119,7 @@ int file_open (char *name, int flags, int* _errno)
   for (;;) {
     loaded = file_loaded(fd);
     if (loaded == 0) {
-      thread_blocked();
+      kernel_threadBlocked();
     } else {
       break;
     }
@@ -131,12 +135,13 @@ int file_open (char *name, int flags, int* _errno)
 }
 
 
-static int _file_read_stdin (int file, char *ptr, int len)
+static int 
+_file_read_stdin (int file, char *ptr, int len)
 {
     int i;
   
     while (!_console_char_avail()) {
-      thread_blocked();
+      kernel_threadBlocked();
     }
     
     for (i = 0; i < len; ++i) {
@@ -151,7 +156,8 @@ static int _file_read_stdin (int file, char *ptr, int len)
     return i;
 }
 
-static int _file_read (int file, char *ptr, int len)
+static int 
+_file_read (int file, char *ptr, int len)
 {
   if (file == STDIN_FILENO) {
     return _file_read_stdin(file, ptr, len);
@@ -176,19 +182,21 @@ static int _file_read (int file, char *ptr, int len)
   }
 }
 
-int file_read (int fd, char *ptr, int len)
+int 
+file_read (int fd, char *ptr, int len)
 {
   int val;
   do {
     val =  _file_read(fd, ptr, len);
     if (val == -2) {
-       thread_blocked();
+       kernel_threadBlocked();
     }
   } while (val == -2); // Blocked pipe
   return val;
 }
 
-static int _file_write_stdout ( int file, char *ptr, int len)
+static int 
+_file_write_stdout ( int file, char *ptr, int len)
 {
   int i = 0;
   for (i = 0; i < len; i++) {
@@ -198,7 +206,8 @@ static int _file_write_stdout ( int file, char *ptr, int len)
   return len;
 }
 
-int file_write ( int file, char *ptr, int len)
+int 
+file_write ( int file, char *ptr, int len)
 {
   if (file == STDOUT_FILENO || file == STDERR_FILENO) {
     return _file_write_stdout(file, ptr, len);
@@ -212,7 +221,8 @@ int file_write ( int file, char *ptr, int len)
   }
 }
 
-static void __file_close(int file)
+static void 
+__file_close(int file)
 {
   _file_lock();
   peripheral.file.fd = file;
@@ -220,7 +230,8 @@ static void __file_close(int file)
   _file_unlock();
 }
 
-static int _file_closeStatus(int fd)
+static int 
+_file_closeStatus(int fd)
 {
   _file_lock();
   peripheral.file.fd = fd;
@@ -229,7 +240,8 @@ static int _file_closeStatus(int fd)
   return status;
 }
 
-static int _file_close(int file)
+static int 
+_file_close(int file)
 {
   if (file == STDIN_FILENO || file == STDOUT_FILENO || file == STDERR_FILENO) {
     fds_t* fds = kernel_getFds();
@@ -247,7 +259,8 @@ static int _file_close(int file)
 
 
 
-int file_close(int file)
+int 
+file_close(int file)
 {
   if (_file_close(file) == -1) {
     return -1;
@@ -258,7 +271,7 @@ int file_close(int file)
   for (;;) {
     status = _file_closeStatus(file);
     if (status == 1) {
-      thread_blocked();
+      kernel_threadBlocked();
     } else {
       break;
     }
@@ -267,7 +280,8 @@ int file_close(int file)
   return status;
 }
 
-int file_isatty(int file)
+int 
+file_isatty(int file)
 {
   if (file == STDIN_FILENO || file == STDOUT_FILENO || file == STDERR_FILENO) {
     return 1;
@@ -277,7 +291,8 @@ int file_isatty(int file)
 }
 
 
-int file_fstat (int file, struct stat *st)
+int 
+file_fstat (int file, struct stat *st)
 {
   if (file == STDIN_FILENO || file == STDOUT_FILENO || file == STDERR_FILENO) {
     st->st_mode = S_IFCHR;
@@ -303,7 +318,8 @@ int _file_creat (const char *path,int mode) {
 }
 
 
-int file_lseek (int file, int ptr, int dir) 
+int
+file_lseek (int file, int ptr, int dir) 
 {
   _file_lock();
   peripheral.file.fd = file;
@@ -321,7 +337,8 @@ int file_lseek (int file, int ptr, int dir)
   }*/
 
 
-static int _file_stat(const char* pathname, int mode, struct stat *st) {
+static int 
+_file_stat(const char* pathname, int mode, struct stat *st) {
   char path[PATH_MAX];
   file_realpath(pathname, path);
 
@@ -334,7 +351,8 @@ static int _file_stat(const char* pathname, int mode, struct stat *st) {
 
 }
 
-static int _file_statStatus(int sd)
+static int 
+_file_statStatus(int sd)
 {
   _file_lock();
   peripheral.file.stat = sd;
@@ -343,7 +361,8 @@ static int _file_statStatus(int sd)
   return status;
 }
 
-int file_stat(const char *path, struct stat *st, int* _errno)
+int 
+file_stat(const char *path, struct stat *st, int* _errno)
 {
   int sd = _file_stat(path, 0, st);    
   int a;
@@ -356,12 +375,13 @@ int file_stat(const char *path, struct stat *st, int* _errno)
       *_errno = 0;
       return a;
     }
-    thread_blocked();
+    kernel_threadBlocked();
   }
 }
 
 
-static int _file_opendir(DIR *dirp, const char* filename)
+static int 
+_file_opendir(DIR *dirp, const char* filename)
 {
   char path[PATH_MAX];
   file_realpath(filename, path);
@@ -374,7 +394,8 @@ static int _file_opendir(DIR *dirp, const char* filename)
 }
 
 
-static int _file_opendirStatus(DIR *dirp)
+static int 
+_file_opendirStatus(DIR *dirp)
 {
   _file_lock();
   peripheral.file.dir.opendirStruct = (unsigned)dirp;
@@ -383,7 +404,8 @@ static int _file_opendirStatus(DIR *dirp)
   return status;
 }
 
-DIR *file_opendir(const char *dirname)
+DIR *
+file_opendir(const char *dirname)
 {
   unsigned loaded;
   void * malloc(size_t);
@@ -394,7 +416,7 @@ DIR *file_opendir(const char *dirname)
   for (;;) {
     loaded = _file_opendirStatus(p);
     if (loaded == 0) {
-      thread_blocked();
+      kernel_threadBlocked();
     } else {
       break;
     }
@@ -407,7 +429,8 @@ DIR *file_opendir(const char *dirname)
   }
 }
 
-static int _file_readdir(struct dirent *dirp)
+static int 
+_file_readdir(struct dirent *dirp)
 {
   _file_lock();
   peripheral.file.dir.readdir = (unsigned)dirp;
@@ -416,7 +439,8 @@ static int _file_readdir(struct dirent *dirp)
   return status;
 }
 
-struct dirent *file_readdir(DIR *dirp)
+struct dirent *
+file_readdir(DIR *dirp)
 {
   if (_file_readdir((struct dirent*)dirp) == 0) {
     return (struct dirent*)dirp;
@@ -425,7 +449,8 @@ struct dirent *file_readdir(DIR *dirp)
   }
 }
 
-static int _file_mkdir(const char* path)
+static int 
+_file_mkdir(const char* path)
 {
   char _path[PATH_MAX];
   file_realpath(path, _path);
@@ -437,19 +462,21 @@ static int _file_mkdir(const char* path)
   return status;
 }
 
-int file_mkdir(const char *path, mode_t mode)
+int
+file_mkdir(const char *path, mode_t mode)
 {
   for (;;) {
     int a = _file_mkdir(path);
     if (a == -1 || a == 0) {
       return a;
     }
-    thread_blocked();
+    kernel_threadBlocked();
   }
 }
 
 
-static int _file_unlinkStatus(void* unlinkp)
+static int 
+_file_unlinkStatus(void* unlinkp)
 {
   _file_lock();
   peripheral.file.unlink.descriptor = (unsigned)unlinkp;
@@ -459,7 +486,8 @@ static int _file_unlinkStatus(void* unlinkp)
 }
 
 
-int file_unlink(char* path)
+int
+file_unlink(char* path)
 {
   char _path[PATH_MAX];
 
@@ -475,7 +503,7 @@ int file_unlink(char* path)
   for (;;) {
     status = _file_unlinkStatus(unlinkp);
     if (status == 1) {
-      thread_blocked();
+      kernel_threadBlocked();
     } else {
       break;
     }
@@ -484,7 +512,8 @@ int file_unlink(char* path)
   return status;
 }
 
-static void* _file_rename(const char* old, const char* new)
+static void* 
+_file_rename(const char* old, const char* new)
 {
   char src[PATH_MAX];
   char dest[PATH_MAX];
@@ -501,7 +530,8 @@ static void* _file_rename(const char* old, const char* new)
 
 }
 
-static int _file_renameStatus(void* renamep)
+static int 
+_file_renameStatus(void* renamep)
 {
   _file_lock();
   peripheral.file.rename.rename = (unsigned)renamep;
@@ -510,7 +540,8 @@ static int _file_renameStatus(void* renamep)
   return status;
 }
 
-int file_rename(const char *old, const char *new)
+int
+file_rename(const char *old, const char *new)
 {
   void* renamep  =  _file_rename(old, new);
   int status;
@@ -518,7 +549,7 @@ int file_rename(const char *old, const char *new)
   for (;;) {
     status = _file_renameStatus(renamep);
     if (status == 1) {
-      thread_blocked();
+      kernel_threadBlocked();
     } else {
       break;
     }
@@ -527,7 +558,8 @@ int file_rename(const char *old, const char *new)
   return status;
 }
 
-int file_pipe(int fds[2])
+int
+file_pipe(int fds[2])
 {
   int fd = open("/dev/pipe", O_CREAT);
   if (fd >= 0) {
@@ -538,7 +570,8 @@ int file_pipe(int fds[2])
   }
 }
 
-void* file_loadElf(unsigned fd, unsigned** image, unsigned *imageSize)
+
+void (*file_loadElf(unsigned fd, unsigned** image, unsigned *imageSize))()
 {
   _file_lock();
   
@@ -547,14 +580,16 @@ void* file_loadElf(unsigned fd, unsigned** image, unsigned *imageSize)
   *image = malloc(peripheral.file.elf.size);
   *imageSize = peripheral.file.elf.size;
   peripheral.file.elf.relocate = (unsigned)*image;
-  void* entry = (void(*)())peripheral.file.elf.entry;
+  //  void* entry = (void(*)())peripheral.file.elf.entry;
+  void(*entry)() = peripheral.file.elf.entry;
   
   _file_unlock();
  
  return entry;
 }
 
-void file_loadElfKernel(unsigned fd)
+void
+file_loadElfKernel(unsigned fd)
 {
   _file_lock();
   

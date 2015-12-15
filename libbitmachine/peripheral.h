@@ -36,7 +36,8 @@ typedef struct {
   unsigned load;
   unsigned size;
   unsigned relocate;
-  unsigned entry;  
+  //  unsigned entry;  
+  void(*entry)();
   unsigned kernelLoad;
 } simulator_elf_t;
 

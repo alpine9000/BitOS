@@ -495,7 +495,7 @@ int kinsert (int c)
  */
 int kremove (int n)
 {
-  if (n >= kused)
+  if (n >= (int)kused)
     return (-1);
   else
     return (kbufp[n] & 0xFF);

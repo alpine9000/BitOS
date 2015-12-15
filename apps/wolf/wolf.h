@@ -19,8 +19,8 @@ typedef unsigned long ColorRGB;
 //const int w = 312;
 //const int h = 154;
 
-const int w = 320;
-const int h = 200;
+const int _w = 320;
+const int _h = 200;
 //const int scale = 1;
 
 //const int w = 320/2;
@@ -37,12 +37,12 @@ inline double getTicks() {
   return peripheral.time.elapsedMilliSeconds;
 }
 
-inline bool keyDown(window_h w, int key) {
-  return window_isKeyDown(w, key);
+inline bool keyDown(window_h wh, int key) {
+  return window_isKeyDown(wh, key);
 }
 
 typedef struct {
-   unsigned long data[h][w];
+   unsigned long data[_h][_w];
 } vb_t;
 
 volatile vb_t* vb = (vb_t*)&videoRam;
@@ -56,6 +56,6 @@ volatile vb_t* vb = (vb_t*)&videoRam;
 
 inline unsigned int TexY(int y, unsigned int lineHeight )
 {
-  unsigned int d = (y<<8) - (h * 128) + (lineHeight * 128); //256 and 128 factors to avoid floats
+  unsigned int d = (y<<8) - (_h * 128) + (lineHeight * 128); //256 and 128 factors to avoid floats
   return ((d * texHeight) / lineHeight) >>8;
 }

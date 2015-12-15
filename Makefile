@@ -1,16 +1,10 @@
-ELF_PATH =/usr/local/sh-elf/bin/
-LIB_PATH=/usr/local/sh-elf/
-CC=$(ELF_PATH)sh-elf-gcc
-CPP=$(ELF_PATH)sh-elf-g++
-AR=$(ELF_PATH)sh-elf-ar
-LD=$(ELF_PATH)sh-elf-ld
-STRIP=$(ELF_PATH)sh-elf-strip -g
 BITOS_PATH=~/Projects/BitOS
 TOOLS_BASE=~/Projects/bitos-build
 GITVERSION := $(shell git describe --abbrev=41 --dirty --always --tags)
-
-CFLAGS=-DGITVERSION=\"$(GITVERSION)\" -g -O3 -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -D_KERNEL_BUILD  -I/usr/local/sh-elf/include -I. -I./libbitmachine -m2e  -funit-at-a-time -falign-jumps -fdelete-null-pointer-checks  #-fdata-sections -ffunction-sections -fno-function-cse 
-CPPFLAGS = -D_KERNEL_BUILD -O3 -Wall -Werror -Wextra -Wno-unused-parameter -Wno-char-subscripts  -m2e -funit-at-a-time -falign-jumps  -I./libbitmachine #-D_POSIX_C_SOURCE -D_XOPEN_SOURCE 
+WARNINGS = -pedantic-errors -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -Wshadow
+CPP_WARNINGS = $(WARNINGS) -Wno-char-subscripts 
+CFLAGS=-DGITVERSION=\"$(GITVERSION)\" -g -O3 $(WARNINGS) -D_KERNEL_BUILD  -I/usr/local/sh-elf/include -I. -I./libbitmachine -m2e  -funit-at-a-time -falign-jumps -fdelete-null-pointer-checks
+CPPFLAGS = -D_KERNEL_BUILD -O3 $(CPP_WARNINGS)  -m2e -funit-at-a-time -falign-jumps  -I./libbitmachine
 LDFLAGS= -L$(LIB_PATH)sh-elf/lib/m2e/ -L/usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e/ -L/usr/local/sh-elf/lib
 
 LIBS =  /usr/local/sh-elf/sh-elf/lib/m2e/crt0.o -L.  -L./libbitmachine  --start-group -lwolf -lbitmachine -lc-kernel -lm -lgcc --end-group
@@ -29,9 +23,10 @@ ELF_FILE = bin/bitos.elf
 LIB_BITMACHINE=./libbitmachine
 BSH=./apps/bsh
 BEMACS=./apps/bemacs
+SI=./apps/si
 
 
-all: $(LIB_BITMACHINE) $(BSH) $(BEMACS) $(ELF_FILE) 
+all: $(LIB_BITMACHINE) $(BSH) $(BEMACS) $(SI) $(ELF_FILE) 
 
 version:
 	@echo $(GITVERSION)
@@ -54,6 +49,7 @@ $(LIB_BITMACHINE):
 $(BSH):
 	make  -C $(BSH)
 	make  -C $(BEMACS)
+	make  -C $(SI)
 
 .SECONDARY:
 %.rgba: %.png
@@ -67,28 +63,7 @@ $(BSH):
 %.c: %.wav
 	./bin2c $*.wav $*.c
 
-%.o: %.cpp
-	$(CPP) -c $(CPPFLAGS) $< -o $@
-	$(CC) -MM $(CPPFLAGS) $*.cpp > $*.d
-	@mv -f $*.d $*.d.tmp
-	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
-	@sed -e 's/.*://' -e 's/\\$$//' < $*.d.tmp | fmt -1 | \
-	  sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
-	@rm -f $*.d.tmp
-
-
-%.S: %.c
-	$(CC) -S $(CFLAGS) $*.c -o $*.s
-
-
-%.o: %.c
-	$(CC) -c $(CFLAGS) $< -o $@
-	$(CC) -MM $(CFLAGS) $*.c > $*.d
-	@mv -f $*.d $*.d.tmp
-	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
-	@sed -e 's/.*://' -e 's/\\$$//' < $*.d.tmp | fmt -1 | \
-	  sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
-	@rm -f $*.d.tmp
+include base.mk
 
 clean:
 	-rm -f $(BIN_FILE) libwolf.a bitos.sym bitos.map *~ *.rgba y.* lex.yy.? y.tab.? $(ELF_FILE) $(ALL_OBJS) $(ALL_OBJS:%.o=%.d)
@@ -98,6 +73,7 @@ clean:
 	$(MAKE) -C apps/wolf clean
 	$(MAKE) -C apps/bemacs clean
 	$(MAKE) -C apps/bsh clean
+	$(MAKE) -C apps/si clean
 
 backup:
 	rsync --delete -crv $(BITOS_PATH)/ ~/Google\ Drive/Projects/BitOS
@@ -127,7 +103,7 @@ BINUTILS_BASE = $(TOOLS_BASE)/binutils.bitos
 relink-tools:	
 	-rm $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus
 	make -C $(GCC_BASE)
-	sh-elf-strip $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus
+	$(STRIP) $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus
 	cp $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus ~/Google\ Drive/BitFS/bin/
 	-rm $(BINUTILS_BASE)/gas/as-new $(BINUTILS_BASE)/ld/ld-new $(BINUTILS_BASE)/binutils/ar
 	make -C $(BINUTILS_BASE) all-gas all-ld
@@ -135,7 +111,7 @@ relink-tools:
 	cp $(BINUTILS_BASE)/binutils/ar ~/Google\ Drive/BitFS/bin/ar
 	cp $(BINUTILS_BASE)/gas/as-new ~/Google\ Drive/BitFS/bin/as
 	cp $(BINUTILS_BASE)/ld/ld-new ~/Google\ Drive/BitFS/bin/ld
-	sh-elf-strip ~/Google\ Drive/BitFS/bin/ar ~/Google\ Drive/BitFS/bin/as ~/Google\ Drive/BitFS/bin/ld
+	$(STRIP) ~/Google\ Drive/BitFS/bin/ar ~/Google\ Drive/BitFS/bin/as ~/Google\ Drive/BitFS/bin/ld
 
 PATH := $(PATH):$(ELF_PATH)
 local.zip:
@@ -153,6 +129,7 @@ local.zip:
 	cp $(BINUTILS_BASE)/ld/ld-new  $(TOOLS_BASE)/local/bin/ld
 	cp $(BITOS_PATH)/apps/bemacs/bemacs $(TOOLS_BASE)/local/bin
 	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin
+	cp $(BITOS_PATH)/apps/si/si $(TOOLS_BASE)/local/bin
 	cp $(BITOS_PATH)/bin/bitos.elf $(TOOLS_BASE)/local/bin
 	cp -r /usr/local/sh-elf $(TOOLS_BASE)/local
 	rm -r $(TOOLS_BASE)/local/sh-elf/share
@@ -171,9 +148,11 @@ local.zip:
 	-rm -rf  $(TOOLS_BASE)/local/src/BitOS.2/newlib-2.0.0-r
 	cp $(BITOS_PATH)/libbitmachine/libc-bitos.a $(TOOLS_BASE)/local/sh-elf/sh-elf/lib/m2e/libc.a
 	$(STRIP) $(TOOLS_BASE)/local/bin/* 
+	mkdir $(TOOLS_BASE)/local/home
+	cp $(BITOS_PATH)/hello.c $(TOOLS_BASE)/local/home
 	-rm $(TOOLS_BASE)/local.zip
 	cd $(TOOLS_BASE)/; zip -r local.zip local
 	cp $(TOOLS_BASE)/local.zip ~/Google\ Drive/BitFS
-	#cp $(TOOLS_BASE)/local.zip ~/Google\ Drive/Projects/BitMachine/Web/BitFS
+	@#cp $(TOOLS_BASE)/local.zip ~/Google\ Drive/Projects/BitMachine/Web/BitFS
 
 full: gdrive web relink-tools local.zip

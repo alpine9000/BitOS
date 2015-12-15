@@ -47,8 +47,9 @@ file_rename(const char* old, const char* new);
 int      
 file_chdir(char* path);
 
-void*          
-file_loadElf(unsigned fd, unsigned** image, unsigned *imageSize);
+//void*          
+//file_loadElf(unsigned fd, unsigned** image, unsigned *imageSize);
+void (*file_loadElf(unsigned fd, unsigned** image, unsigned *imageSize))();
 
 int            
 file_pipe(int fds[2]);
