@@ -522,7 +522,7 @@ shell_exec(char* cmd)
     for (unsigned i = 0; i < numBuiltins; i++) {
       if (strcmp(argv[0], builtins[i].name) == 0) {
 	if (builtins[i].spawn) {
-	  kernel_spawn(builtins[i].function, argv, 0);
+	  kernel_threadSpawn(builtins[i].function, argv, 0);
 	  // argv free'd by kernel on thread exit
 	  return;
 	} else {
@@ -594,8 +594,8 @@ runShell()
   unsigned w = 320, h = 200;
   window_h window = window_create("Shell", 20, 20, w, h);
   gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
-  kernel_setThreadWindow(window);
+  kernel_threadSetWindow(window);
   shell(); 
   window_close(window);
-  kernel_die(0);
+  kernel_threadDie(0);
 }

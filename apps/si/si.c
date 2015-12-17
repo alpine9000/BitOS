@@ -220,7 +220,7 @@ int main(int agrc, char* argv[])
   unsigned w = 217, h = 248;
   window_h window = window_create("Space Invaders", 0, 0, w, h);
   gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
-  kernel_setThreadWindow(window);
+  kernel_threadSetWindow(window);
 
   width = w;
   height = h;

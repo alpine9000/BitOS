@@ -59,7 +59,7 @@ gfx_createFrameBuffer(unsigned w, unsigned h)
   unsigned fb = PERIPHERAL_MAX_FRAMEBUFFERS;
   for (int i = 1; i < PERIPHERAL_MAX_FRAMEBUFFERS; i++) {
     if (frameBufferAllocator[i] == INVALID_THREAD) {
-      frameBufferAllocator[i] = kernel_getTid();
+      frameBufferAllocator[i] = kernel_threadGetId();
       fb = i;
       break;
     }

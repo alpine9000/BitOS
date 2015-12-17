@@ -10,16 +10,16 @@ typedef struct {
   void (*window_close)(window_h window);
   unsigned (*window_isKeyDown)(window_h window, unsigned key);
 
-  int (*kernel_setThreadInfo)(thread_info_t type, unsigned info);
+  int (*kernel_threadSetInfo)(thread_info_t type, unsigned info);
   void (*kernel_threadBlocked)();
   void (*kernel_spinLock)(void* ptr);
   void (*kernel_unlock)(void* ptr);
-  thread_h (*kernel_tid)();
-  void (*kernel_die)(int status);
-  window_h (*kernel_getThreadWindow)(void);
-  thread_h (*kernel_spawn)(void (*entry)(int argc, char**argv),  char**argv, fds_t* fds);
+  thread_h (*kernel_threadGetId)();
+  void (*kernel_threadDie)(int status);
+  window_h (*kernel_threadGetWindow)(void);
+  thread_h (*kernel_threadSpawn)(void (*entry)(int argc, char**argv),  char**argv, fds_t* fds);
   void (*kernel_stats)();
-  fds_t* (*kernel_getFds)(void);
+  fds_t* (*kernel_threadGetFds)(void);
   void (*malloc_stats)();
 
   void (*gfx_fillRect)(unsigned fb, int x, int y, unsigned width, unsigned height, unsigned color);

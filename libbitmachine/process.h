@@ -19,7 +19,5 @@ thread_spawn(char* command);
 int 
 thread_load(char* commandLine);
 
-int 
-thread_wait(thread_h pid);
 
 

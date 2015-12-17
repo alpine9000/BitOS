@@ -20,16 +20,16 @@ _bft_t __bft  = {
   &window_close,
   &window_isKeyDown,
 
-  &kernel_setThreadInfo,
+  &kernel_threadSetInfo,
   &kernel_threadBlocked,
   &kernel_spinLock,
   &kernel_unlock,
-  &kernel_getTid,
-  &kernel_die,
-  &kernel_getThreadWindow,
-  &kernel_spawn,
+  &kernel_threadGetId,
+  &kernel_threadDie,
+  &kernel_threadGetWindow,
+  &kernel_threadSpawn,
   &kernel_stats,
-  &kernel_getFds,
+  &kernel_threadGetFds,
   &dlmalloc_stats,
 
   &gfx_fillRect,
@@ -67,7 +67,7 @@ _bft_t __bft  = {
 
   &thread_spawn,
   &thread_load,
-  &thread_wait,
+  &kernel_threadWait,
 
   &_kernel_newlib_lock_init_recursive,
   &_kernel_newlib_lock_close_recursive,

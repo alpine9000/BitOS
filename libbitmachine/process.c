@@ -78,7 +78,7 @@ thread_open(char* command)
 
     fds_t fds = {STDIN_FILENO, fileno(fp), STDERR_FILENO};
     
-    kernel_load(info.image, info.imageSize, info.entry, info.argv, &fds, 1);
+    kernel_threadLoad(info.image, info.imageSize, info.entry, info.argv, &fds, 1);
     
     return fp;
   } 
@@ -90,8 +90,8 @@ int
 thread_close(FILE* stream)
 {
   unsigned fd = fileno(stream);
-  thread_h tid = kernel_getTidForStdout(fd);
-  int status = kernel_getExitStatus(tid);
+  thread_h tid = kernel_threadGetIdForStdout(fd);
+  int status = kernel_threadGetExitStatus(tid);
 
   fclose(stream);
 
@@ -103,7 +103,7 @@ thread_spawn(char* command)
 {
   _thread_info_t info;
   if (_thread_load(command, &info)) {
-    return kernel_load(info.image, info.imageSize, info.entry, info.argv, 0, 1);
+    return kernel_threadLoad(info.image, info.imageSize, info.entry, info.argv, 0, 1);
   }
   return INVALID_THREAD;
 }
@@ -130,13 +130,4 @@ int thread_load(char* commandLine)
   return 0;
 }
 
-int 
-thread_wait(thread_h tid)
-{
-  while (kernel_getIsThreadAlive(tid)) {
-    kernel_threadBlocked();
-  }
-
-  return kernel_getExitStatus(tid);
-}
 

@@ -82,7 +82,7 @@ file_chdir(char* path)
 {
   char _path[PATH_MAX];
   file_realpath(path, _path);
-  kernel_setThreadInfo(KERNEL_CURRENT_WORKING_DIRECTORY, (unsigned)_path);
+  kernel_threadSetInfo(KERNEL_CURRENT_WORKING_DIRECTORY, (unsigned)_path);
   return 0;
 }
 
@@ -244,7 +244,7 @@ static int
 _file_close(int file)
 {
   if (file == STDIN_FILENO || file == STDOUT_FILENO || file == STDERR_FILENO) {
-    fds_t* fds = kernel_getFds();
+    fds_t* fds = kernel_threadGetFds();
     if (file == STDOUT_FILENO && fds->_stdout != STDOUT_FILENO) {
       close(fds->_stdout);
     }

@@ -17,31 +17,31 @@ static const  unsigned console_characterSpacing = gfx_spaceWidth;
 static unsigned 
 _fb() 
 {
-  return window_getFrameBuffer(kernel_getThreadWindow());
+  return window_getFrameBuffer(kernel_threadGetWindow());
 }
 
 static unsigned 
 _w() 
 {
-  return window_getW(kernel_getThreadWindow());
+  return window_getW(kernel_threadGetWindow());
 }
 
 static unsigned 
 _h() 
 {
-  return window_getH(kernel_getThreadWindow());
+  return window_getH(kernel_threadGetWindow());
 }
 
 static unsigned 
 _x() 
 {
-  return window_getCursorX(kernel_getThreadWindow());
+  return window_getCursorX(kernel_threadGetWindow());
 }
 
 static unsigned 
 _y() 
 {
-  return window_getCursorY(kernel_getThreadWindow());
+  return window_getCursorY(kernel_threadGetWindow());
 }
 
 static void 
@@ -92,7 +92,7 @@ _console_output_char(char c)
 {
   char string[] = {c, 0};
   unsigned x = _x(), y = _y();
-  window_h windowH = kernel_getThreadWindow();
+  window_h windowH = kernel_threadGetWindow();
   unsigned background;
   unsigned foreground;
     
@@ -133,10 +133,10 @@ _console_output_char(char c)
 void 
 _console_write_char(char c) 
 {
-  fds_t *fds = kernel_getFds();
+  fds_t *fds = kernel_threadGetFds();
   if (fds->_stdout == STDOUT_FILENO) {
     
-    window_h windowH = kernel_getThreadWindow();
+    window_h windowH = kernel_threadGetWindow();
 
     if (window_getConsoleControl(windowH)->behaviour & CONSOLE_BEHAVIOUR_AUTO_SCROLL) {
       peripheral.console.consoleWrite = c;
@@ -184,9 +184,9 @@ _console_write_char(char c)
 unsigned char 
 _console_char_avail() 
 {
-  fds_t *fds = kernel_getFds();
+  fds_t *fds = kernel_threadGetFds();
   if (fds->_stdin == STDIN_FILENO) {
-    if (window_getZ(kernel_getThreadWindow()) == 0) {
+    if (window_getZ(kernel_threadGetWindow()) == 0) {
       return peripheral.console.consoleReadBufferSize;
     } else {
       return 0;
@@ -200,9 +200,9 @@ _console_char_avail()
 int 
 _console_read_char() 
 {
-  fds_t *fds = kernel_getFds();
+  fds_t *fds = kernel_threadGetFds();
   if (fds->_stdin == STDIN_FILENO) {
-    if (window_getZ(kernel_getThreadWindow()) == 0) {
+    if (window_getZ(kernel_threadGetWindow()) == 0) {
       return peripheral.console.consoleRead;
     } else {
       return -1;
@@ -223,7 +223,7 @@ console_isKeyDown(unsigned key)
 void 
 console_backspace()  
 {
-  window_setCursor(kernel_getThreadWindow(), _x() - (window_getCharacterPixelWidth(window)+console_characterSpacing), _y());
+  window_setCursor(kernel_threadGetWindow(), _x() - (window_getCharacterPixelWidth(window)+console_characterSpacing), _y());
 }
 
 void 
@@ -243,7 +243,7 @@ console_deleteAtCursor()
 void 
 console_setCursorPos(unsigned col, unsigned row)
 {
-  window_h w = kernel_getThreadWindow();
+  window_h w = kernel_threadGetWindow();
   
   unsigned x = col * (window_getCharacterPixelWidth(w)+console_characterSpacing);
   unsigned y = row * window_getCharacterPixelHeight(w);
@@ -256,13 +256,13 @@ console_setCursorCol(unsigned col)
 {
   unsigned x = col * (window_getCharacterPixelWidth(window)+console_characterSpacing);
   
-  window_setCursorX(kernel_getThreadWindow(), x);
+  window_setCursorX(kernel_threadGetWindow(), x);
 }
 
 void 
 console_setCursorRow(unsigned row)
 {
-  window_h w = kernel_getThreadWindow();
+  window_h w = kernel_threadGetWindow();
   unsigned y = row * (window_getCharacterPixelHeight(w));
   
   window_setCursorY(w, y);
@@ -272,28 +272,28 @@ console_setCursorRow(unsigned row)
 unsigned 
 console_getCursorRow()
 {
-  window_h w = kernel_getThreadWindow();
+  window_h w = kernel_threadGetWindow();
   return window_getCursorY(w) / window_getCharacterPixelHeight(w);
 }
 
 void 
 console_clearToEndOfLine()
 {
-  gfx_fillRect(_fb(), _x(), _y(), _w()-_x(), window_getCharacterPixelHeight(window), window_getBackgroundColor(kernel_getThreadWindow())); 
+  gfx_fillRect(_fb(), _x(), _y(), _w()-_x(), window_getCharacterPixelHeight(window), window_getBackgroundColor(kernel_threadGetWindow())); 
 }
 
 
 unsigned 
 console_getColumns()
 {
-  window_h w = kernel_getThreadWindow();
+  window_h w = kernel_threadGetWindow();
   return  window_getW(w) / (window_getCharacterPixelWidth(w)+console_characterSpacing) + 1;
 }
 
 
 unsigned console_getLines()
 {
-  window_h w = kernel_getThreadWindow();
+  window_h w = kernel_threadGetWindow();
   return window_getH(w) / (window_getCharacterPixelHeight(w));
 }
 
@@ -301,17 +301,17 @@ void
 console_reset()
 {
   console_setCursorPos(0, 0);
-  gfx_fillRect(_fb(), _x(), _y(), _w(), _h(), window_getBackgroundColor(kernel_getThreadWindow())); 
+  gfx_fillRect(_fb(), _x(), _y(), _w(), _h(), window_getBackgroundColor(kernel_threadGetWindow())); 
 }
 
 void 
 console_clearBehaviour(unsigned mask)
 {
-  window_getConsoleControl(kernel_getThreadWindow())->behaviour &= ~mask;
+  window_getConsoleControl(kernel_threadGetWindow())->behaviour &= ~mask;
 }
 
 void 
 console_setBehaviour(unsigned mask)
 {
-  window_getConsoleControl(kernel_getThreadWindow())->behaviour |= mask;
+  window_getConsoleControl(kernel_threadGetWindow())->behaviour |= mask;
 }

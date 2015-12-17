@@ -478,7 +478,7 @@ extern "C" {
   {
    
     window_h window = window_create((char*)"Wolf2", 0, 0, _w, _h);
-    kernel_setThreadWindow(window);
+    kernel_threadSetWindow(window);
 #ifdef _KERNEL_BUILD
     window_enableCursor(window, 0);
 #endif

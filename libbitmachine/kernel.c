@@ -10,8 +10,18 @@
 #include "memory.h"
 #include "console.h"
 
-extern void* malloc(unsigned);
-extern void free(void*ptr);
+extern void* 
+malloc(unsigned);
+
+extern void 
+free(void*ptr);
+
+extern void 
+_kernel_resume_asm(unsigned int *sp);
+
+extern unsigned 
+_kernel_atomic_lock_asm(void* ptr);
+
 
 #define _thread_max 8
 #define _thread_historyMax 20 
@@ -74,8 +84,8 @@ kernel_enterKernelMode()
   currentThreadSave = currentThread;
   currentThread = 0;
   return ___ints_disabled;
-
 }
+
 
 void
 kernel_exitKernelMode(unsigned ___ints_disabled)
@@ -84,7 +94,9 @@ kernel_exitKernelMode(unsigned ___ints_disabled)
   _kernel_enableInts(___ints_disabled);  
 }
 
-static void _kernel_schedule_from_blocked()
+
+static void 
+_kernel_scheduleFromBlocked()
 {
   unsigned int i, previous = currentThread;
 
@@ -107,7 +119,8 @@ static void _kernel_schedule_from_blocked()
 }
 
 
-static void _kernel_schedule()
+static void 
+_kernel_schedule()
 {
   unsigned int i;
 
@@ -131,7 +144,8 @@ static void _kernel_schedule()
 }
 
 
-static thread_h _kernel_thread(unsigned int threadIndex, unsigned* image, unsigned imageSize, void(* ptr)(int,char**),  char**argv, fds_t* fds)
+static thread_h 
+_kernel_threadCreate(unsigned int threadIndex, unsigned* image, unsigned imageSize, void(* ptr)(int,char**),  char**argv, fds_t* fds)
 {
   _thread_entry_t *entry = &threadTable[threadIndex];
   entry->tid = (thread_h)nextTid++;
@@ -143,6 +157,7 @@ static thread_h _kernel_thread(unsigned int threadIndex, unsigned* image, unsign
   entry->window = 0;
   entry->cwd[0] = '/';
   entry->cwd[1] = 0;
+
   if (fds != 0) {
     entry->fd._stdin = fds->_stdin;
     entry->fd._stdout = fds->_stdout;
@@ -152,7 +167,9 @@ static thread_h _kernel_thread(unsigned int threadIndex, unsigned* image, unsign
     entry->fd._stdout = STDOUT_FILENO;
     entry->fd._stderr = STDERR_FILENO;
   }
+
   entry->thread_stack[(_thread_stack_size_words)-1] = 0x00; // SR - all ints enabled
+
   if (ptr != 0) {
     entry->thread_stack[(_thread_stack_size_words)-2] = ((unsigned int)ptr); // PC
     entry->thread_stack[(_thread_stack_size_words)-10] = (unsigned) entry->argc; // R4
@@ -165,7 +182,8 @@ static thread_h _kernel_thread(unsigned int threadIndex, unsigned* image, unsign
 }
 
 
-static int _kernel_allocate_thread()
+static int 
+_kernel_threadAllocate()
 {
   unsigned int i;
   for (i = 0; i < _thread_max; i++) {
@@ -179,7 +197,7 @@ static int _kernel_allocate_thread()
 
 
 static int
-_kernel_setThreadInfo(unsigned threadIndex, thread_info_t type, unsigned info)
+_kernel_threadSetInfo(unsigned threadIndex, thread_info_t type, unsigned info)
 {
   _thread_entry_t *entry = &threadTable[threadIndex];
   switch (type) {
@@ -204,12 +222,11 @@ _kernel_isArgvAddress(char* address, char** vector)
     return 1;
   }
   if (vector != NULL) {
-    for (scan = vector; *scan != NULL; scan++)
-      {
-	if (*scan == address) {
-	  return 1;
-	}
+    for (scan = vector; *scan != NULL; scan++) {
+      if (*scan == address) {
+	return 1;
       }
+    }
   }
   return 0;
 }
@@ -289,7 +306,7 @@ _from_asm_kernel_blocked(unsigned int *sp)
   threadTable[currentThread].sp = sp;
   ktrace_thread_blocked();
   threadTable[currentThread].state = _THREAD_BLOCKED;
-  _kernel_schedule_from_blocked();
+  _kernel_scheduleFromBlocked();
   if (threadTable[currentThread].thread_stack[0] != _KERNEL_STACK_CANARY) {
     panic("_from_asm_kernel_blocked: dead canary");
   }
@@ -314,12 +331,11 @@ _from_asm_kernel_kill(int status, int context)
       break;
     }
   }
+
   if (i == _thread_historyMax) {
     panic("_from_asm_kernel_kill: exceeded thread history limits");
   }    
-  
-   
-
+    
   if (entry->argv != 0) {
       argv_free(entry->argv);
       entry->argv = 0;
@@ -335,8 +351,6 @@ _from_asm_kernel_kill(int status, int context)
   
   //  memory_cleanupThread(entry->tid); 
 
-
-  
   entry->state = _THREAD_DEAD;
   entry->tid = 0;
   memset(&entry->fd, 0, sizeof(entry->fd));
@@ -348,7 +362,7 @@ _from_asm_kernel_kill(int status, int context)
   if (threadTable[currentThread].thread_stack[0] != _KERNEL_STACK_CANARY) {
     panic("_from_asm_kernel_kill:  dead canary");
   }
-
+  
   _kernel_resume_asm(threadTable[currentThread].sp);
 }
 
@@ -358,20 +372,20 @@ kernel_init(void(*ptr)(int argc, char** argv))
 {
   ktrace_reset();
   currentThread = 0;
-   for (int i = 0; i < _thread_max; i++) {
-      threadTable[i].thread_stack = malloc(_thread_stack_size_bytes);
-      threadTable[i].thread_stack[0] = _KERNEL_STACK_CANARY;
-   }
-   _kernel_thread(currentThread, 0, 0, ptr, argv_build("kernel"), 0);
+  for (int i = 0; i < _thread_max; i++) {
+    threadTable[i].thread_stack = malloc(_thread_stack_size_bytes);
+    threadTable[i].thread_stack[0] = _KERNEL_STACK_CANARY;
+  }
+  _kernel_threadCreate(currentThread, 0, 0, ptr, argv_build("kernel"), 0);
   _kernel_resume_asm(threadTable[currentThread].sp);
 }
 
 
-int 
-kernel_getIsThreadAlive(thread_h tid)
+static int 
+_kernel_getIsThreadAlive(thread_h tid)
 {
   _threadTable_lock();
-
+  
   int result = 0;
   for (unsigned i = 0; i < _thread_max; i++) {
     if (threadTable[i].tid == tid) {
@@ -379,15 +393,15 @@ kernel_getIsThreadAlive(thread_h tid)
       break;
     }
   }
-
+  
   _threadTable_unlock();
-
+  
   return result;
 }
 
 
 unsigned
-kernel_getIsActiveImage(void* ptr)
+kernel_threadGetIsActiveImage(void* ptr)
 {
    for (int i = 0; i < _thread_max; i++) {
     _thread_entry_t *entry = &threadTable[i];     
@@ -418,23 +432,23 @@ kernel_enableInts(unsigned enable)
 
 
 int
-kernel_setThreadInfo(thread_info_t type, unsigned info)
+kernel_threadSetInfo(thread_info_t type, unsigned info)
 {
   _threadTable_lock();
-  int result = _kernel_setThreadInfo(currentThread, type, info);
+  int result = _kernel_threadSetInfo(currentThread, type, info);
   _threadTable_unlock();
   return result;
 }
 
 
 thread_h
-kernel_spawn(void (*entry)(int, char**argv), char**argv, fds_t* fds)
+kernel_threadSpawn(void (*entry)(int, char**argv), char**argv, fds_t* fds)
 {
   _threadTable_lock();
-  int threadIndex = _kernel_allocate_thread();
+  int threadIndex = _kernel_threadAllocate();
   thread_h tid = INVALID_THREAD;
   if (threadIndex > 0) {
-    tid = _kernel_thread(threadIndex, 0, 0,  entry,  argv, fds);
+    tid = _kernel_threadCreate(threadIndex, 0, 0,  entry,  argv, fds);
     //_kernel_disableInts();
   }
   _threadTable_unlock();
@@ -444,26 +458,25 @@ kernel_spawn(void (*entry)(int, char**argv), char**argv, fds_t* fds)
 
 
 thread_h
-kernel_load(unsigned* image, unsigned imageSize, void (*entry)(int,char**),  char** argv, fds_t* fds, int clone_cwd)
+kernel_threadLoad(unsigned* image, unsigned imageSize, void (*entry)(int,char**),  char** argv, fds_t* fds, int clone_cwd)
 {
   _threadTable_lock();
-  int threadIndex = _kernel_allocate_thread();
+  int threadIndex = _kernel_threadAllocate();
   thread_h tid = INVALID_THREAD;
   if (threadIndex > 0) {
-    tid = _kernel_thread(threadIndex, image, imageSize, entry, argv, fds);
+    tid = _kernel_threadCreate(threadIndex, image, imageSize, entry, argv, fds);
     if (clone_cwd) {
       strncpy(threadTable[threadIndex].cwd, threadTable[currentThread].cwd, PATH_MAX);      
     }
-    //_kernel_disableInts();
   }
   _threadTable_unlock();
-
+  
   return tid;
 }
 
 
 void
-kernel_die(int status)
+kernel_threadDie(int status)
 {
   __asm__ volatile("trapa #37":::"memory");
 }
@@ -507,7 +520,7 @@ kernel_unlock(void* ptr)
 
 
 window_h
-kernel_getThreadWindow()
+kernel_threadGetWindow()
 {
   _threadTable_lock();
   window_h result = threadTable[currentThread].window;
@@ -517,7 +530,7 @@ kernel_getThreadWindow()
 
 
 thread_h
-kernel_getTid()
+kernel_threadGetId()
 {
   _threadTable_lock();
   thread_h tid = threadTable[currentThread].tid;
@@ -527,7 +540,7 @@ kernel_getTid()
 
 
 fds_t*
-kernel_getFds()
+kernel_threadGetFds()
 {
   _threadTable_lock();
   fds_t* fds = &threadTable[currentThread].fd;
@@ -582,7 +595,7 @@ kernel_times (struct tms *tp)
 
 
 thread_h
-kernel_getTidForStdout(unsigned fd)
+kernel_threadGetIdForStdout(unsigned fd)
 {
   _threadTable_lock();
   for (unsigned i = 0; i < _thread_max; i++) {
@@ -606,7 +619,7 @@ kernel_getTidForStdout(unsigned fd)
 
 
 int
-kernel_getExitStatus(thread_h tid)
+kernel_threadGetExitStatus(thread_h tid)
 {
   _threadTable_lock();
   int exitStatus = -1;
@@ -673,7 +686,7 @@ _kernel_newlib_lock_close_recursive(_LOCK_RECURSIVE_T* lock)
 unsigned 
 _kernel_newlib_lock_acquire_recursive(_LOCK_RECURSIVE_T* lock)
 {
-  thread_h tid = kernel_getTid();
+  thread_h tid = kernel_threadGetId();
   for (;;) {
     kernel_spinLock(&lock->lock);
     if (lock->thread == 0) {
@@ -701,7 +714,7 @@ void
 _kernel_newlib_lock_release_recursive(_LOCK_RECURSIVE_T* lock)
 {
 #ifdef _KERNEL_ASSERTS
-  thread_h tid = kernel_getTid();
+  thread_h tid = kernel_threadGetId();
 #endif
 
   kernel_spinLock(&lock->lock);
@@ -760,4 +773,14 @@ _kernel_newlib_lock_try_acquire(unsigned* lock)
 void _kernel_newlib_lock_release(unsigned* lock) 
 {
   *lock = 0;
+}
+
+int 
+kernel_threadWait(thread_h tid)
+{
+  while (_kernel_getIsThreadAlive(tid)) {
+    kernel_threadBlocked();
+  }
+
+  return kernel_threadGetExitStatus(tid);
 }

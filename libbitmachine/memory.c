@@ -57,7 +57,7 @@ memory_malloc(size_t size)
   void* ptr = dlmalloc(size);
   
   peripheral.malloc.mallocSize = size;
-  peripheral.malloc.pid = (unsigned)kernel_getTid();
+  peripheral.malloc.pid = (unsigned)kernel_threadGetId();
   peripheral.malloc.mallocAddress = (unsigned)ptr;
 
   _memory_unlock();
@@ -86,7 +86,7 @@ memory_realloc(void* ptr, size_t size)
 
   peripheral.malloc.freeAddress = (unsigned)ptr;
   peripheral.malloc.mallocSize = size;
-  peripheral.malloc.pid = (unsigned)kernel_getTid();
+  peripheral.malloc.pid = (unsigned)kernel_threadGetId();
   peripheral.malloc.mallocAddress = (unsigned)newPtr;
   _memory_unlock();
 
@@ -110,7 +110,7 @@ memory_cleanupThread(thread_h tid)
     
     unsigned address;
     while ((address = peripheral.malloc.mallocAddress) != 0) {
-      if (!kernel_getIsActiveImage((void*)address)) {
+      if (!kernel_threadGetIsActiveImage((void*)address)) {
 	free((void*)address);
       } 
     }

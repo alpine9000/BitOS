@@ -20,10 +20,10 @@ int main(int argc, char**argv)
   unsigned w = (gfx_fontWidth+gfx_spaceWidth)*80, h = gfx_fontHeight*24;
   window_h window = window_create("bsh", 20, 20, w, h);
   gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
-  kernel_setThreadWindow(window);
+  kernel_threadSetWindow(window);
 #endif
 
-  fds_t* fds = kernel_getFds();
+  fds_t* fds = kernel_threadGetFds();
   close(fds->_stdout);
   fds->_stdout = STDOUT_FILENO;
   

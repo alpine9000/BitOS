@@ -28,15 +28,15 @@ kernel_unlock(void* ptr)
 }
 
 thread_h 
-kernel_tid()
+kernel_threadGetId()
 {
-  return _bft->kernel_tid();
+  return _bft->kernel_threadGetId();
 }
 
 void 
-kernel_die(int status)
+kernel_threadDie(int status)
 {
-  _bft->kernel_die(status);
+  _bft->kernel_threadDie(status);
 }
 
 int 

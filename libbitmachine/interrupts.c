@@ -54,7 +54,7 @@
 #define _SYS_wait          _notImplemented
 #define _SYS_mkdir         file_mkdir
 #define _SYS_gtod          simulator_gtod
-#define	_SYS_getpid	   kernel_getTid
+#define	_SYS_getpid	   kernel_threadGetId
 #define _SYS_rename        file_rename
 
 int _notImplemented()
