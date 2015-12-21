@@ -8,7 +8,7 @@ STRIP=$(ELF_PATH)sh-elf-strip -g
 
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
-	@#$(CC) -S $< $(CFLAGS)
+	#$(CC) -S $< $(CFLAGS)
 	$(CC) -MM $(CFLAGS) $*.c > $*.d
 	@mv -f $*.d $*.d.tmp
 	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d

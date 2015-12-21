@@ -2,9 +2,10 @@ BITOS_PATH=~/Projects/BitOS
 TOOLS_BASE=~/Projects/bitos-build
 GITVERSION := $(shell git describe --abbrev=41 --dirty --always --tags)
 WARNINGS = -pedantic-errors -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -Wshadow
+include ./optimize.mk
 CPP_WARNINGS = $(WARNINGS) -Wno-char-subscripts 
-CFLAGS=-DGITVERSION=\"$(GITVERSION)\" -g -O3 $(WARNINGS) -D_KERNEL_BUILD  -I/usr/local/sh-elf/include -I. -I./libbitmachine -m2e  -funit-at-a-time -falign-jumps -fdelete-null-pointer-checks
-CPPFLAGS = -D_KERNEL_BUILD -O3 $(CPP_WARNINGS)  -m2e -funit-at-a-time -falign-jumps  -I./libbitmachine
+CFLAGS=-DGITVERSION=\"$(GITVERSION)\" -g $(OPTIMIZE) $(WARNINGS) -D_KERNEL_BUILD  -I/usr/local/sh-elf/include -I. -I./libbitmachine -m2e  -funit-at-a-time -falign-jumps -fdelete-null-pointer-checks
+CPPFLAGS = -D_KERNEL_BUILD $(OPTIMIZE) $(CPP_WARNINGS)  -m2e -funit-at-a-time -falign-jumps  -I./libbitmachine
 LDFLAGS= -L$(LIB_PATH)sh-elf/lib/m2e/ -L/usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e/ -L/usr/local/sh-elf/lib
 
 LIBS =  /usr/local/sh-elf/sh-elf/lib/m2e/crt0.o -L.  -L./libbitmachine  --start-group -lwolf -lbitmachine -lc-kernel -lm -lgcc --end-group
