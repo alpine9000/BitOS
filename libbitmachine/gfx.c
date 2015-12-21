@@ -247,11 +247,11 @@ gfx_drawCharRetro(unsigned fb, int x, int y, char c, unsigned color, unsigned ch
 
 void 
 gfx_drawChar(unsigned fb, int x, int y, char c, unsigned color, unsigned char size) {
+  char text[2] = {c,0};
   kernel_spinLock(&frameBufferAllocator_lock);
   peripheral.pcg.fb = fb;
   peripheral.pcg.x = x;
   peripheral.pcg.y = y;
-  char text[2] = {c,0};
   peripheral.pcg.color = color;
   peripheral.pcg.text = (unsigned)text;
   kernel_unlock(&frameBufferAllocator_lock);
