@@ -2,9 +2,9 @@
 include ../optimize.mk
 WARNINGS = -pedantic-errors -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -Wshadow
 CFLAGS=-D_KERNEL_BUILD $(OPTIMIZE) $(WARNINGS) -I. -m2e -funit-at-a-time -falign-jumps #-fdata-sections -ffunction-sections -fno-function-cse 
-LIBOBJ=cpp.o glcdfont.o gfx.o console.o audio.o simulator.o interrupts.o file.o syscall.o kernel_asm.o kernel_client_asm.o kernel.o window.o memory.o syscalls.o bft_kernel.o malloc.o  panic.o argv.o process.o shell.o build.o
+LIBOBJ=cpp.o glcdfont.o gfx.o console.o audio.o simulator.o interrupts.o file.o syscall.o kernel_asm.o kernel_client_asm.o kernel.o window.o memory.o syscalls.o bft_kernel.o malloc.o  panic.o argv.o process.o shell.o build.o termios.o
 ASMOBJ=start.o
-CLIENTOBJ=bft.o kernel_client_asm.o syscalls.o panic.o client.o termios.o shell.o argv.o build.o
+CLIENTOBJ=bft.o kernel_client_asm.o syscalls.o panic.o client.o shell.o argv.o build.o
 CRT_OBJS=crt1.o crti.o crtbegin.o crtend.o crtn.o
 
 include ../base.mk

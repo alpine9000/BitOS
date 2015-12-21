@@ -79,6 +79,18 @@ typedef struct {
   unsigned (*gfx_getVideoHeight)();
   void (*gfx_drawStringRetro)(unsigned fb, int  x, int y, char *c, unsigned color, int size, int spaceSize);
 
+  int (*tputs)(const char *str, int affcnt, int (*putc)(int));
+  int (*tcsetattr)(int fildes, int optional_actions, const struct termios *termios_p);
+  int (*tcflow)(int fildes, int action);
+  int (*tcflush)(int fildes, int action);
+  char* (*tgoto)(const char *cap, int col, int row);
+  int (*tcgetattr)(int fd, struct termios *termios_p);
+  int (*tgetnum)(char *id);
+  char* (*tgetstr)(char *id, char **area);
+  int (*tgetflag)(char *id);
+  int (*tgetent)(char *bp, const char *name);
+  void (*cfmakeraw)(struct termios *termios_p);
+
 } _bft_t;
 
 extern _bft_t* _bft;

@@ -7,6 +7,7 @@
 #include "process.h"
 #include "simulator.h"
 #include "file.h"
+#include "_termios.h"
 
 extern void 
 dlmalloc_stats(void);
@@ -86,7 +87,19 @@ _bft_t __bft  = {
 
   &gfx_getVideoWidth,
   &gfx_getVideoHeight,
-  &gfx_drawStringRetro
+  &gfx_drawStringRetro,
+
+  &tputs,
+  &tcsetattr,
+  &tcflow,
+  &tcflush,
+  &tgoto,
+  &tcgetattr,
+  &tgetnum,
+  &tgetstr,
+  &tgetflag,
+  &tgetent,
+  &cfmakeraw
 };
 
 _bft_t* _bft = &__bft;

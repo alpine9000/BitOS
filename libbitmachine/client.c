@@ -107,3 +107,71 @@ realloc(void *ptr, size_t size)
 {
   return (void*)__trap34(SYS_realloc, ptr, size);
 }
+
+
+int 
+tputs(const char *str, int affcnt, int (*putc)(int))
+{
+  return _bft->tputs(str, affcnt, putc);
+}
+
+int 
+tcsetattr(int fildes, int optional_actions, const struct termios *termios_p)
+{
+  return _bft->tcsetattr(fildes, optional_actions, termios_p);
+}
+
+int 
+tcflow(int fildes, int action)
+{
+  return _bft->tcflow(fildes, action);
+}
+
+int 
+tcflush(int fildes, int action)
+{
+  return _bft->tcflush(fildes, action);
+}
+
+char* 
+tgoto(const char *cap, int col, int row)
+{
+  return _bft->tgoto(cap, col, row);
+}
+
+int 
+tcgetattr(int fd, struct termios *termios_p)
+{
+  return _bft->tcgetattr(fd, termios_p);
+}
+
+int 
+tgetnum(char *id)
+{
+  return _bft->tgetnum(id);
+}
+
+char* 
+tgetstr(char *id, char **area)
+{
+  return _bft->tgetstr(id, area);
+}
+   
+
+int 
+tgetflag(char *id)
+{
+  return _bft->tgetflag(id);
+}
+
+int 
+tgetent(char *bp, const char *name)
+{
+  return _bft->tgetent(bp, name);
+}
+
+void 
+cfmakeraw(struct termios *termios_p)
+{
+  _bft->cfmakeraw(termios_p);
+}
