@@ -68,11 +68,17 @@ _console_processControl(window_h windowH)
     console_reset();
     break;
   case CONSOLE_INSERT_AT_CURSOR:
+    if ((int)window_getConsoleControl(windowH)->arg < 0) {
+      panic("_console_processControl: CONSOLE_INSERT_AT_CURSOR: negative arg");
+    }
     for (unsigned i = 0; i < window_getConsoleControl(windowH)->arg; i++) {
       console_insertAtCursor();
     }
     break;
   case CONSOLE_DELETE_AT_CURSOR:
+    if ((int)window_getConsoleControl(windowH)->arg < 0) {
+      panic("_console_processControl: CONSOLE_DELETE_AT_CURSOR: negative arg");
+    }
     for (unsigned i = 0; i < window_getConsoleControl(windowH)->arg; i++) {
       console_deleteAtCursor();
     }
@@ -135,36 +141,36 @@ _console_write_char(char c)
 {
   fds_t *fds = kernel_threadGetFds();
   if (fds->_stdout == STDOUT_FILENO) {
-    
     window_h windowH = kernel_threadGetWindow();
+    console_control_t *control = window_getConsoleControl(windowH);
 
-    if (window_getConsoleControl(windowH)->behaviour & CONSOLE_BEHAVIOUR_AUTO_SCROLL) {
+    if (control->behaviour & CONSOLE_BEHAVIOUR_AUTO_SCROLL) {
       peripheral.console.consoleWrite = c;
     }
 
-    switch (window_getConsoleControl(windowH)->state) {
+    switch (control->state) {
     case WAITING_FOR_TYPE:
-      window_getConsoleControl(windowH)->type = c;
-      window_getConsoleControl(windowH)->state++;
+      control->type = c;
+      control->state++;
       return;
     case WAITING_FOR_ARG:
-      window_getConsoleControl(windowH)->arg = c;
-      window_getConsoleControl(windowH)->state = 0;
+      control->arg = c;
+      control->state = 0;
       _console_processControl(windowH);
       return;
     default:
       break;
     }
-
-  switch (c) {
-  case  7: // bell
-    audio_bell();
-    return;
-  case CONSOLE_CONTROL_ESCAPE: // Data link escape
-    window_getConsoleControl(windowH)->state++;
-    return;
-  }
-
+    
+    switch (c) {
+    case  7: // bell
+      audio_bell();
+      return;
+    case CONSOLE_CONTROL_ESCAPE: // Data link escape
+      control->state++;
+      return;
+    }
+    
     switch (c) {
     case 1: //CTRL_A
       break;

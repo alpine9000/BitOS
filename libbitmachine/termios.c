@@ -65,11 +65,11 @@ tputs(const char *str, int affcnt, int (*_putc)(int))
 
   } else if (strstr(str, "DC") != 0) {
     int col, row;
-    sscanf(str, "IC %d %d",  &col, &row);
+    sscanf(str, "DC %d %d",  &col, &row);
     _putc(CONSOLE_CONTROL_ESCAPE);
     _putc(CONSOLE_DELETE_AT_CURSOR);
     _putc(row);    
-    printf("tputs IC (console_deletetCursor)\n");
+    printf("tputs DC (console_deletetCursor)\n");
 
   } else if (strcmp(str, "up") == 0) {
     _putc(CONSOLE_CONTROL_ESCAPE);
