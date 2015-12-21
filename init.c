@@ -3,6 +3,7 @@
 #include "kernel.h"
 #include "window.h"
 #include "argv.h"
+#include "process.h"
 
 extern char ** gitversion;
 static char* version=GITVERSION;
@@ -28,7 +29,9 @@ runShell()
 void 
 go()
 {
-  kernel_threadSpawn(&runShell, argv_build("shell"), 0); 
+  if (thread_spawn("bsh") == INVALID_THREAD) {
+    kernel_threadSpawn(&runShell, argv_build("bsh"), 0); 
+  }
   window_loop();
 }
 

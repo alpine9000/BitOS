@@ -15,7 +15,7 @@ extern int shell_exec(char*);
 int main(int argc, char**argv)
 {
 #define OPEN_WINDOW
-
+ 
 #ifdef OPEN_WINDOW
   unsigned w = (gfx_fontWidth+gfx_spaceWidth)*80, h = gfx_fontHeight*24;
   window_h window = window_create("bsh", 20, 20, w, h);
@@ -24,8 +24,11 @@ int main(int argc, char**argv)
 #endif
 
   fds_t* fds = kernel_threadGetFds();
-  close(fds->_stdout);
-  fds->_stdout = STDOUT_FILENO;
+
+  if (fds->_stdout != STDOUT_FILENO) {
+    close(fds->_stdout);
+    fds->_stdout = STDOUT_FILENO;
+  }
   
   using_history();
   stifle_history(20);
@@ -37,6 +40,7 @@ int main(int argc, char**argv)
 
 
   setbuf(stdout, NULL);
+
   char* line = 0;
   while (1) {
     if (line != 0) {

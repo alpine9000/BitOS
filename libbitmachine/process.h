@@ -13,7 +13,7 @@ thread_close(FILE* fp);
 
 #endif
 
-int 
+thread_h
 thread_spawn(char* command);
 
 int 

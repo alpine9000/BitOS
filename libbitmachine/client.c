@@ -39,7 +39,7 @@ kernel_threadDie(int status)
   _bft->kernel_threadDie(status);
 }
 
-int 
+thread_h 
 thread_spawn(char* command)
 {
   return _bft->thread_spawn(command);

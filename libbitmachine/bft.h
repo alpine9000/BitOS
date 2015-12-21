@@ -55,7 +55,7 @@ typedef struct {
   void (*console_clearToEndOfLine)();
   void (*console_reset)();
 
-  int (*thread_spawn)(char* command);
+  thread_h (*thread_spawn)(char* command);
   int (*thread_load)(char* commandLine);
   int (*thread_wait)(thread_h tid);
 
