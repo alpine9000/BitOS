@@ -24,6 +24,8 @@
 
 void shell_exec(char* cmd);
 
+#define shellWindowWidth  ((gfx_fontWidth+gfx_spaceWidth)*80)
+#define shellWindowHeight ( gfx_fontHeight*24)
 
 extern void 
 wolf();
@@ -115,6 +117,8 @@ static builtin_t builtins[] = {
 static unsigned numBuiltins = sizeof(builtins)/sizeof(builtin_t);
 
 char **gitversion = 0;
+
+int _shell_complete = 0;
 
 static void 
 version(int argc, char** argv)
@@ -270,45 +274,52 @@ getSR()
  return r0;
 }
 
-extern unsigned 
-kernel_disableInts();
-extern  void 
-kernel_enableInts(unsigned );
+
+static void 
+testBuild(char* cmd, void(*builder)(), unsigned x)
+{
+  static int numTestBuilds = 2;
+  unsigned w = shellWindowWidth, h = shellWindowHeight;
+  setbuf(stdout, NULL); 
+  window_h window = window_create(cmd, x, 0, w, h);
+  gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
+  kernel_threadSetWindow(window);
+  char** argv = argv_build(cmd);
+  int argc = argv_argc(argv);
+  for (int i = 0; i < numTestBuilds; i++) {
+    builder(argc, argv);
+  }
+
+  printf("Success!!!\n");
+
+  for (;;) {
+    kernel_threadBlocked();
+  }
+}
+
+
+static void 
+runTestBuild1(int argc, char** argv)
+{
+  testBuild("b -f", build, 0);
+}
+
+static void
+runTestBuild2(int argc, char** argv)
+{
+  testBuild("c -f", build2, shellWindowWidth);
+}
 
 
 static void 
 test(int argc, char** argv)
 {
-#if 0
-  printf("SR = %x\n", getSR());
-
-  unsigned disabled = kernel_disableInts();
-  
-  printf("kernel_disableInts()= %d\n", disabled);
-
-  printf("SR = %x\n", getSR());
-
-  printf("kernel_enableInts(false);\n");
-
-  kernel_enableInts(0);
-
-  printf("SR = %x\n", getSR());
-
-  if (argc == 1) {
-    printf("kernel_enableInts(true);\n");
-    
-    kernel_enableInts(1);
-
-    printf("SR = %x\n", getSR());
-
-  } else {
-    printf("keeping ints disabled\n");
-  }
-
-  for(;;);
-#endif
+   kernel_threadSpawn(&runTestBuild1, 0, 0);
+   kernel_threadSpawn(&runTestBuild2, 0, 0); 
+   do {
+     kernel_threadBlocked();
+   } while(1);
 }
-
 
 static void 
 pwd(int argc, char** argv)
@@ -550,7 +561,7 @@ shell_exec(char* cmd)
 void 
 shell()
 {
-  while (1) {
+  while (!_shell_complete) {
     char buf[255];
     print(">");	
     for (int i = 0;;) {

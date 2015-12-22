@@ -11,6 +11,7 @@
 
 extern void shell();
 extern int shell_exec(char*);
+extern int _shell_complete;
 
 int main(int argc, char**argv)
 {
@@ -42,7 +43,7 @@ int main(int argc, char**argv)
   setbuf(stdout, NULL);
 
   char* line = 0;
-  while (1) {
+  while (!_shell_complete) {
     if (line != 0) {
       free(line);
     }
