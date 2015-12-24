@@ -484,7 +484,7 @@ Index: libiberty/pex-unix.c
  /* Implementation of pex->exec_child using standard vfork + exec.  */
  
  static pid_t
-@@ -596,133 +202,35 @@
+@@ -596,133 +202,37 @@
  {
    pid_t pid;
  
@@ -575,6 +575,10 @@ Index: libiberty/pex-unix.c
 -	  environ = (char**) env;
 -	}
 +  pid = (pid_t) thread_spawnFileDescriptors(command, in, fd[0], fd[0]);
++  
++  free(command);
++  
++  obj->sysdep = (void*)fd[0];
  
 -      if ((flags & PEX_SEARCH) != 0)
 -	{
@@ -586,12 +590,11 @@ Index: libiberty/pex-unix.c
 -	  execv (executable, to_ptr32 (argv));
 -	  pex_child_error (obj, executable, "execv", errno);
 -	}
-+  obj->sysdep = (void*)fd[0];
++  //  printf("thread_spawn: %d\n", pid);
  
 -      /* NOTREACHED */
 -      return (pid_t) -1;
-+  //  printf("thread_spawn: %d\n", pid);
- 
+-
 -    default:
 -      /* Parent process.  */
 -
@@ -638,7 +641,7 @@ Index: libiberty/pex-unix.c
  
  /* Wait for a child process to complete.  */
  
-@@ -736,7 +244,11 @@
+@@ -736,7 +246,11 @@
    if (done)
      kill (pid, SIGTERM);
  
@@ -651,7 +654,7 @@ Index: libiberty/pex-unix.c
      {
        *err = errno;
        *errmsg = "wait";
-@@ -746,46 +258,9 @@
+@@ -746,46 +260,9 @@
    return 0;
  }
  

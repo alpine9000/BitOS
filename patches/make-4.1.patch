@@ -12,8 +12,8 @@ diff -Naur make-4.1.orig/dir.c make-4.1.bitos/dir.c
  # define REAL_DIR_ENTRY(dp) 1
 diff -Naur make-4.1.orig/function.c make-4.1.bitos/function.c
 --- make-4.1.orig/function.c	2014-10-06 03:24:51.000000000 +1100
-+++ make-4.1.bitos/function.c	2015-12-24 16:28:44.000000000 +1100
-@@ -1656,9 +1656,56 @@
++++ make-4.1.bitos/function.c	2015-12-25 09:09:28.000000000 +1100
+@@ -1656,9 +1656,57 @@
  
  #else
  #ifndef _AMIGA
@@ -60,6 +60,7 @@ diff -Naur make-4.1.orig/function.c make-4.1.bitos/function.c
 +  fold_newlines (buffer, &i, trim_newlines);
 +  o = variable_buffer_output (o, buffer, i);
 +  free (buffer);
++  free(command);
 +
 +  return o;
 +}
@@ -70,7 +71,7 @@ diff -Naur make-4.1.orig/function.c make-4.1.bitos/function.c
    char *batch_filename = NULL;
    int errfd;
  #ifdef __MSDOS__
-@@ -1860,7 +1907,7 @@
+@@ -1860,7 +1908,7 @@
  
    return o;
  }
@@ -81,7 +82,7 @@ diff -Naur make-4.1.orig/function.c make-4.1.bitos/function.c
  /* Do the Amiga version of func_shell.  */
 diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
 --- make-4.1.orig/job.c	2014-10-06 03:24:51.000000000 +1100
-+++ make-4.1.bitos/job.c	2015-12-25 07:54:12.000000000 +1100
++++ make-4.1.bitos/job.c	2015-12-25 09:09:03.000000000 +1100
 @@ -82,6 +82,10 @@
  int dos_command_running;
  #endif /* __MSDOS__ */
@@ -210,7 +211,7 @@ diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
  #endif /* !WINDOWS32 && !_AMIGA && !__MSDOS__ */
  
    /* Decide whether to give this child the 'good' standard input
-@@ -1519,6 +1553,23 @@
+@@ -1519,6 +1553,26 @@
  
  #else  /* !__EMX__ */
  
@@ -227,6 +228,9 @@ diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
 +	perror_with_name ("thread_load", "");
 +	goto error;
 +      }
++
++      free(command);
++
 +      child->pid = bitos_pid++;
 +
 +#else /* !__BITOS__ */
@@ -234,7 +238,7 @@ diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
        child->pid = fork ();
        environ = parent_environ; /* Restore value child may have clobbered.  */
        if (child->pid == 0)
-@@ -1551,6 +1602,7 @@
+@@ -1551,6 +1605,7 @@
            perror_with_name ("fork", "");
            goto error;
          }
