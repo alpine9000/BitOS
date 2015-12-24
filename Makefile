@@ -100,21 +100,9 @@ $(BIN_FILE): $(ELF_FILE)
 
 #GCC_BASE=$(TOOLS_BASE)/gcc-5.2.0.bitos.O3
 GCC_BASE=$(TOOLS_BASE)/gcc-5.3.0.bitos
+MAKE_BASE=$(TOOLS_BASE)/make-4.1
+GCC_LIBEXEC=$(TOOLS_BASE)/local/sh-elf/libexec/gcc/sh-elf/5.3.0/
 BINUTILS_BASE = $(TOOLS_BASE)/binutils.bitos
-relink-tools:	
-	-rm $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus
-	make -C $(GCC_BASE)
-	$(STRIP) $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus
-	cp $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus ~/Google\ Drive/BitFS/bin/
-	-rm $(BINUTILS_BASE)/gas/as-new $(BINUTILS_BASE)/ld/ld-new $(BINUTILS_BASE)/binutils/ar
-	make -C $(BINUTILS_BASE) all-gas all-ld
-	make -C $(BINUTILS_BASE)/binutils ar
-	cp $(BINUTILS_BASE)/binutils/ar ~/Google\ Drive/BitFS/bin/ar
-	cp $(BINUTILS_BASE)/gas/as-new ~/Google\ Drive/BitFS/bin/as
-	cp $(BINUTILS_BASE)/ld/ld-new ~/Google\ Drive/BitFS/bin/ld
-	$(STRIP) ~/Google\ Drive/BitFS/bin/ar ~/Google\ Drive/BitFS/bin/as ~/Google\ Drive/BitFS/bin/ld
-
-PATH := $(PATH):$(ELF_PATH)
 local.zip:
 
 	-rm -rf $(TOOLS_BASE)/local
@@ -125,17 +113,25 @@ local.zip:
 	-mkdir $(TOOLS_BASE)/local/
 	-mkdir $(TOOLS_BASE)/local/bin
 	cp $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus $(TOOLS_BASE)/local/bin
+	cp $(MAKE_BASE)/make $(TOOLS_BASE)/local/bin
 	cp $(BINUTILS_BASE)/binutils/ar $(TOOLS_BASE)/local/bin
 	cp $(BINUTILS_BASE)/gas/as-new  $(TOOLS_BASE)/local/bin/as
 	cp $(BINUTILS_BASE)/ld/ld-new  $(TOOLS_BASE)/local/bin/ld
-	cp $(BITOS_PATH)/apps/bemacs/bemacs $(TOOLS_BASE)/local/bin
+	cp $(BITOS_PATH)/apps/bemacs/bemacs $(TOOLS_BASE)/local/bin	
 	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin
 	cp $(BITOS_PATH)/apps/si/si $(TOOLS_BASE)/local/bin
 	cp $(BITOS_PATH)/bin/bitos.elf $(TOOLS_BASE)/local/bin
 	cp -r /usr/local/sh-elf $(TOOLS_BASE)/local
 	rm -r $(TOOLS_BASE)/local/sh-elf/share
 	rm -r $(TOOLS_BASE)/local/sh-elf/bin
-	rm -r $(TOOLS_BASE)/local/sh-elf/libexec
+	mkdir $(TOOLS_BASE)/local/sh-elf/bin
+
+	rm -r $(GCC_LIBEXEC)/*
+	cp $(GCC_BASE)/gcc/xgcc $(TOOLS_BASE)/local/sh-elf/bin/sh-elf-gcc
+	cp $(BINUTILS_BASE)/binutils/ar $(TOOLS_BASE)/local/sh-elf/bin/sh-elf-ar
+	cp $(GCC_BASE)/gcc/lto-wrapper $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus $(GCC_LIBEXEC)
+
+	#rm -r $(TOOLS_BASE)/local/sh-elf/libexec
 	rm -r $(TOOLS_BASE)/local/sh-elf/sh-elf/bin
 	rm -r $(TOOLS_BASE)/local/sh-elf/sh-elf/lib/ml
 	rm -r $(TOOLS_BASE)/local/sh-elf/sh-elf/lib/*.*
@@ -144,11 +140,17 @@ local.zip:
 	cp -r $(BITOS_PATH) $(TOOLS_BASE)/local/src/BitOS
 	cp -r $(BITOS_PATH) $(TOOLS_BASE)/local/src/BitOS.2/
 	rm -rf $(TOOLS_BASE)/local/src/BitOS/.git
-	rm -rf $(TOOLS_BASE)/local/src/BitOS2/.git
+	rm -rf $(TOOLS_BASE)/local/src/BitOS.2/.git
 	-rm -rf  $(TOOLS_BASE)/local/src/BitOS/newlib-2.0.0-r
 	-rm -rf  $(TOOLS_BASE)/local/src/BitOS.2/newlib-2.0.0-r
 	cp $(BITOS_PATH)/libbitmachine/libc-bitos.a $(TOOLS_BASE)/local/sh-elf/sh-elf/lib/m2e/libc.a
+
+
 	$(STRIP) $(TOOLS_BASE)/local/bin/* 
+	$(STRIP) $(GCC_LIBEXEC)/cc1
+	$(STRIP) $(GCC_LIBEXEC)/cc1plus
+	$(STRIP) $(TOOLS_BASE)/local/sh-elf/bin/* 
+
 	mkdir $(TOOLS_BASE)/local/home
 	cp $(BITOS_PATH)/hello.c $(TOOLS_BASE)/local/home
 	-rm $(TOOLS_BASE)/local.zip

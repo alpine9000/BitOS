@@ -99,7 +99,9 @@ _bft_t __bft  = {
   &tgetstr,
   &tgetflag,
   &tgetent,
-  &cfmakeraw
+  &cfmakeraw,
+
+  &thread_spawnFileDescriptors
 };
 
 _bft_t* _bft = &__bft;

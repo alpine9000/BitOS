@@ -16,6 +16,9 @@ thread_close(FILE* fp);
 thread_h
 thread_spawn(char* command);
 
+thread_h 
+thread_spawnFileDescriptors(char* command, int in, int out, int err);
+
 int 
 thread_load(char* commandLine);
 

@@ -1,0 +1,274 @@
+diff -Naur make-4.1.orig/dir.c make-4.1.bitos/dir.c
+--- make-4.1.orig/dir.c	2014-10-06 03:24:51.000000000 +1100
++++ make-4.1.bitos/dir.c	2015-12-24 16:26:21.000000000 +1100
+@@ -49,7 +49,7 @@
+ # define NAMLEN(d) _D_NAMLEN(d)
+ #endif
+ 
+-#if (defined (POSIX) || defined (VMS) || defined (WINDOWS32)) && !defined (__GNU_LIBRARY__)
++#if (defined (__BITOS__) || defined (POSIX) || defined (VMS) || defined (WINDOWS32)) && !defined (__GNU_LIBRARY__)
+ /* Posix does not require that the d_ino field be present, and some
+    systems do not provide it. */
+ # define REAL_DIR_ENTRY(dp) 1
+diff -Naur make-4.1.orig/function.c make-4.1.bitos/function.c
+--- make-4.1.orig/function.c	2014-10-06 03:24:51.000000000 +1100
++++ make-4.1.bitos/function.c	2015-12-24 16:28:44.000000000 +1100
+@@ -1656,9 +1656,56 @@
+ 
+ #else
+ #ifndef _AMIGA
++
++#ifdef __BITOS__
++
++extern char* argv_reconstruct(char** vector);
++extern void kernel_threadBlocked();
+ char *
+ func_shell_base (char *o, char **argv, int trim_newlines)
+ {
++
++  char* command = argv_reconstruct(argv);
++  FILE *fp = popen(command, "r");
++  int i,  maxlen = 64;
++  char* buffer = xmalloc(maxlen+1);
++
++  printf("func_shell_base: %s\n", command);
++
++  if (fp == NULL) {
++      perror_with_name ("", "popen");
++      return o;
++  }
++
++  for(i = 0;fp != 0;) {
++    char c;
++    if (read(fileno(fp), &c, 1) <= 0) {
++      kernel_threadBlocked();
++      break;
++    }
++    buffer[i++] = c;
++    if (i == maxlen) {
++      maxlen *= 2;
++      buffer = xrealloc (buffer, maxlen + 1);
++    }
++  }
++  
++  buffer[i] = 0;
++
++  if (fp) {
++    pclose(fp);
++  }
++
++  fold_newlines (buffer, &i, trim_newlines);
++  o = variable_buffer_output (o, buffer, i);
++  free (buffer);
++
++  return o;
++}
++#else
++
++func_shell_base (char *o, char **argv, int trim_newlines)
++{
+   char *batch_filename = NULL;
+   int errfd;
+ #ifdef __MSDOS__
+@@ -1860,7 +1907,7 @@
+ 
+   return o;
+ }
+-
++#endif
+ #else   /* _AMIGA */
+ 
+ /* Do the Amiga version of func_shell.  */
+diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
+--- make-4.1.orig/job.c	2014-10-06 03:24:51.000000000 +1100
++++ make-4.1.bitos/job.c	2015-12-25 07:54:12.000000000 +1100
+@@ -82,6 +82,10 @@
+ int dos_command_running;
+ #endif /* __MSDOS__ */
+ 
++#ifdef __BITOS__
++static int bitos_pid = 1;
++#endif
++
+ #ifdef _AMIGA
+ # include <proto/dos.h>
+ static int amiga_pid = 123;
+@@ -627,7 +631,6 @@
+          all modern, POSIX-y systems that support wait3() or waitpid().
+          The rest of this comment below applies only to early, broken
+          pre-POSIX systems.  We keep the count only because... it's there...
+-
+          The test and decrement are not atomic; if it is compiled into:
+                 register = dead_children - 1;
+                 dead_children = register;
+@@ -686,7 +689,12 @@
+                 pid = WAIT_NOHANG (&status);
+               else
+ #endif
+-                EINTRLOOP(pid, wait (&status));
++#ifdef __BITOS__
++	      pid = bitos_pid-1;
++	      memset(&status, sizeof(status), 0);
++#else
++	      EINTRLOOP(pid, wait (&status));
++#endif
+ #endif /* !VMS */
+             }
+           else
+@@ -700,9 +708,15 @@
+           else if (pid > 0)
+             {
+               /* We got a child exit; chop the status word up.  */
++#if defined(__BITOS__) 
++              exit_code = 0;
++              exit_sig = 0;
++              coredump = 0;
++#else
+               exit_code = WEXITSTATUS (status);
+               exit_sig = WIFSIGNALED (status) ? WTERMSIG (status) : 0;
+               coredump = WCOREDUMP (status);
++#endif
+ 
+               /* If we have started jobs in this second, remove one.  */
+               if (job_counter)
+@@ -1140,7 +1154,6 @@
+ }
+ #endif
+ 
+-
+ /* Start a job to run the commands specified in CHILD.
+    CHILD is updated to reflect the commands and ID of the child process.
+ 
+@@ -1164,10 +1177,24 @@
+   int errfd = FD_STDERR;
+ #endif
+ 
++
++
+   /* If we have a completely empty commandset, stop now.  */
+   if (!child->command_ptr)
+     goto next_command;
+ 
++#ifdef __BITOS__
++  /*  printf("%s\n", child->command_ptr);
++  if (!thread_load(child->command_ptr)) {
++    child->noerror = 0;
++    perror_with_name ("thread_load", "");
++  } else {
++    child->noerror = 1;
++  }
++  return;*/
++#endif
++
++
+   /* Combine the flags parsed for the line itself with
+      the flags specified globally for this target.  */
+   flags = (child->file->command_flags
+@@ -1314,6 +1341,7 @@
+   child->output.syncout = output_sync && (output_sync == OUTPUT_SYNC_RECURSE
+                                           || !(flags & COMMANDS_RECURSE));
+ 
++#ifndef __BITOS__
+   OUTPUT_SET (&child->output);
+ 
+ #ifndef NO_OUTPUT_SYNC
+@@ -1323,6 +1351,9 @@
+     output_dump (&child->output);
+ #endif
+ 
++#endif
++
++
+   /* Print the command if appropriate.  */
+   if (just_print_flag || trace_flag
+       || (!(flags & COMMANDS_SILENT) && !silent_flag))
+@@ -1375,6 +1406,7 @@
+       goto next_command;
+     }
+ 
++#ifndef __BITOS__
+   /* We're sure we're going to invoke a command: set up the output.  */
+   output_start ();
+ 
+@@ -1382,8 +1414,10 @@
+ 
+   fflush (stdout);
+   fflush (stderr);
++#endif /* __BITOS__ */
+ 
+ #ifndef VMS
++#ifndef __BITOS__
+ #if !defined(WINDOWS32) && !defined(_AMIGA) && !defined(__MSDOS__)
+ 
+   /* Set up a bad standard input that reads from a broken pipe.  */
+@@ -1406,7 +1440,7 @@
+           CLOSE_ON_EXEC (bad_stdin);
+         }
+     }
+-
++#endif
+ #endif /* !WINDOWS32 && !_AMIGA && !__MSDOS__ */
+ 
+   /* Decide whether to give this child the 'good' standard input
+@@ -1519,6 +1553,23 @@
+ 
+ #else  /* !__EMX__ */
+ 
++#  ifdef __BITOS__
++
++      extern char* argv_reconstruct(char** vector);
++      extern int thread_load(char*);
++
++      char* command = argv_reconstruct(argv);
++
++      printf("thread_load: pid = %d %s\n", bitos_pid, command);
++
++      if (!thread_load(command)) {
++	perror_with_name ("thread_load", "");
++	goto error;
++      }
++      child->pid = bitos_pid++;
++
++#else /* !__BITOS__ */
++
+       child->pid = fork ();
+       environ = parent_environ; /* Restore value child may have clobbered.  */
+       if (child->pid == 0)
+@@ -1551,6 +1602,7 @@
+           perror_with_name ("fork", "");
+           goto error;
+         }
++#  endif  /* !__BITOS__ */
+ # endif  /* !__EMX__ */
+ #endif /* !VMS */
+     }
+diff -Naur make-4.1.orig/main.c make-4.1.bitos/main.c
+--- make-4.1.orig/main.c	2014-10-06 03:24:51.000000000 +1100
++++ make-4.1.bitos/main.c	2015-12-24 16:31:42.000000000 +1100
+@@ -1017,7 +1017,7 @@
+ }
+ #endif  /* __MSDOS__ */
+ 
+-#ifdef _AMIGA
++#if defined( _AMIGA) || defined(__BITOS)
+ int
+ main (int argc, char **argv)
+ #else
+@@ -1271,7 +1271,7 @@
+      done before $(MAKE) is figured out so its definitions will not be
+      from the environment.  */
+ 
+-#ifndef _AMIGA
++#if !defined(_AMIGA) && !defined(__BITOS__)
+   {
+     unsigned int i;
+ 
+@@ -1343,7 +1343,7 @@
+       define_variable_cname ("PATH", windows32_path ? windows32_path : "",
+                              o_env, 1)->export = v_export;
+ #endif
+-#else /* For Amiga, read the ENV: device, ignoring all dirs */
++#elif defined(AMIGA) /* For Amiga, read the ENV: device, ignoring all dirs */
+     {
+         BPTR env, file, old;
+         char buffer[1024];

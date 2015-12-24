@@ -91,6 +91,8 @@ typedef struct {
   int (*tgetent)(char *bp, const char *name);
   void (*cfmakeraw)(struct termios *termios_p);
 
+  thread_h (*thread_spawnFileDescriptors)(char* command, int in, int out, int err);
+
 } _bft_t;
 
 extern _bft_t* _bft;

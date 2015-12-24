@@ -35,6 +35,9 @@ _thread_load(char* command, _thread_info_t* info)
   int fd;
   struct stat s;
 
+
+  simulator_printf("_thread_load: %s\n", command);
+
   if (name[0] != '/') {
     snprintf(buffer, PATH_MAX, "/usr/local/bin/%s", name);
   } else {
@@ -45,12 +48,19 @@ _thread_load(char* command, _thread_info_t* info)
 
   if (fstat(fd, &s) < 0) {
     buffer[0] = 0;
+    snprintf(buffer, PATH_MAX, "/usr/local/sh-elf/bin/%s", name);
+    fd = open(buffer, O_RDONLY);
+  }
+
+  if (fstat(fd, &s) < 0) {
+    buffer[0] = 0;
     snprintf(buffer, PATH_MAX, "/dev/id/%s/%s", BIN, name);
     fd = open(buffer, O_RDONLY);
-    if (fstat(fd, &s) < 0) {
-      printf("fstat failed\n");
-      return 0;
-    }
+  }
+
+  if (fstat(fd, &s) < 0) {
+    printf("fstat failed (%s)\n", command);
+    return 0;
   }
 
   info->entry = file_loadElf(fd, &info->image, &info->imageSize);
@@ -65,6 +75,7 @@ _thread_load(char* command, _thread_info_t* info)
 
   return 1;
 }
+
 
 FILE* 
 thread_open(char* command)
@@ -108,6 +119,16 @@ thread_spawn(char* command)
   return INVALID_THREAD;
 }
 
+thread_h 
+thread_spawnFileDescriptors(char* command, int in, int out, int err)
+{
+  _thread_info_t info;
+  if (_thread_load(command, &info)) {
+    fds_t fds = {in, out, err};
+    return kernel_threadLoad(info.image, info.imageSize, info.entry, info.argv, &fds, 1);
+  }
+  return INVALID_THREAD;
+}
 
 int thread_load(char* commandLine)
 { 

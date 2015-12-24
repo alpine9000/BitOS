@@ -194,3 +194,29 @@ int argv_argc(char** vector)
 
   return argc;
 }
+
+char* argv_reconstruct(char** vector)
+{
+  int len = 0;
+  if (vector == 0) {
+    return 0;
+  }
+
+  for (int argc = 0; argc < 255 && vector[argc] != 0; argc++) {
+    len += (strlen(vector[argc])+1);
+  }
+
+  len++;
+
+  char* cmd = (char*)malloc(len);
+
+  cmd[0] = 0;
+
+  for (int argc = 0; argc < 255 && vector[argc] != 0; argc++) {
+    strcat(cmd, vector[argc]);
+    strcat(cmd, " ");
+  }
+
+  cmd[len-1] = 0;
+  return cmd;
+}

@@ -8,6 +8,7 @@ CLIENTOBJ=bft.o kernel_client_asm.o syscalls.o panic.o client.o shell.o argv.o b
 CRT_OBJS=crt1.o crti.o crtbegin.o crtend.o crtn.o
 
 include ../base.mk
+include libc.mk
 
 all: libbitmachine.a libc-bitos.a libc-kernel.a $(CRT_OBJS)
 
@@ -15,10 +16,10 @@ libbitmachine.a: $(LIBOBJ) $(ASMOBJ)
 	$(AR) rcs libbitmachine.a $(LIBOBJ) $(ASMOBJ)
 
 libc-bitos.a: $(CLIENTOBJ)
-	$(AR) rcs libc-bitos.a $(CLIENTOBJ) libc/*.o
+	$(AR) rcs libc-bitos.a $(CLIENTOBJ) $(LIBC_OBJS) 
 
 libc-kernel.a: libc-bitos.a
-	$(AR) rcs libc-kernel.a libc/*.o
+	$(AR) rcs libc-kernel.a $(LIBC_OBJS) 
 	cp libc-kernel.a ..
 
 clean:

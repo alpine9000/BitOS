@@ -175,3 +175,10 @@ cfmakeraw(struct termios *termios_p)
 {
   _bft->cfmakeraw(termios_p);
 }
+
+
+thread_h 
+thread_spawnFileDescriptors(char* command, int in, int out, int err)
+{
+  return _bft->thread_spawnFileDescriptors(command, in, out, err);
+}
