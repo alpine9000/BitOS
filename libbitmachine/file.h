@@ -49,7 +49,8 @@ file_chdir(char* path);
 
 //void*          
 //file_loadElf(unsigned fd, unsigned** image, unsigned *imageSize);
-void (*file_loadElf(unsigned fd, unsigned** image, unsigned *imageSize))();
+//void (*file_loadElf(unsigned fd, unsigned** image, unsigned *imageSize))();
+int (*file_loadElf(unsigned fd, unsigned** image, unsigned *imageSize))(int, char**x);
 
 int            
 file_pipe(int fds[2]);

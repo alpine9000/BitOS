@@ -1,10 +1,10 @@
 BITOS_PATH=~/Projects/BitOS
 TOOLS_BASE=~/Projects/bitos-build
-GITVERSION := $(shell git describe --abbrev=41 --dirty --always --tags)
 WARNINGS = -pedantic-errors -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -Wshadow
 include ./optimize.mk
+-include ./gitversion.mk
 CPP_WARNINGS = $(WARNINGS) -Wno-char-subscripts 
-CFLAGS=-DGITVERSION=\"$(GITVERSION)\" -g $(OPTIMIZE) $(WARNINGS) -D_KERNEL_BUILD  -I/usr/local/sh-elf/include -I. -I./libbitmachine -m2e  -funit-at-a-time -falign-jumps -fdelete-null-pointer-checks
+CFLAGS=$(VERSION) -g $(OPTIMIZE) $(WARNINGS) -D_KERNEL_BUILD  -I/usr/local/sh-elf/include -I. -I./libbitmachine -m2e  -funit-at-a-time -falign-jumps -fdelete-null-pointer-checks
 CPPFLAGS = -D_KERNEL_BUILD $(OPTIMIZE) $(CPP_WARNINGS)  -m2e -funit-at-a-time -falign-jumps  -I./libbitmachine
 LDFLAGS= -L$(LIB_PATH)sh-elf/lib/m2e/ -L/usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e/ -L/usr/local/sh-elf/lib
 
@@ -29,13 +29,13 @@ SI=./apps/si
 
 all: $(LIB_BITMACHINE) $(BSH) $(BEMACS) $(SI) $(ELF_FILE) 
 
-version:
-	@echo $(GITVERSION)
-
 elf: $(LIB_BITMACHINE) $(ELF_FILE) 
 
 gdrive: all
 	cp $(ELF_FILE) ~/Google\ Drive/BitFS/bin
+	make  -C $(BSH) gdrive
+	make  -C $(BEMACS) gdrive
+	make  -C $(SI) gdrive
 
 web: all
 	cp $(ELF_FILE) ~/Google\ Drive/Projects/BitMachine/Web/BitFS/
@@ -52,23 +52,10 @@ $(BSH):
 	make  -C $(BEMACS)
 	make  -C $(SI)
 
-.SECONDARY:
-%.rgba: %.png
-	convert $*.png $*.rgba
-
-.SECONDARY:
-%.c: %.rgba
-	./bin/bin2c $*.rgba $*.c
-
-.SECONDARY:
-%.c: %.wav
-	./bin2c $*.wav $*.c
-
 include base.mk
 
 clean:
 	-rm -f $(BIN_FILE) libwolf.a bitos.sym bitos.map *~ *.rgba y.* lex.yy.? y.tab.? $(ELF_FILE) $(ALL_OBJS) $(ALL_OBJS:%.o=%.d)
-	#-rm -f $(IMG_OBJ:.o=.rgba) $(IMG_OBJ:.o=.c) $(SOUND_OBJ:.o=.c)
 	rm -f $(IMG_OBJ) $(SOUND_OBJ) $(WOLF_OBJ)
 	$(MAKE) -C libbitmachine clean
 	$(MAKE) -C apps/wolf clean
@@ -119,6 +106,8 @@ local.zip:
 	cp $(BINUTILS_BASE)/ld/ld-new  $(TOOLS_BASE)/local/bin/ld
 	cp $(BITOS_PATH)/apps/bemacs/bemacs $(TOOLS_BASE)/local/bin	
 	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin
+	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin/cp
+	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin/rm
 	cp $(BITOS_PATH)/apps/si/si $(TOOLS_BASE)/local/bin
 	cp $(BITOS_PATH)/bin/bitos.elf $(TOOLS_BASE)/local/bin
 	cp -r /usr/local/sh-elf $(TOOLS_BASE)/local
@@ -128,15 +117,16 @@ local.zip:
 
 	rm -r $(GCC_LIBEXEC)/*
 	cp $(GCC_BASE)/gcc/xgcc $(TOOLS_BASE)/local/sh-elf/bin/sh-elf-gcc
+	cp $(GCC_BASE)/gcc/xg++ $(TOOLS_BASE)/local/sh-elf/bin/sh-elf-g++
+	cp $(TOOLS_BASE)/local/bin/ld $(TOOLS_BASE)/local/sh-elf/bin/sh-elf-ld
 	cp $(BINUTILS_BASE)/binutils/ar $(TOOLS_BASE)/local/sh-elf/bin/sh-elf-ar
 	cp $(GCC_BASE)/gcc/lto-wrapper $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus $(GCC_LIBEXEC)
 
-	#rm -r $(TOOLS_BASE)/local/sh-elf/libexec
 	rm -r $(TOOLS_BASE)/local/sh-elf/sh-elf/bin
 	rm -r $(TOOLS_BASE)/local/sh-elf/sh-elf/lib/ml
 	rm -r $(TOOLS_BASE)/local/sh-elf/sh-elf/lib/*.*
 	-rm -rf $(TOOLS_BASE)/local/src/BitOS
-	mkdir $(TOOLS_BASE)/local/src
+	-mkdir $(TOOLS_BASE)/local/src
 	cp -r $(BITOS_PATH) $(TOOLS_BASE)/local/src/BitOS
 	cp -r $(BITOS_PATH) $(TOOLS_BASE)/local/src/BitOS.2/
 	rm -rf $(TOOLS_BASE)/local/src/BitOS/.git
@@ -144,7 +134,7 @@ local.zip:
 	-rm -rf  $(TOOLS_BASE)/local/src/BitOS/newlib-2.0.0-r
 	-rm -rf  $(TOOLS_BASE)/local/src/BitOS.2/newlib-2.0.0-r
 	cp $(BITOS_PATH)/libbitmachine/libc-bitos.a $(TOOLS_BASE)/local/sh-elf/sh-elf/lib/m2e/libc.a
-
+	mv $(TOOLS_BASE)/local/sh-elf/sh-elf/include/c++  $(TOOLS_BASE)/local/sh-elf/include
 
 	$(STRIP) $(TOOLS_BASE)/local/bin/* 
 	$(STRIP) $(GCC_LIBEXEC)/cc1
@@ -153,6 +143,7 @@ local.zip:
 
 	mkdir $(TOOLS_BASE)/local/home
 	cp $(BITOS_PATH)/hello.c $(TOOLS_BASE)/local/home
+	cp $(BITOS_PATH)/Makefile.hello $(TOOLS_BASE)/local/home/Makefile
 	-rm $(TOOLS_BASE)/local.zip
 	cd $(TOOLS_BASE)/; zip -r local.zip local
 	cp $(TOOLS_BASE)/local.zip ~/Google\ Drive/BitFS

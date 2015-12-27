@@ -20,7 +20,7 @@
 #define BIN "0B-PSYTJK8InmOUtrX3p2eG9zUU0"
 
 typedef struct {
-  void(*entry)(int, char**);
+  int(*entry)(int, char**);
   char** argv;
   unsigned *image;
   unsigned imageSize;

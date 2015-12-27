@@ -145,7 +145,7 @@ _kernel_schedule()
 
 
 static thread_h 
-_kernel_threadCreate(unsigned int threadIndex, unsigned* image, unsigned imageSize, void(* ptr)(int,char**),  char**argv, fds_t* fds)
+_kernel_threadCreate(unsigned int threadIndex, unsigned* image, unsigned imageSize, int(* ptr)(int,char**),  char**argv, fds_t* fds)
 {
   _thread_entry_t *entry = &threadTable[threadIndex];
   entry->tid = (thread_h)nextTid++;
@@ -367,8 +367,8 @@ _from_asm_kernel_kill(int status, int context)
 }
 
 
-void 
-kernel_init(void(*ptr)(int argc, char** argv))
+void
+kernel_init(int(*ptr)(int argc, char** argv))
 {
   ktrace_reset();
   currentThread = 0;
@@ -442,7 +442,7 @@ kernel_threadSetInfo(thread_info_t type, unsigned info)
 
 
 thread_h
-kernel_threadSpawn(void (*entry)(int, char**argv), char**argv, fds_t* fds)
+kernel_threadSpawn(int (*entry)(int, char**argv), char**argv, fds_t* fds)
 {
   _threadTable_lock();
   int threadIndex = _kernel_threadAllocate();
@@ -458,7 +458,7 @@ kernel_threadSpawn(void (*entry)(int, char**argv), char**argv, fds_t* fds)
 
 
 thread_h
-kernel_threadLoad(unsigned* image, unsigned imageSize, void (*entry)(int,char**),  char** argv, fds_t* fds, int clone_cwd)
+kernel_threadLoad(unsigned* image, unsigned imageSize, int (*entry)(int,char**),  char** argv, fds_t* fds, int clone_cwd)
 {
   _threadTable_lock();
   int threadIndex = _kernel_threadAllocate();
@@ -618,22 +618,38 @@ kernel_threadGetIdForStdout(unsigned fd)
 }
 
 
-int
-kernel_threadGetExitStatus(thread_h tid)
+static int
+_kernel_threadGetExitStatus(thread_h tid, int* status)
 {
   _threadTable_lock();
-  int exitStatus = -1;
+  int success = 0;
+
   for (unsigned i = 0; i < _thread_historyMax; i++) {
     _thread_history_t *entry = &threadHistory[i];
     if (entry->tid == tid) {
       entry->tid = 0;
-      exitStatus =  entry->exitStatus;
+      *status =  entry->exitStatus;
+      success = 1;
       break;
     }
   }
   _threadTable_unlock();
     
-  return exitStatus;
+  return success;
+}
+
+int 
+kernel_threadGetExitStatus(thread_h tid)
+{
+  int status = -1, success, count = 0;
+  do {
+    success = _kernel_threadGetExitStatus(tid, &status);
+    if (!success) {
+      kernel_threadBlocked();
+    }
+  } while (!success && count++ < 10); // TODO: bemacs exit doesn't work
+
+  return status;
 }
 
 

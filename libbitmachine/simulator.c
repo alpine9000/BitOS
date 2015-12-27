@@ -66,10 +66,11 @@ simulator_gtod(struct timeval *tv, void *tz)
 int 
 simulator_printf(const char * format, ...)
 {
-  char buffer[4096];
+  #define BIG_NUMBER 32768
+  static char buffer[BIG_NUMBER];
   va_list argList;
   va_start(argList, format);
-  vsprintf(buffer, format, argList);
+  vsnprintf(buffer, BIG_NUMBER, format, argList);
   va_end(argList);
 
   peripheral.simulator.print = (unsigned)&buffer;

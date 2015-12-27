@@ -354,6 +354,9 @@ globtilde(pattern, patbuf, patbuf_len, pglob)
 	size_t patbuf_len;
 	glob_t *pglob;
 {
+#ifdef __BITOS__
+	return pattern;
+#else
 	struct passwd *pwd;
 	char *h;
 	const Char *p;
@@ -417,6 +420,7 @@ globtilde(pattern, patbuf, patbuf_len, pglob)
 	*b = EOS;
 
 	return patbuf;
+#endif
 }
 
 

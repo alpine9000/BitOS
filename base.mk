@@ -8,7 +8,7 @@ STRIP=$(ELF_PATH)sh-elf-strip -g
 
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
-	#$(CC) -S $< $(CFLAGS)
+	@#$(CC) -S $< $(CFLAGS)
 	$(CC) -MM $(CFLAGS) $*.c > $*.d
 	@mv -f $*.d $*.d.tmp
 	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
@@ -34,3 +34,16 @@ STRIP=$(ELF_PATH)sh-elf-strip -g
 
 %.S: %.c
 	$(CC) -S $(CFLAGS) $*.c -o $*.s
+
+
+.SECONDARY:
+%.rgba: %.png
+	convert $*.png $*.rgba
+
+.SECONDARY:
+%.c: %.rgba
+	./bin/bin2c $*.rgba $*.c
+
+.SECONDARY:
+%.c: %.wav
+	./bin2c $*.wav $*.c

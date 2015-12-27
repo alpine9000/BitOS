@@ -571,7 +571,7 @@ file_pipe(int fds[2])
 }
 
 
-void (*file_loadElf(unsigned fd, unsigned** image, unsigned *imageSize))()
+int (*file_loadElf(unsigned fd, unsigned** image, unsigned *imageSize))(int, char**x)
 {
   _file_lock();
   
@@ -581,7 +581,7 @@ void (*file_loadElf(unsigned fd, unsigned** image, unsigned *imageSize))()
   *imageSize = peripheral.file.elf.size;
   peripheral.file.elf.relocate = (unsigned)*image;
   //  void* entry = (void(*)())peripheral.file.elf.entry;
-  void(*entry)() = peripheral.file.elf.entry;
+  int(*entry)(int,char**) = (int(*)(int,char**))peripheral.file.elf.entry;
   
   _file_unlock();
  

@@ -31,13 +31,13 @@ unsigned
 kernel_disableInts();
 
 void     
-kernel_init(void(*ptr)(int argc, char** argv));
+kernel_init(int (*ptr)(int argc, char** argv));
 
 thread_h    
-kernel_threadSpawn(void (*entry)(int argc, char**argv),  char**argv, fds_t* fds);
+kernel_threadSpawn(int (*entry)(int argc, char**argv),  char**argv, fds_t* fds);
 
 thread_h    
-kernel_threadLoad( unsigned* image, unsigned imageSize, void (*entry)(int,char**), char** argv, fds_t* fds, int clone_cwd);
+kernel_threadLoad( unsigned* image, unsigned imageSize, int (*entry)(int,char**), char** argv, fds_t* fds, int clone_cwd);
 
 void     
 kernel_threadBlocked();

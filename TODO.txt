@@ -1,6 +1,9 @@
 TODO
 ====
 http://mrale.ph/talks/goto2015/#/178
+
+o - convert
+o - bemacs no <CR> on last line
 o - argv ownership
 o - file locking
 o - bemacs readline for buffers

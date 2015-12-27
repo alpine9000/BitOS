@@ -5,6 +5,7 @@ libc/lib_a-__call_atexit.o\
 libc/lib_a-__dprintf.o\
 libc/lib_a-__exp10.o\
 libc/lib_a-__ten_mu.o\
+libc/lib_a-_isatty.o\
 libc/lib_a-a64l.o\
 libc/lib_a-abort.o\
 libc/lib_a-abs.o\
@@ -44,7 +45,10 @@ libc/lib_a-callocr.o\
 libc/lib_a-cfreer.o\
 libc/lib_a-clearerr.o\
 libc/lib_a-clock.o\
+libc/lib_a-closedir.o\
 libc/lib_a-closer.o\
+libc/lib_a-collate.o\
+libc/lib_a-collcmp.o\
 libc/lib_a-creat.o\
 libc/lib_a-ctime.o\
 libc/lib_a-ctime_r.o\
@@ -72,7 +76,13 @@ libc/lib_a-envz_strip.o\
 libc/lib_a-eprintf.o\
 libc/lib_a-erand48.o\
 libc/lib_a-errno.o\
+libc/lib_a-execl.o\
+libc/lib_a-execle.o\
+libc/lib_a-execlp.o\
 libc/lib_a-execr.o\
+libc/lib_a-execv.o\
+libc/lib_a-execve.o\
+libc/lib_a-execvp.o\
 libc/lib_a-exit.o\
 libc/lib_a-fclose.o\
 libc/lib_a-fcloseall.o\
@@ -95,6 +105,7 @@ libc/lib_a-fiscanf.o\
 libc/lib_a-fix_grouping.o\
 libc/lib_a-flags.o\
 libc/lib_a-fmemopen.o\
+libc/lib_a-fnmatch.o\
 libc/lib_a-fopen.o\
 libc/lib_a-fopencookie.o\
 libc/lib_a-fprintf.o\
@@ -140,6 +151,7 @@ libc/lib_a-gettzinfo.o\
 libc/lib_a-getw.o\
 libc/lib_a-getwc.o\
 libc/lib_a-getwchar.o\
+libc/lib_a-glob.o\
 libc/lib_a-gmtime.o\
 libc/lib_a-gmtime_r.o\
 libc/lib_a-hash.o\
@@ -157,6 +169,7 @@ libc/lib_a-iprintf.o\
 libc/lib_a-isalnum.o\
 libc/lib_a-isalpha.o\
 libc/lib_a-isascii.o\
+libc/lib_a-isatty.o\
 libc/lib_a-isattyr.o\
 libc/lib_a-isblank.o\
 libc/lib_a-iscanf.o\
@@ -244,8 +257,10 @@ libc/lib_a-nl_langinfo.o\
 libc/lib_a-nrand48.o\
 libc/lib_a-on_exit.o\
 libc/lib_a-open_memstream.o\
+libc/lib_a-opendir.o\
 libc/lib_a-openr.o\
 libc/lib_a-perror.o\
+libc/lib_a-popen.o\
 libc/lib_a-printf.o\
 libc/lib_a-psignal.o\
 libc/lib_a-putc.o\
@@ -264,16 +279,23 @@ libc/lib_a-raise.o\
 libc/lib_a-rand.o\
 libc/lib_a-rand48.o\
 libc/lib_a-rand_r.o\
+libc/lib_a-readdir.o\
+libc/lib_a-readdir_r.o\
 libc/lib_a-readr.o\
 libc/lib_a-realloc.o\
 libc/lib_a-reallocf.o\
 libc/lib_a-reallocr.o\
 libc/lib_a-reent.o\
 libc/lib_a-refill.o\
+libc/lib_a-regcomp.o\
+libc/lib_a-regerror.o\
+libc/lib_a-regexec.o\
+libc/lib_a-regfree.o\
 libc/lib_a-remove.o\
 libc/lib_a-rename.o\
 libc/lib_a-renamer.o\
 libc/lib_a-rewind.o\
+libc/lib_a-rewinddir.o\
 libc/lib_a-rget.o\
 libc/lib_a-rindex.o\
 libc/lib_a-s_copysign.o\
@@ -291,9 +313,11 @@ libc/lib_a-s_nan.o\
 libc/lib_a-s_scalbn.o\
 libc/lib_a-sb_charsets.o\
 libc/lib_a-sbrkr.o\
+libc/lib_a-scandir.o\
 libc/lib_a-scanf.o\
 libc/lib_a-sccl.o\
 libc/lib_a-seed48.o\
+libc/lib_a-seekdir.o\
 libc/lib_a-setbuf.o\
 libc/lib_a-setbuffer.o\
 libc/lib_a-setenv.o\
@@ -318,6 +342,7 @@ libc/lib_a-signalr.o\
 libc/lib_a-signgam.o\
 libc/lib_a-siprintf.o\
 libc/lib_a-siscanf.o\
+libc/lib_a-sleep.o\
 libc/lib_a-sniprintf.o\
 libc/lib_a-snprintf.o\
 libc/lib_a-sprintf.o\
@@ -405,6 +430,7 @@ libc/lib_a-syswait.o\
 libc/lib_a-syswrite.o\
 libc/lib_a-tdelete.o\
 libc/lib_a-tdestroy.o\
+libc/lib_a-telldir.o\
 libc/lib_a-tfind.o\
 libc/lib_a-time.o\
 libc/lib_a-timelocal.o\
@@ -430,6 +456,7 @@ libc/lib_a-unctrl.o\
 libc/lib_a-ungetc.o\
 libc/lib_a-ungetwc.o\
 libc/lib_a-unlinkr.o\
+libc/lib_a-usleep.o\
 libc/lib_a-valloc.o\
 libc/lib_a-vallocr.o\
 libc/lib_a-vasiprintf.o\
@@ -511,6 +538,8 @@ libc/lib_a-wmemcmp.o\
 libc/lib_a-wmemcpy.o\
 libc/lib_a-wmemmove.o\
 libc/lib_a-wmemset.o\
+libc/lib_a-wordexp.o\
+libc/lib_a-wordfree.o\
 libc/lib_a-wprintf.o\
 libc/lib_a-writer.o\
 libc/lib_a-wscanf.o\

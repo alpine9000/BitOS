@@ -17,7 +17,7 @@ typedef struct {
   thread_h (*kernel_threadGetId)();
   void (*kernel_threadDie)(int status);
   window_h (*kernel_threadGetWindow)(void);
-  thread_h (*kernel_threadSpawn)(void (*entry)(int argc, char**argv),  char**argv, fds_t* fds);
+  thread_h (*kernel_threadSpawn)(int (*entry)(int argc, char**argv),  char**argv, fds_t* fds);
   void (*kernel_stats)();
   fds_t* (*kernel_threadGetFds)(void);
   void (*malloc_stats)();

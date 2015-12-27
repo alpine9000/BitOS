@@ -1,4 +1,5 @@
 #undef _KERNEL_BUILD
+#include <glob.h>
 #include <sys/dirent.h>
 #include <sys/syslimits.h>
 #include <stdio.h>
@@ -27,69 +28,69 @@ void shell_exec(char* cmd);
 #define shellWindowWidth  ((gfx_fontWidth+gfx_spaceWidth)*80)
 #define shellWindowHeight ( gfx_fontHeight*24)
 
-extern void 
+extern int
 wolf();
 
-extern void 
+extern int 
 build(int argc, char** argv);
 
-extern void 
+extern int 
 build2(int argc, char** argv);
 
-extern void 
+extern int
 bcc(int argc, char** argv);
 
-static void
+static int
 mv(int argc, char** argv);
 
-static void
+static int
 cd(int argc, char** argv);
 
-static void
+static int
 cp(int argc, char** argv);
 
-static void
+static int
 pwd(int argc, char** argv);
 
-static void
+static int
 ls(int argc, char** argv);
 
-static void
+static int
 rm(int argc, char** argv);
 
-static void
+static int
 cat(int argc, char** argv);
 
-static void
+static int
+touch(int argc, char** argv);
+
+static int
 _mkdir(int argc, char** argv);
 
-static void
-runShell();
+static int
+runShell(int argc, char** argv);
 
-static void
+static int
 test(int argc, char** argv);
 
-static void
+static int
 version(int argc, char** argv);
 
-static void
-panic(int argc, char** argv);
+static int
+kernel(int argc, char** argv);
 
-static void
-kernel(int argc, char**argv);
+static int
+shell_kernel_stats(int argc, char** argv);
 
-static void
-shell_kernel_stats();
-
-static void
-shell_malloc_stats();
+static int
+shell_malloc_stats(int argc, char** argv);
 
 typedef void(*arg_function)(int,char**);
 
 typedef struct {
   char *name;
   unsigned spawn;
-  void(*function)();
+  int(*function)(int, char**);
 } builtin_t;
 
 static builtin_t builtins[] = {
@@ -109,9 +110,9 @@ static builtin_t builtins[] = {
   {"c", 0, build2},
   {"shell", 1, runShell},
   {"test", 0, test},
-  {"panic", 0, panic},
   {"version", 0, version},
-  {"kernel", 0, kernel}
+  {"kernel", 0, kernel},
+  {"touch", 0, touch}
 };
 
 static unsigned numBuiltins = sizeof(builtins)/sizeof(builtin_t);
@@ -120,10 +121,11 @@ char **gitversion = 0;
 
 int _shell_complete = 0;
 
-static void 
+static int
 version(int argc, char** argv)
 {
   printf("BitOS version %s\n", *gitversion);
+  return 0;
 }
 
 static char *
@@ -131,13 +133,6 @@ basename(char *path)
 {
   char *base = strrchr(path, '/');
   return base ? base+1 : path;
-}
-
-static void 
-panic(int argc, char** argv)
-{
-  unsigned lock;
-  _bft->_bitos_lock_close(&lock);
 }
 
 static int 
@@ -216,23 +211,23 @@ rcopy(char* src, char* dest)
 }
 
 
-static void 
+static int
 mv(int argc, char** argv)
 {
   if (argc != 3) {
     printf("usage: %ssrc dest\n", argv[0]);
-    return;
+    return 1;
   }
 
-  rename(argv[1], argv[2]);
+  return rename(argv[1], argv[2]);
 }
 
-static void 
+static int
 cp(int argc, char** argv)
 {
   if (!(argc == 3 || argc == 4)) {
     printf("usage: %s [-r] src dest\n", argv[0]);
-    return;
+    return 1;
   }
 
   int argvIndex = 1;
@@ -246,21 +241,21 @@ cp(int argc, char** argv)
   char* s = argv[argvIndex++];
   char* d = argv[argvIndex++];
   if (!recursive) {
-    copy(s, d);
+    return copy(s, d);
   } else {
-    rcopy(s, d);
+    return rcopy(s, d);
   }
 }
 
-static void 
+static int
 _mkdir(int argc, char** argv)
 {
   if (argc != 2) {
     printf("usage: %s path\n", argv[0]);
-    return;
+    return 1;
   }
 
-  mkdir(argv[1], 0);
+  return mkdir(argv[1], 0);
 }
 
 unsigned 
@@ -276,7 +271,7 @@ getSR()
 
 
 static void 
-testBuild(char* cmd, void(*builder)(), unsigned x)
+testBuild(char* cmd, int(*builder)(int, char**), unsigned x)
 {
   static int numTestBuilds = 2;
   unsigned w = shellWindowWidth, h = shellWindowHeight;
@@ -298,20 +293,22 @@ testBuild(char* cmd, void(*builder)(), unsigned x)
 }
 
 
-static void 
+static int 
 runTestBuild1(int argc, char** argv)
 {
   testBuild("b -f", build, 0);
+  return 0;
 }
 
-static void
+static int
 runTestBuild2(int argc, char** argv)
 {
   testBuild("c -f", build2, shellWindowWidth);
+  return 0;
 }
 
 
-static void 
+static int
 test(int argc, char** argv)
 {
    kernel_threadSpawn(&runTestBuild1, 0, 0);
@@ -319,30 +316,32 @@ test(int argc, char** argv)
    do {
      kernel_threadBlocked();
    } while(1);
+
+   return 0;
 }
 
-static void 
+static int
 pwd(int argc, char** argv)
 {
   char buffer[PATH_MAX];
   printf("%s\n", getcwd(buffer, PATH_MAX));
+  return 0;
 }
 
 
-static void 
+static int 
 cd(int argc, char** argv)
 {
   if (argc == 1) {
-    chdir("~");
-    return;
+    return chdir("~");
   }
 
   if (argc != 2) {
     printf("usage: %s path\n", argv[0]);
-    return;
+    return 1;
   }
 
-  chdir(argv[1]);
+  return chdir(argv[1]);
 }
 
 static void 
@@ -388,31 +387,17 @@ lsdir(char* path, int argc, char** argv)
     printf("%s: %s: No such file or directory\n", argv[0], path);
   }
 }
- 
-static void 
-ls(int argc, char** argv)
+
+static int
+listPath(char* path, char* cwd, int argc, char** argv)
 {
-  char cwd[PATH_MAX];
-  char path[PATH_MAX];
   struct stat statBuffer;
-
-  if (argc > 2) {
-    printf("usage: %s [path]\n", argv[0]);
-    return;
-  }
-
-  if (argc == 1) {
-    getcwd(path, PATH_MAX);
-    getcwd(cwd, PATH_MAX);
-  } else {
-    strcpy(path, argv[1]);
-  }
 
   if (stat(path, &statBuffer) != 0) {
     fprintf(stderr, "%s: %s: %s\n", argv[0], path, strerror(errno));
-    return;
+    return 1;
   }
-
+  
   if (statBuffer.st_mode & S_IFDIR) {
     chdir(path);
     lsdir(path, argc, argv);
@@ -426,33 +411,69 @@ ls(int argc, char** argv)
     printf("%ld %s %s\n", statBuffer.st_size, timbuf, path);
   }
 
+  return 0;
+}
+
+static int
+ls(int argc, char** argv)
+{
+  char cwd[PATH_MAX];
+  char path[PATH_MAX];
+  
+  if (argc > 2) {
+    printf("usage: %s [path]\n", argv[0]);
+    return 1;
+  }
+  
+  if (argc == 1) {
+    getcwd(path, PATH_MAX);
+    getcwd(cwd, PATH_MAX);
+    listPath(path, cwd, argc, argv);
+  } else {
+    glob_t g;
+    
+    g.gl_offs = 0;
+    for (int i = 1; i < argc; i++) {
+      if (i == 1) {
+	glob(argv[i], GLOB_DOOFFS, NULL, &g);
+      } else {
+	glob(argv[i], GLOB_DOOFFS | GLOB_APPEND, NULL, &g);
+      }
+    }
+
+    for (int i = 0; i < g.gl_matchc; i++) {
+      listPath(g.gl_pathv[i], cwd, argc, argv);
+    }
+  }
+  
+  return 0;
 }
 
 
-static void 
+static int 
 rm(int argc, char** argv)
 {
   if (argc != 2) {
     printf("usage: %s [path]\n", argv[0]);
-    return;
+    return 1;
   }
 
-  unlink(argv[1]);
+  return unlink(argv[1]);
 } 
 
-static void 
+static int 
 cat(int argc, char** argv)
 {
   if (argc != 2) {
     printf("usage: %s file\n", argv[0]);
-    return;
+    return 1;
   }
   
   FILE *fp = fopen(argv[1], "r");
   
   if (fp == 0) {
     printf("%s: %s: %s\n", argv[0], argv[1], strerror(errno));
-    return;
+    return 1;
   }
   
   char buffer[255];
@@ -467,36 +488,63 @@ cat(int argc, char** argv)
   } 
 
   fclose(fp);
+
+  return 0;
 }
 
-static void 
+
+int
+touch(int argc, char** argv)
+{
+  if (argc != 2) {
+    printf("usage: %s file\n", argv[0]);
+    return 1;
+  }
+  
+  int fd = open(argv[1], O_RDWR|O_APPEND);
+  
+  if (fd < 0) {
+    printf("%s: %s: %s\n", argv[0], argv[1], strerror(errno));
+    return 1;
+  }
+  
+  close(fd);
+
+  return 0;
+ 
+}
+
+static int 
 kernel(int argc, char** argv)
 {
   if (argc != 2) {
     printf("usage: %s file\n", argv[0]);
-    return;
+    return 1;
   }
   
   FILE *fp = fopen(argv[1], "r");
   
   if (fp == 0) {
     printf("%s: %s: %s\n", argv[0], argv[1], strerror(errno));
-    return;
+    return 1;
   }
   
   file_loadElfKernel(fileno(fp));
+  return 0;
 }
 
-static void 
-shell_kernel_stats()
+static int
+shell_kernel_stats(int argc, char** argv)
 {
   kernel_stats();
+  return 0;
 }
 
-static void 
-shell_malloc_stats()
+static int 
+shell_malloc_stats(int argc, char** argv)
 {
   malloc_stats();
+  return 0;
 }
 
 
@@ -510,6 +558,23 @@ readchar()
   return -1;
 }
 
+int 
+shell_execBuiltin(int argc, char** argv)
+{
+  int retval = -2;
+  if (argc > 0) {
+    for (unsigned i = 0; i < numBuiltins; i++) {
+      if (strcmp(argv[0], builtins[i].name) == 0) {
+	if (!builtins[i].spawn) {
+	  retval = builtins[i].function(argv_argc(argv), argv);
+	}
+	return retval;
+      } 
+    }
+  }
+
+  return retval;
+}
 
 void 
 shell_exec(char* cmd)
@@ -599,8 +664,8 @@ shell()
   } 
 }
 
-static void 
-runShell()
+static int
+runShell(int argc, char** argv)
 {
   unsigned w = 320, h = 200;
   window_h window = window_create("Shell", 20, 20, w, h);
@@ -609,4 +674,5 @@ runShell()
   shell(); 
   window_close(window);
   kernel_threadDie(0);
+  return 0;
 }

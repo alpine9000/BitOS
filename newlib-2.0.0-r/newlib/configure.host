@@ -245,7 +245,7 @@ case "${host_cpu}" in
 	;;
   sh | sh64)
 	machine_dir=sh
-	newlib_cflags="${newlib_cflags} -DREENTRANT_SYSCALLS_PROVIDED -DHAVE_RENAME"
+	newlib_cflags="${newlib_cflags} -DREENTRANT_SYSCALLS_PROVIDED -DHAVE_RENAME -D__BITOS__"
 	;;
   sparc*)
 	machine_dir=sparc
@@ -482,6 +482,7 @@ case "${host}" in
 	;;
   sh*-*)
 	sys_dir=sh
+	posix_dir=posix
 	;;
   sparc-sun-sunos*)
 	sys_dir=sun4
@@ -728,6 +729,7 @@ case "${host}" in
   sh*-*-*)
 	default_newlib_io_long_long="yes"
 	syscall_dir=syscalls
+	newlib_cflags="${newlib_cflags} -DHAVE_OPENDIR"
 	;;
   sparc-sun-sunos*)
 	newlib_cflags="${newlib_cflags} -DSIGNAL_PROVIDED"

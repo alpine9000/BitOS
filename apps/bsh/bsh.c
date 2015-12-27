@@ -3,18 +3,46 @@
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <libgen.h>
 #include "bft.h"
 #include "kernel.h"
 #include "window.h"
 #include "gfx.h"
 #include "console.h"
 
-extern void shell();
-extern int shell_exec(char*);
+extern void 
+shell();
+
+extern int 
+shell_exec(char*);
+
+extern int 
+shell_execBuiltin(int argc, char** argv);
+
 extern int _shell_complete;
+
+int endsWith(char* str, char* end)
+{
+  int str_len = strlen(str);
+  int end_len = strlen(end);
+  return (str_len > end_len && !strcmp(str + str_len - end_len, end));
+}
+
 
 int main(int argc, char**argv)
 {
+
+  if (argc > 0) {
+    char *base = basename(argv[0]);
+    if (strcmp(base, "bsh") != 0) {
+      char* argvSave = argv[0];
+      argv[0] = base;
+      int retval = shell_execBuiltin(argc, argv);
+      argv[0] = argvSave;
+      return retval;
+    }
+  }
+
 #define OPEN_WINDOW
  
 #ifdef OPEN_WINDOW
