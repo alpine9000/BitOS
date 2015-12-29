@@ -22,6 +22,9 @@ libc-kernel.a: libc-bitos.a
 	$(AR) rcs libc-kernel.a $(LIBC_OBJS) 
 	cp libc-kernel.a ..
 
+touch:
+	touch $(LIBOBJ) $(ASMOBJ) $(CLIENTOBJ) $(CRT_OBJS)
+
 clean:
 	-rm -f libc-bitos.a libc-kernel.a libbitmachine.a $(CRT_OBJS) $(LIBOBJ) $(CLIENTOBJ) $(ASMOBJ) $(LIBOBJ:.o=.d) $(CRT_OBJS:.o=.d) $(CLIENTOBJ:.o=.d) *~
 

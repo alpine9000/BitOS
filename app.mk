@@ -14,6 +14,9 @@ include ../../base.mk
 $(ELF_FILE): $(OBJ_FILES) ../../libbitmachine/libc-bitos.a
 	$(CC) -m2e $(LDFLAGS) -Wl,-Map -Wl,a.map -pie -o $(ELF_FILE) $(OBJ_FILES) $(LIBS) 
 
+touch:
+	touch $(OBJ_FILES)
+
 gdrive: $(ELF_FILE)
 	cp $(ELF_FILE) ~/Google\ Drive/BitFS/bin/
 

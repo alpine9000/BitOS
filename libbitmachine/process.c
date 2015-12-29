@@ -35,7 +35,6 @@ _thread_load(char* command, _thread_info_t* info)
   int fd;
   struct stat s;
 
-
   simulator_printf("_thread_load: %s\n", command);
 
   if (name[0] != '/') {
@@ -81,6 +80,7 @@ FILE*
 thread_open(char* command)
 {
   _thread_info_t info;
+
   if (_thread_load(command, &info)) {
 
     unsigned x = kernel_enterKernelMode();

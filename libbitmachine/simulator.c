@@ -1,7 +1,12 @@
 #include <stdarg.h>
 #include <stdio.h>
+#include <string.h>
 #include "simulator.h"
 #include "peripheral.h"
+#include "kernel.h"
+
+#define lock() unsigned ___ints_disabled = kernel_disableInts()
+#define unlock() kernel_enableInts(___ints_disabled)
 
 
 void 
@@ -66,13 +71,14 @@ simulator_gtod(struct timeval *tv, void *tz)
 int 
 simulator_printf(const char * format, ...)
 {
-  #define BIG_NUMBER 32768
+#define BIG_NUMBER 32768
   static char buffer[BIG_NUMBER];
   va_list argList;
   va_start(argList, format);
   vsnprintf(buffer, BIG_NUMBER, format, argList);
   va_end(argList);
 
+  kernel_memoryBarrier();
   peripheral.simulator.print = (unsigned)&buffer;
 
   return 1;

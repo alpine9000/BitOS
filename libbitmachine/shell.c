@@ -311,13 +311,13 @@ runTestBuild2(int argc, char** argv)
 static int
 test(int argc, char** argv)
 {
-   kernel_threadSpawn(&runTestBuild1, 0, 0);
-   kernel_threadSpawn(&runTestBuild2, 0, 0); 
-   do {
-     kernel_threadBlocked();
-   } while(1);
-
-   return 0;
+  kernel_threadSpawn(&runTestBuild1, 0, 0);
+  kernel_threadSpawn(&runTestBuild2, 0, 0); 
+  do {
+    kernel_threadBlocked();
+  } while(1);
+  
+  return 0;
 }
 
 static int
@@ -420,30 +420,18 @@ ls(int argc, char** argv)
   char cwd[PATH_MAX];
   char path[PATH_MAX];
   
-  if (argc > 2) {
-    printf("usage: %s [path]\n", argv[0]);
-    return 1;
+  int file = 0;
+  for (int i = 1; i < argc; i++) {
+    if (argv[i][0] != '-') {
+      file = 1;
+      listPath(argv[i], cwd, argc, argv);
+    }
   }
-  
-  if (argc == 1) {
+
+  if (!file) {
     getcwd(path, PATH_MAX);
     getcwd(cwd, PATH_MAX);
     listPath(path, cwd, argc, argv);
-  } else {
-    glob_t g;
-    
-    g.gl_offs = 0;
-    for (int i = 1; i < argc; i++) {
-      if (i == 1) {
-	glob(argv[i], GLOB_DOOFFS, NULL, &g);
-      } else {
-	glob(argv[i], GLOB_DOOFFS | GLOB_APPEND, NULL, &g);
-      }
-    }
-
-    for (int i = 0; i < g.gl_matchc; i++) {
-      listPath(g.gl_pathv[i], cwd, argc, argv);
-    }
   }
   
   return 0;
@@ -453,12 +441,21 @@ ls(int argc, char** argv)
 static int 
 rm(int argc, char** argv)
 {
-  if (argc != 2) {
-    printf("usage: %s [path]\n", argv[0]);
+  if (argc == 1) {
+    printf("usage: %s [path...]\n", argv[0]);
     return 1;
   }
 
-  return unlink(argv[1]);
+  for (int i = 1; i < argc; i++) {
+    if (argv[i][0] != '-') {
+      if (unlink(argv[i]) != 0) {
+	printf("%s: failed to rm %s\n", argv[0], argv[i]);
+	return 1;
+      }
+    }
+  }
+
+  return 0;
 } 
 
 static int 
@@ -496,22 +493,24 @@ cat(int argc, char** argv)
 int
 touch(int argc, char** argv)
 {
-  if (argc != 2) {
-    printf("usage: %s file\n", argv[0]);
+  if (argc == 1) {
+    printf("usage: %s [path...]\n", argv[0]);
     return 1;
   }
-  
-  int fd = open(argv[1], O_RDWR|O_APPEND);
-  
-  if (fd < 0) {
-    printf("%s: %s: %s\n", argv[0], argv[1], strerror(errno));
-    return 1;
-  }
-  
-  close(fd);
 
-  return 0;
- 
+  for (int i = 1; i < argc; i++) {
+    if (argv[i][0] != '-') {
+      int fd = open(argv[i], O_RDWR|O_APPEND);     
+      if (fd < 0) {
+	printf("%s: %s: %s\n", argv[0], argv[1], strerror(errno));
+	return 1;
+      }
+  
+      close(fd);
+    }
+  }
+
+  return 0; 
 }
 
 static int 
@@ -576,6 +575,60 @@ shell_execBuiltin(int argc, char** argv)
   return retval;
 }
 
+typedef struct {
+  int argc;
+  char** argv;
+} argv_t;
+
+static 
+char** 
+shell_argvDup(int argc, char** argv)
+{
+
+  if (argv != 0) {
+    char **vector = malloc((argc+1)*sizeof(char*));
+    int i;
+    for (i = 0;i  <  argc; i++) {
+      vector[i] = malloc(strlen(argv[i]+1));
+      strcpy(vector[i], argv[i]);
+    }
+    vector[i] = 0;
+    return vector;
+  }
+
+  return 0;
+}
+
+static 
+void
+shell_globArgv(char* command, int* out_argc, char*** out_argv)
+{
+  char** argv = argv_build(command);
+  int argc = argv_argc(argv);
+
+  if (argc > 1) {
+    glob_t g;
+    g.gl_offs = 1;
+    for (int i = 1; i < argc; i++) {
+      if (i == 1) {
+	glob(argv[i], GLOB_NOCHECK | GLOB_DOOFFS, NULL, &g);
+      } else {
+	glob(argv[i], GLOB_NOCHECK | GLOB_DOOFFS | GLOB_APPEND, NULL, &g);
+      }
+    }
+    
+    g.gl_pathv[0] = argv[0];
+    
+    *out_argv = shell_argvDup(g.gl_pathc + g.gl_offs, g.gl_pathv);
+    *out_argc = g.gl_pathc + g.gl_offs;
+    argv_free(argv);
+  } else {
+    *out_argv = argv;
+    *out_argc = argc;
+  }
+}
+
+
 void 
 shell_exec(char* cmd)
 {
@@ -590,9 +643,11 @@ shell_exec(char* cmd)
     }
   }
 
-  char** argv = argv_build(cmd);
-  int argc = argv_argc(argv);
 
+  char** argv;
+  int argc;
+
+  shell_globArgv(cmd, &argc, &argv);
 
   if (argc > 0) {
     for (unsigned i = 0; i < numBuiltins; i++) {
@@ -614,7 +669,7 @@ shell_exec(char* cmd)
     if (background) {
       thread_spawn(cmd);
     } else {
-       thread_load(cmd);
+      thread_load(cmd);
     }
   }
 

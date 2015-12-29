@@ -28,6 +28,7 @@ Boston, MA 02110-1301, USA.  */
 #include <malloc.h>
 
 #define INITIAL_MAXARGC 8
+#define MAX_ARGC 32768
 
 #ifndef EOS
 #define EOS '\0'
@@ -189,7 +190,7 @@ int argv_argc(char** vector)
 {
   int argc = 0;
   if (vector != 0) {
-    for (; argc < 255 && vector[argc] != 0; argc++);
+    for (; argc < MAX_ARGC && vector[argc] != 0; argc++);
   }
 
   return argc;
@@ -202,7 +203,7 @@ char* argv_reconstruct(char** vector)
     return 0;
   }
 
-  for (int argc = 0; argc < 255 && vector[argc] != 0; argc++) {
+  for (int argc = 0; argc < 32768 && vector[argc] != 0; argc++) {
     len += (strlen(vector[argc])+1);
   }
 
@@ -212,7 +213,7 @@ char* argv_reconstruct(char** vector)
 
   cmd[0] = 0;
 
-  for (int argc = 0; argc < 255 && vector[argc] != 0; argc++) {
+  for (int argc = 0; argc < MAX_ARGC && vector[argc] != 0; argc++) {
     strcat(cmd, vector[argc]);
     strcat(cmd, " ");
   }

@@ -7,6 +7,7 @@ struct tms;
 
 #ifdef _KERNEL_BUILD
 
+#define kernel_memoryBarrier() do { asm volatile ("" : : : "memory"); } while (0)
 #define kernel_threadSetWindow(w) kernel_threadSetInfo(KERNEL_THREAD_WINDOW, (unsigned)w)
 
 unsigned 

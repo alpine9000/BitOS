@@ -54,6 +54,14 @@ $(BSH):
 
 include base.mk
 
+touch:
+	touch $(IMG_OBJ) $(SOUND_OBJ) $(WOLF_OBJ)
+	$(MAKE) -C libbitmachine touch
+	$(MAKE) -C apps/wolf touch
+	$(MAKE) -C apps/bemacs touch
+	$(MAKE) -C apps/bsh touch
+	$(MAKE) -C apps/si touch
+
 clean:
 	-rm -f $(BIN_FILE) libwolf.a bitos.sym bitos.map *~ *.rgba y.* lex.yy.? y.tab.? $(ELF_FILE) $(ALL_OBJS) $(ALL_OBJS:%.o=%.d)
 	rm -f $(IMG_OBJ) $(SOUND_OBJ) $(WOLF_OBJ)
@@ -108,6 +116,7 @@ local.zip:
 	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin
 	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin/cp
 	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin/rm
+	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin/touch
 	cp $(BITOS_PATH)/apps/si/si $(TOOLS_BASE)/local/bin
 	cp $(BITOS_PATH)/bin/bitos.elf $(TOOLS_BASE)/local/bin
 	cp -r /usr/local/sh-elf $(TOOLS_BASE)/local
