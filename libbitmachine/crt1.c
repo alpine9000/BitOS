@@ -32,6 +32,7 @@ void start(int argc, char** argv)
   bft_init();
   _init_ctors();
   setenv("PATH", "/usr/local/bin:/usr/local/sh-elf/bin", 1);
+  setenv("SHELL", "/usr/local/bin/sh", 1);
   exit(main(argc, argv));
 }
 

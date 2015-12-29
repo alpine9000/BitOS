@@ -21,6 +21,6 @@ gdrive: $(ELF_FILE)
 	cp $(ELF_FILE) ~/Google\ Drive/BitFS/bin/
 
 clean:
-	-rm *.o $(ELF_FILE)
+	-rm -f *.o $(ELF_FILE)
 
 -include $(OBJ_FILES:%.o=%.d) 

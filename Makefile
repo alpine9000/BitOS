@@ -114,6 +114,7 @@ local.zip:
 	cp $(BINUTILS_BASE)/ld/ld-new  $(TOOLS_BASE)/local/bin/ld
 	cp $(BITOS_PATH)/apps/bemacs/bemacs $(TOOLS_BASE)/local/bin	
 	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin
+	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin/sh
 	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin/cp
 	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin/rm
 	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin/touch
@@ -140,6 +141,12 @@ local.zip:
 	cp -r $(BITOS_PATH) $(TOOLS_BASE)/local/src/BitOS.2/
 	rm -rf $(TOOLS_BASE)/local/src/BitOS/.git
 	rm -rf $(TOOLS_BASE)/local/src/BitOS.2/.git
+	rm -f $(TOOLS_BASE)/local/src/BitOS/gitversion.mk
+	rm -f $(TOOLS_BASE)/local/src/BitOS.2/gitversion.mk
+	rm -f $(TOOLS_BASE)/local/src/BitOS/base.mk
+	rm -f $(TOOLS_BASE)/local/src/BitOS.2/base.mk
+	cp -r $(BITOS_PATH)/simple.mk $(TOOLS_BASE)/local/src/BitOS/base.mk
+	cp -r $(BITOS_PATH)/simple.mk $(TOOLS_BASE)/local/src/BitOS.2/base.mk
 	-rm -rf  $(TOOLS_BASE)/local/src/BitOS/newlib-2.0.0-r
 	-rm -rf  $(TOOLS_BASE)/local/src/BitOS.2/newlib-2.0.0-r
 	cp $(BITOS_PATH)/libbitmachine/libc-bitos.a $(TOOLS_BASE)/local/sh-elf/sh-elf/lib/m2e/libc.a

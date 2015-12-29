@@ -74,6 +74,9 @@ static int
 test(int argc, char** argv);
 
 static int
+sh(int argc, char** argv);
+
+static int
 version(int argc, char** argv);
 
 static int
@@ -84,6 +87,13 @@ shell_kernel_stats(int argc, char** argv);
 
 static int
 shell_malloc_stats(int argc, char** argv);
+
+int 
+shell_execBuiltin(int argc, char** argv);
+
+static 
+void
+shell_globArgv(char* command, int* out_argc, char*** out_argv);
 
 typedef void(*arg_function)(int,char**);
 
@@ -103,6 +113,7 @@ static builtin_t builtins[] = {
   {"rm", 0, rm},
   {"pwd", 0, pwd},
   {"cd", 0, cd},
+  {"sh", 0, sh},
   {"mkdir", 0, _mkdir},
   {"bcc", 0, bcc},
   {"rwolf", 1, wolf},
@@ -179,6 +190,44 @@ copy(char* s, char* dest_filename)
   }
 }
 
+static 
+char** 
+shell_argvDup2(int argc, char** argv, int skip)
+{
+
+  if (argv != 0) {
+    char **vector = malloc((argc+1-skip)*sizeof(char*));
+    int i;
+    for (i = 0;i  <  argc-skip; i++) {
+      vector[i] = malloc(strlen(argv[i+skip]+1));
+      strcpy(vector[i], argv[i+skip]);
+    }
+    vector[i] = 0;
+    return vector;
+  }
+
+  return 0;
+}
+
+static int
+sh(int argc, char** argv)
+{
+  if (!(argc > 2)) { // /bin/sh -c rm blah blah2
+    printf("%s: usage: %s -c command\n", argv[0], argv[0]);
+    return 1;
+  }
+
+  int argc2;
+  char** argv2;
+  char* cmd = argv_reconstruct(argv);
+  shell_globArgv(cmd, &argc2, &argv2);
+  free(cmd);
+  char** argv3 = shell_argvDup2(argc2, argv2, 2);
+  shell_execBuiltin(argc2-2, argv3);
+  argv_free(argv2);
+  argv_free(argv3);
+  return 0;
+}
 
 static int 
 rcopy(char* src, char* dest)
@@ -446,15 +495,22 @@ rm(int argc, char** argv)
     return 1;
   }
 
+  int force = 0;
+  
   for (int i = 1; i < argc; i++) {
     if (argv[i][0] != '-') {
       if (unlink(argv[i]) != 0) {
-	printf("%s: failed to rm %s\n", argv[0], argv[i]);
-	return 1;
+	if (!force) {
+	  printf("%s: failed to rm %s\n", argv[0], argv[i]);
+	  return 1;
+	}
+      }
+    } else {
+      if (argv[i][1] == 'f') {
+	force = 1;
       }
     }
-  }
-
+  }  
   return 0;
 } 
 

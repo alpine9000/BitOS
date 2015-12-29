@@ -29,11 +29,21 @@ typedef struct {
 static int 
 _thread_load(char* command, _thread_info_t* info)
 {
+  char* from = "/bin/sh"; // Hack because it's too hard to have "/bin/" for now
+  char* to = "/usr/local/bin/sh";  
+
   char buffer[PATH_MAX];
   char** argv = argv_build((char*)command);
-  char* name = argv[0];
   int fd;
   struct stat s;
+
+  if (strncmp(from, command, strlen(from)) == 0) {
+    free(argv[0]);
+    argv[0] = malloc(strlen(to)+1);
+    strcpy(argv[0], to);
+  } 
+
+  char* name = argv[0];
 
   simulator_printf("_thread_load: %s\n", command);
 
