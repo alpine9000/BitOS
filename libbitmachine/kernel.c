@@ -38,6 +38,8 @@ enum {
     _THREAD_BLOCKED = 3,
 };
 
+const char* _version;
+
 static char* states[] = {
   "D", "R", "W", "B"
 };
@@ -366,10 +368,16 @@ _from_asm_kernel_kill(int status, int context)
   _kernel_resume_asm(threadTable[currentThread].sp);
 }
 
+const char* 
+kernel_version()
+{
+  return _version;
+}
 
 void
-kernel_init(int(*ptr)(int argc, char** argv))
+kernel_init(int (*ptr)(int argc, char** argv), const char* version)
 {
+  _version = version;
   ktrace_reset();
   currentThread = 0;
   for (int i = 0; i < _thread_max; i++) {

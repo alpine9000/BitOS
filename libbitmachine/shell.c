@@ -128,14 +128,12 @@ static builtin_t builtins[] = {
 
 static unsigned numBuiltins = sizeof(builtins)/sizeof(builtin_t);
 
-char **gitversion = 0;
-
 int _shell_complete = 0;
 
 static int
 version(int argc, char** argv)
 {
-  printf("BitOS version %s\n", *gitversion);
+  printf("BitOS version %s\n", _bft->kernel_version());
   return 0;
 }
 

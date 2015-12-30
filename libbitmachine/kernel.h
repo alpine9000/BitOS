@@ -10,6 +10,7 @@ struct tms;
 #define kernel_memoryBarrier() do { asm volatile ("" : : : "memory"); } while (0)
 #define kernel_threadSetWindow(w) kernel_threadSetInfo(KERNEL_THREAD_WINDOW, (unsigned)w)
 
+
 unsigned 
 kernel_times (struct tms *tp);
 
@@ -32,7 +33,7 @@ unsigned
 kernel_disableInts();
 
 void     
-kernel_init(int (*ptr)(int argc, char** argv));
+kernel_init(int (*ptr)(int argc, char** argv), const char* version);
 
 thread_h    
 kernel_threadSpawn(int (*entry)(int argc, char**argv),  char**argv, fds_t* fds);
@@ -108,6 +109,8 @@ _kernel_newlib_lock_try_acquire(unsigned* lock);
 void 
 _kernel_newlib_lock_release(unsigned* lock);
 
+const char*
+kernel_version();
 
 //#define KTRACE
 

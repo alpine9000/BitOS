@@ -101,7 +101,9 @@ _bft_t __bft  = {
   &tgetent,
   &cfmakeraw,
 
-  &thread_spawnFileDescriptors
+  &thread_spawnFileDescriptors,
+
+  &kernel_version
 };
 
 _bft_t* _bft = &__bft;

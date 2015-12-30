@@ -5,11 +5,10 @@
 #include "argv.h"
 #include "process.h"
 
-extern char ** gitversion;
 #ifdef GITVERSION
-static char* version=GITVERSION;
+static const char* version=GITVERSION;
 #else
-static char* version="local";
+static const char* version="local";
 #endif
 
 extern void 
@@ -44,10 +43,9 @@ go(int argc, char** argv)
 int
 main()
 {
-  gitversion = &version;
   gfx_init();
   window_init();
-  kernel_init(&go); 
+  kernel_init(&go, version); 
   for(;;);
 }
 
