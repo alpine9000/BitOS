@@ -93,76 +93,82 @@ $(BIN_FILE): $(ELF_FILE)
 -include $(ALL_OBJS:%.o=%.d) 
 
 
-#GCC_BASE=$(TOOLS_BASE)/gcc-5.2.0.bitos.O3
+FS_BASE=$(TOOLS_BASE)/filesystem
 GCC_BASE=$(TOOLS_BASE)/gcc-5.3.0.bitos
 MAKE_BASE=$(TOOLS_BASE)/make-4.1
-GCC_LIBEXEC=$(TOOLS_BASE)/local/sh-elf/libexec/gcc/sh-elf/5.3.0/
 BINUTILS_BASE = $(TOOLS_BASE)/binutils.bitos
-local.zip:
+GCC_LIBEXEC=$(FS_BASE)/usr/local/sh-elf/libexec/gcc/sh-elf/5.3.0/
+filesystem:
 
-	-rm -rf $(TOOLS_BASE)/local
+	-rm -rf $(FS_BASE)
+	mkdir $(FS_BASE)
 
 	-rm $(BINUTILS_BASE)/gas/as-new $(BINUTILS_BASE)/ld/ld-new $(BINUTILS_BASE)/binutils/ar
 	make -C $(BINUTILS_BASE) all-gas all-ld
 	make -C $(BINUTILS_BASE)/binutils ar
-	-mkdir $(TOOLS_BASE)/local/
-	-mkdir $(TOOLS_BASE)/local/bin
-	cp $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus $(TOOLS_BASE)/local/bin
-	cp $(MAKE_BASE)/make $(TOOLS_BASE)/local/bin
-	cp $(BINUTILS_BASE)/binutils/ar $(TOOLS_BASE)/local/bin
-	cp $(BINUTILS_BASE)/gas/as-new  $(TOOLS_BASE)/local/bin/as
-	cp $(BINUTILS_BASE)/ld/ld-new  $(TOOLS_BASE)/local/bin/ld
-	cp $(BITOS_PATH)/apps/bemacs/bemacs $(TOOLS_BASE)/local/bin	
-	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin
-	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin/sh
-	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin/cp
-	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin/rm
-	cp $(BITOS_PATH)/apps/bsh/bsh $(TOOLS_BASE)/local/bin/touch
-	cp $(BITOS_PATH)/apps/si/si $(TOOLS_BASE)/local/bin
-	cp $(BITOS_PATH)/bin/bitos.elf $(TOOLS_BASE)/local/bin
-	cp -r /usr/local/sh-elf $(TOOLS_BASE)/local
-	rm -r $(TOOLS_BASE)/local/sh-elf/share
-	rm -r $(TOOLS_BASE)/local/sh-elf/bin
-	mkdir $(TOOLS_BASE)/local/sh-elf/bin
+	-mkdir $(FS_BASE)/usr
+	-mkdir $(FS_BASE)/usr/local
+	-mkdir $(FS_BASE)/usr/local/bin
+	-mkdir $(FS_BASE)/bin
+	-mkdir $(FS_BASE)/usr/local/home
+	-mkdir $(FS_BASE)/usr/local/src
+
+	cp $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus $(FS_BASE)/usr/local/bin
+	cp $(MAKE_BASE)/make $(FS_BASE)/usr/local/bin
+	cp $(BINUTILS_BASE)/binutils/ar $(FS_BASE)/usr/local/bin
+	cp $(BINUTILS_BASE)/gas/as-new  $(FS_BASE)/usr/local/bin/as
+	cp $(BINUTILS_BASE)/ld/ld-new  $(FS_BASE)/usr/local/bin/ld
+	cp $(BITOS_PATH)/apps/bemacs/bemacs $(FS_BASE)/usr/local/bin	
+	cp $(BITOS_PATH)/apps/bsh/bsh $(FS_BASE)/usr/local/bin
+	cp $(BITOS_PATH)/apps/bsh/bsh $(FS_BASE)/bin/sh
+	cp $(BITOS_PATH)/apps/bsh/bsh $(FS_BASE)/usr/local/bin/sh
+	cp $(BITOS_PATH)/apps/bsh/bsh $(FS_BASE)/usr/local/bin/cp
+	cp $(BITOS_PATH)/apps/bsh/bsh $(FS_BASE)/usr/local/bin/rm
+	cp $(BITOS_PATH)/apps/bsh/bsh $(FS_BASE)/usr/local/bin/touch
+	cp $(BITOS_PATH)/apps/si/si $(FS_BASE)/usr/local/bin
+	cp $(BITOS_PATH)/bin/bitos.elf $(FS_BASE)/usr/local/bin
+	cp -r /usr/local/sh-elf $(FS_BASE)/usr/local
+	rm -r $(FS_BASE)/usr/local/sh-elf/share
+	rm -r $(FS_BASE)/usr/local/sh-elf/bin
+	mkdir $(FS_BASE)/usr/local/sh-elf/bin
 
 	rm -r $(GCC_LIBEXEC)/*
-	cp $(GCC_BASE)/gcc/xgcc $(TOOLS_BASE)/local/sh-elf/bin/sh-elf-gcc
-	cp $(GCC_BASE)/gcc/xg++ $(TOOLS_BASE)/local/sh-elf/bin/sh-elf-g++
-	cp $(TOOLS_BASE)/local/bin/ld $(TOOLS_BASE)/local/sh-elf/bin/sh-elf-ld
-	cp $(BINUTILS_BASE)/binutils/ar $(TOOLS_BASE)/local/sh-elf/bin/sh-elf-ar
+	cp $(GCC_BASE)/gcc/xgcc $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-gcc
+	cp $(GCC_BASE)/gcc/xg++ $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-g++
+	cp $(FS_BASE)/usr/local/bin/ld $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-ld
+	cp $(BINUTILS_BASE)/binutils/ar $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-ar
 	cp $(GCC_BASE)/gcc/lto-wrapper $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus $(GCC_LIBEXEC)
 
-	rm -r $(TOOLS_BASE)/local/sh-elf/sh-elf/bin
-	rm -r $(TOOLS_BASE)/local/sh-elf/sh-elf/lib/ml
-	rm -r $(TOOLS_BASE)/local/sh-elf/sh-elf/lib/*.*
-	-rm -rf $(TOOLS_BASE)/local/src/BitOS
-	-mkdir $(TOOLS_BASE)/local/src
-	cp -r $(BITOS_PATH) $(TOOLS_BASE)/local/src/BitOS
-	cp -r $(BITOS_PATH) $(TOOLS_BASE)/local/src/BitOS.2/
-	rm -rf $(TOOLS_BASE)/local/src/BitOS/.git
-	rm -rf $(TOOLS_BASE)/local/src/BitOS.2/.git
-	rm -f $(TOOLS_BASE)/local/src/BitOS/gitversion.mk
-	rm -f $(TOOLS_BASE)/local/src/BitOS.2/gitversion.mk
-	rm -f $(TOOLS_BASE)/local/src/BitOS/base.mk
-	rm -f $(TOOLS_BASE)/local/src/BitOS.2/base.mk
-	cp -r $(BITOS_PATH)/simple.mk $(TOOLS_BASE)/local/src/BitOS/base.mk
-	cp -r $(BITOS_PATH)/simple.mk $(TOOLS_BASE)/local/src/BitOS.2/base.mk
-	-rm -rf  $(TOOLS_BASE)/local/src/BitOS/newlib-2.0.0-r
-	-rm -rf  $(TOOLS_BASE)/local/src/BitOS.2/newlib-2.0.0-r
-	cp $(BITOS_PATH)/libbitmachine/libc-bitos.a $(TOOLS_BASE)/local/sh-elf/sh-elf/lib/m2e/libc.a
-	mv $(TOOLS_BASE)/local/sh-elf/sh-elf/include/c++  $(TOOLS_BASE)/local/sh-elf/include
+	rm -r $(FS_BASE)/usr/local/sh-elf/sh-elf/bin
+	rm -r $(FS_BASE)/usr/local/sh-elf/sh-elf/lib/ml
+	rm -r $(FS_BASE)/usr/local/sh-elf/sh-elf/lib/*.*
 
-	$(STRIP) $(TOOLS_BASE)/local/bin/* 
+	cp -r $(BITOS_PATH) $(FS_BASE)/usr/local/src/BitOS
+	cp -r $(BITOS_PATH) $(FS_BASE)/usr/local/src/BitOS.2/
+	rm -rf $(FS_BASE)/usr/local/src/BitOS/.git
+	rm -rf $(FS_BASE)/usr/local/src/BitOS.2/.git
+	rm -f $(FS_BASE)/usr/local/src/BitOS/gitversion.mk
+	rm -f $(FS_BASE)/usr/local/src/BitOS.2/gitversion.mk
+	rm -f $(FS_BASE)/usr/local/src/BitOS/base.mk
+	rm -f $(FS_BASE)/usr/local/src/BitOS.2/base.mk
+	cp -r $(BITOS_PATH)/simple.mk $(FS_BASE)/usr/local/src/BitOS/base.mk
+	cp -r $(BITOS_PATH)/simple.mk $(FS_BASE)/usr/local/src/BitOS.2/base.mk
+	-rm -rf  $(FS_BASE)/usr/local/src/BitOS/newlib-2.0.0-r
+	-rm -rf  $(FS_BASE)/usr/local/src/BitOS.2/newlib-2.0.0-r
+	cp $(BITOS_PATH)/libbitmachine/libc-bitos.a $(FS_BASE)/usr/local/sh-elf/sh-elf/lib/m2e/libc.a
+	mv $(FS_BASE)/usr/local/sh-elf/sh-elf/include/c++  $(FS_BASE)/usr/local/sh-elf/include
+
+	$(STRIP) $(FS_BASE)/usr/local/bin/* 
 	$(STRIP) $(GCC_LIBEXEC)/cc1
 	$(STRIP) $(GCC_LIBEXEC)/cc1plus
-	$(STRIP) $(TOOLS_BASE)/local/sh-elf/bin/* 
+	$(STRIP) $(FS_BASE)/usr/local/sh-elf/bin/* 
 
-	mkdir $(TOOLS_BASE)/local/home
-	cp $(BITOS_PATH)/hello.c $(TOOLS_BASE)/local/home
-	cp $(BITOS_PATH)/Makefile.hello $(TOOLS_BASE)/local/home/Makefile
-	-rm $(TOOLS_BASE)/local.zip
-	cd $(TOOLS_BASE)/; zip -r local.zip local
-	cp $(TOOLS_BASE)/local.zip ~/Google\ Drive/BitFS
-	@#cp $(TOOLS_BASE)/local.zip ~/Google\ Drive/Projects/BitMachine/Web/BitFS
 
-full: gdrive web relink-tools local.zip
+	cp $(BITOS_PATH)/hello.c $(FS_BASE)/usr/local/home
+	cp $(BITOS_PATH)/Makefile.hello $(FS_BASE)/usr/local/home/Makefile
+	-rm $(TOOLS_BASE)/filesystem.zip
+	cd $(TOOLS_BASE)/filesystem; zip -r $(TOOLS_BASE)/filesystem.zip *
+	cp $(TOOLS_BASE)/filesystem.zip ~/Google\ Drive/BitFS
+
+
+full: gdrive web filesystem
