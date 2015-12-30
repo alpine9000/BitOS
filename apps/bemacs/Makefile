@@ -3,3 +3,4 @@ OBJ_FILES=readline.o basic.o buffer.o display.o file.o fileio.o line.o main.o ra
 LIBS=-lreadline
 
 include ../../app.mk
+OPTIMIZE=-O2
