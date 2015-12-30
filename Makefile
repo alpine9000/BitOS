@@ -37,6 +37,12 @@ gdrive: all
 	make  -C $(BEMACS) gdrive
 	make  -C $(SI) gdrive
 
+install:
+	cp apps/bsh/bsh /usr/local/bin
+	cp apps/bemacs/bemacs /usr/local/bin
+	cp apps/si/si /usr/local/bin
+
+
 web: all
 	cp $(ELF_FILE) ~/Google\ Drive/Projects/BitMachine/Web/BitFS/
 
@@ -72,7 +78,7 @@ clean:
 	$(MAKE) -C apps/si clean
 
 backup:
-	rsync --delete -crv $(BITOS_PATH)/ ~/Google\ Drive/Projects/BitOS
+	git -C ~/Google\ Drive/Projects/BitOS pull
 
 .SECONDARY:
 libwolf.a: $(WOLF_MEDIA)
