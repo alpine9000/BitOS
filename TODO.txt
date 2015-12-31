@@ -2,7 +2,7 @@ TODO
 ====
 http://mrale.ph/talks/goto2015/#/178
 
-o - add free's for argv_reconstruct, argvDup and glob
+o - are you sure for FS init
 o - rwolf -> bft
 o - convert
 o - bemacs no <CR> on last line

@@ -7,7 +7,7 @@ Index: libiberty/pex-unix.c
  /* Utilities to execute a program in a subprocess (possibly linked by pipes
     with other subprocesses), and wait for it.  Generic Unix version
     (also used for UWIN and VMS).
-@@ -59,6 +60,276 @@
+@@ -59,6 +60,274 @@
  #include <process.h>
  #endif
  
@@ -174,15 +174,13 @@ Index: libiberty/pex-unix.c
 +
 +  setbuf(stdout, NULL);
 +
-+  printf("%s %d %d %d\n", command, in, fd[0], fd[1]);
++  //printf("%s %d %d %d\n", command, in, fd[0], fd[1]);
 +
 +  pid = (pid_t) thread_spawnFileDescriptors(command, in, fd[0], fd[0]);
 +  
 +  free(command);
 +  
 +  obj->sysdep = (void*)fd[0];
-+
-+  //  printf("thread_spawn: %d\n", pid);
 +
 +  return pid;
 +}
@@ -284,7 +282,7 @@ Index: libiberty/pex-unix.c
  #ifdef vfork /* Autoconf may define this to fork for us. */
  # define VFORK_STRING "fork"
  #else
-@@ -789,3 +1060,4 @@
+@@ -789,3 +1058,4 @@
      }
  #endif
  }

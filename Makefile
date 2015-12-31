@@ -107,6 +107,7 @@ GCC_LIBEXEC=$(FS_BASE)/usr/local/sh-elf/libexec/gcc/sh-elf/5.3.0/
 filesystem:
 
 	-rm -rf $(FS_BASE)
+	-rm $(TOOLS_BASE)/filesystem.zip
 	mkdir $(FS_BASE)
 
 	-rm $(BINUTILS_BASE)/gas/as-new $(BINUTILS_BASE)/ld/ld-new $(BINUTILS_BASE)/binutils/ar
@@ -119,7 +120,6 @@ filesystem:
 	-mkdir $(FS_BASE)/usr/local/home
 	-mkdir $(FS_BASE)/usr/local/src
 
-	cp $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus $(FS_BASE)/usr/local/bin
 	cp $(MAKE_BASE)/make $(FS_BASE)/usr/local/bin
 	cp $(BINUTILS_BASE)/binutils/ar $(FS_BASE)/usr/local/bin
 	cp $(BINUTILS_BASE)/gas/as-new  $(FS_BASE)/usr/local/bin/as
@@ -164,6 +164,8 @@ filesystem:
 	cp $(BITOS_PATH)/libbitmachine/libc-bitos.a $(FS_BASE)/usr/local/sh-elf/sh-elf/lib/m2e/libc.a
 	mv $(FS_BASE)/usr/local/sh-elf/sh-elf/include/c++  $(FS_BASE)/usr/local/sh-elf/include
 
+
+	-rm `find $(FS_BASE)/usr/local/src -name "*~"`
 	$(STRIP) $(FS_BASE)/usr/local/bin/* 
 	$(STRIP) $(GCC_LIBEXEC)/cc1
 	$(STRIP) $(GCC_LIBEXEC)/cc1plus

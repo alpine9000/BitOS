@@ -12,8 +12,8 @@ diff -Naur make-4.1.orig/dir.c make-4.1.bitos/dir.c
  # define REAL_DIR_ENTRY(dp) 1
 diff -Naur make-4.1.orig/function.c make-4.1.bitos/function.c
 --- make-4.1.orig/function.c	2014-10-06 03:24:51.000000000 +1100
-+++ make-4.1.bitos/function.c	2015-12-25 09:09:28.000000000 +1100
-@@ -1656,9 +1656,57 @@
++++ make-4.1.bitos/function.c	2015-12-31 13:35:48.000000000 +1100
+@@ -1656,9 +1656,55 @@
  
  #else
  #ifndef _AMIGA
@@ -30,8 +30,6 @@ diff -Naur make-4.1.orig/function.c make-4.1.bitos/function.c
 +  FILE *fp = popen(command, "r");
 +  int i,  maxlen = 64;
 +  char* buffer = xmalloc(maxlen+1);
-+
-+  printf("func_shell_base: %s\n", command);
 +
 +  if (fp == NULL) {
 +      perror_with_name ("", "popen");
@@ -71,7 +69,7 @@ diff -Naur make-4.1.orig/function.c make-4.1.bitos/function.c
    char *batch_filename = NULL;
    int errfd;
  #ifdef __MSDOS__
-@@ -1860,7 +1908,7 @@
+@@ -1860,7 +1906,7 @@
  
    return o;
  }
@@ -82,7 +80,7 @@ diff -Naur make-4.1.orig/function.c make-4.1.bitos/function.c
  /* Do the Amiga version of func_shell.  */
 diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
 --- make-4.1.orig/job.c	2014-10-06 03:24:51.000000000 +1100
-+++ make-4.1.bitos/job.c	2015-12-27 08:25:22.000000000 +1100
++++ make-4.1.bitos/job.c	2015-12-31 13:34:52.000000000 +1100
 @@ -82,6 +82,11 @@
  int dos_command_running;
  #endif /* __MSDOS__ */
@@ -125,7 +123,7 @@ diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
  /* Start a job to run the commands specified in CHILD.
     CHILD is updated to reflect the commands and ID of the child process.
  
-@@ -1164,10 +1172,24 @@
+@@ -1164,6 +1172,8 @@
    int errfd = FD_STDERR;
  #endif
  
@@ -134,23 +132,7 @@ diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
    /* If we have a completely empty commandset, stop now.  */
    if (!child->command_ptr)
      goto next_command;
- 
-+#ifdef __BITOS__
-+  /*  printf("%s\n", child->command_ptr);
-+  if (!thread_load(child->command_ptr)) {
-+    child->noerror = 0;
-+    perror_with_name ("thread_load", "");
-+  } else {
-+    child->noerror = 1;
-+  }
-+  return;*/
-+#endif
-+
-+
-   /* Combine the flags parsed for the line itself with
-      the flags specified globally for this target.  */
-   flags = (child->file->command_flags
-@@ -1314,6 +1336,7 @@
+@@ -1314,6 +1324,7 @@
    child->output.syncout = output_sync && (output_sync == OUTPUT_SYNC_RECURSE
                                            || !(flags & COMMANDS_RECURSE));
  
@@ -158,7 +140,7 @@ diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
    OUTPUT_SET (&child->output);
  
  #ifndef NO_OUTPUT_SYNC
-@@ -1323,6 +1346,9 @@
+@@ -1323,6 +1334,9 @@
      output_dump (&child->output);
  #endif
  
@@ -168,7 +150,7 @@ diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
    /* Print the command if appropriate.  */
    if (just_print_flag || trace_flag
        || (!(flags & COMMANDS_SILENT) && !silent_flag))
-@@ -1375,6 +1401,7 @@
+@@ -1375,6 +1389,7 @@
        goto next_command;
      }
  
@@ -176,7 +158,7 @@ diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
    /* We're sure we're going to invoke a command: set up the output.  */
    output_start ();
  
-@@ -1382,8 +1409,10 @@
+@@ -1382,8 +1397,10 @@
  
    fflush (stdout);
    fflush (stderr);
@@ -187,7 +169,7 @@ diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
  #if !defined(WINDOWS32) && !defined(_AMIGA) && !defined(__MSDOS__)
  
    /* Set up a bad standard input that reads from a broken pipe.  */
-@@ -1406,7 +1435,7 @@
+@@ -1406,7 +1423,7 @@
            CLOSE_ON_EXEC (bad_stdin);
          }
      }
@@ -196,7 +178,7 @@ diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
  #endif /* !WINDOWS32 && !_AMIGA && !__MSDOS__ */
  
    /* Decide whether to give this child the 'good' standard input
-@@ -1519,6 +1548,29 @@
+@@ -1519,6 +1536,21 @@
  
  #else  /* !__EMX__ */
  
@@ -207,15 +189,7 @@ diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
 +
 +      char* command = argv_reconstruct(argv);
 +
-+      printf("thread_load: pid = %d %s\n", bitos_pid, command);
-+
 +      bitos_status = !thread_load(command);
-+
-+      /*if (!bitos_status) {
-+	errno = ENOENT;
-+	perror_with_name ("thread_load", command);
-+	goto error;
-+	}*/
 +
 +      free(command);
 +
@@ -226,7 +200,7 @@ diff -Naur make-4.1.orig/job.c make-4.1.bitos/job.c
        child->pid = fork ();
        environ = parent_environ; /* Restore value child may have clobbered.  */
        if (child->pid == 0)
-@@ -1551,6 +1603,7 @@
+@@ -1551,6 +1583,7 @@
            perror_with_name ("fork", "");
            goto error;
          }
