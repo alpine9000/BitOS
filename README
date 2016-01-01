@@ -172,10 +172,15 @@ cd ~/Projects/bitos-build/binutils.bitos
 ../src/binutils-2.25/configure --host=sh-elf --target=sh-elf --prefix=/usr/local --disable-nls --disable-nls --disable-werror CFLAGS="-O2 -m2e -pie"
 make all-gas all-ld
 
-(14) make local.zip
+(14) make
+=========
+cd ~/Projects/BitOS/external
+make -f make.mk
+
+(14) make filesystem.zip
 ===================
 cd ~/Projects/BitOS
-make local.zip
+make filesystem
 
 (15) Setting local filesystem
 =============================

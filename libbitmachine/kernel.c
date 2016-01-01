@@ -23,8 +23,8 @@ extern unsigned
 _kernel_atomic_lock_asm(void* ptr);
 
 
-#define _thread_max 8
-#define _thread_historyMax 20 
+#define _thread_max 16
+#define _thread_historyMax 32
 
 //#define _thread_stack_size_bytes  (0x2800000)
 #define _thread_stack_size_bytes  (0x200000)

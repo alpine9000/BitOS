@@ -69,7 +69,7 @@ touch:
 	$(MAKE) -C apps/si touch
 
 clean:
-	-rm -f $(BIN_FILE) libwolf.a bitos.sym bitos.map *~ *.rgba y.* lex.yy.? y.tab.? $(ELF_FILE) $(ALL_OBJS) $(ALL_OBJS:%.o=%.d)
+	-rm -f $(BIN_FILE) libwolf.a  *~ $(ELF_FILE) $(ALL_OBJS) $(ALL_OBJS:%.o=%.d)
 	rm -f $(IMG_OBJ) $(SOUND_OBJ) $(WOLF_OBJ)
 	$(MAKE) -C libbitmachine clean
 	$(MAKE) -C apps/wolf clean
@@ -104,6 +104,8 @@ GCC_BASE=$(TOOLS_BASE)/gcc-5.3.0.bitos
 MAKE_BASE=$(TOOLS_BASE)/make-4.1
 BINUTILS_BASE = $(TOOLS_BASE)/binutils.bitos
 GCC_LIBEXEC=$(FS_BASE)/usr/local/sh-elf/libexec/gcc/sh-elf/5.3.0/
+fs: filesystem
+
 filesystem:
 
 	-rm -rf $(FS_BASE)
