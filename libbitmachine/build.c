@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include "process.h"
+#include "thread.h"
 
 static char* 
 filename_base(char* filename, char *buffer)

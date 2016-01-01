@@ -14,7 +14,7 @@
 #include "kernel.h"
 #include "simulator.h"
 #include "console.h"
-#include "process.h"
+#include "thread.h"
 #include "argv.h"
 #include "window.h"
 #include "gfx.h"

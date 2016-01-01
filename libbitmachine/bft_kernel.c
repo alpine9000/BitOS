@@ -4,7 +4,7 @@
 #include "gfx.h"
 #include "audio.h"
 #include "console.h"
-#include "process.h"
+#include "thread.h"
 #include "simulator.h"
 #include "file.h"
 #include "_termios.h"

@@ -5,7 +5,7 @@
 #include "file.h"
 #include "memory.h"
 #include "bft.h"
-#include "process.h"
+#include "thread.h"
 #include "kernel.h"
 
 #define _notImplemented    _SYS_reserved

@@ -3,7 +3,7 @@
 #include "kernel.h"
 #include "window.h"
 #include "argv.h"
-#include "process.h"
+#include "thread.h"
 
 #ifdef GITVERSION
 static const char* version=GITVERSION;
