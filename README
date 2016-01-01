@@ -51,6 +51,7 @@ sudo make install
 #===================
 svn checkout svn://gcc.gnu.org/svn/gcc/tags/gcc_5_3_0_release ~/Projects/bitos-build/src/gcc-5.3.0
 cd ~/Projects/bitos-build/src/gcc-5.3.0
+patch -p0 < ~/Projects/BitOS/external/patches/gcc-5.3.0.patch
 ./contrib/download_prerequisites
 mkdir ~/Projects/bitos-build/osx-gcc-5.3.0
 cd ~/Projects/bitos-build/osx-gcc-5.3.0
@@ -130,9 +131,9 @@ mkdir ~/Projects/bitos-build/gcc-5.3.0.bitos
 cd  ~/Projects/bitos-build/gcc-5.3.0.bitos
 ../src/gcc-5.3.0/configure --host=sh-elf --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp CFLAGS="-D__BITOS__ -O2 -g -m2e -pie" CXXFLAGS="-D__BITOS__ -O2 -m2e -pie -fpermissive -g" --disable-libstdcxx --enable-checking=release
 make
-(doesn't work - need to edit a makefile to remove CXXFLAGS from host build)
+(Build will fail - (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=53579) - need to edit a makefile to remove CXXFLAGS from host build)
 
-emacs build-x86_64-apple-darwin15.2.0/libcpp/Makefile
+emacs build-x86_64-apple-darwin15.2.0/libcpp/Makefile  (path will differ depending on OS version)
 
 ALL_CXXFLAGS = $(CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
         $(CPPFLAGS) $(PICFLAG)
@@ -144,35 +145,14 @@ ALL_CXXFLAGS = $(_CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
 make -j 4
 
 
-(12) gcc.bitos.O3 (pre 5.3.0) - not used atm
-============================================
-mkdir ~/Projects/bitos-build/gcc-5.3.0.bitos.O3
-cd  ~/Projects/bitos-build/gcc-5.3.0.bitos.O3
-../src/gcc-5.3.0/configure --host=sh-elf --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp CFLAGS="-O3 -g -m2e -pie" CXXFLAGS="-O3 -m2e -pie -fpermissive -g" --disable-libstdcxx --enable-checking=release 
-make
-(doesn't work - need to edit a makefile to remove CXXFLAGS from host build)
-
-emacs build-x86_64-apple-darwin15.0.0/libcpp/Makefile
-
-ALL_CXXFLAGS = $(CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
-        $(CPPFLAGS) $(PICFLAG)
-
-== becomes ==
-
-ALL_CXXFLAGS = $(_CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
-        $(CPPFLAGS) $(PICFLAG)
-
-make
-
-
-(13) bintuils.bitos
+(12) bintuils.bitos
 ===================
 mkdir ~/Projects/bitos-build/binutils.bitos
 cd ~/Projects/bitos-build/binutils.bitos
 ../src/binutils-2.25/configure --host=sh-elf --target=sh-elf --prefix=/usr/local --disable-nls --disable-nls --disable-werror CFLAGS="-O2 -m2e -pie"
 make all-gas all-ld
 
-(14) make
+(13) make
 =========
 cd ~/Projects/BitOS/external
 make -f make.mk
@@ -191,7 +171,8 @@ make filesystem
 ================================
 * Navigate to https://alpine9000.github.io/BitMachine/ (Chrome works best)
 * Menu "Drive" -> "Boot BitOS from Google Drive"
-b (Takes a long time)
+cd /usr/local/src/BitOS
+make elf
 * Menu "Drive" -> "Boot BitOS from Local"
 
 You are now running bitos built on bitos (-:
@@ -200,19 +181,16 @@ You are now running bitos built on bitos (-:
 ============================
 * Navigate to https://alpine9000.github.io/BitMachine/ (Chrome works best)
 * Menu "Drive" -> "Boot BitOS from Google Drive"
-bsh
-bemacs /usr/local/src/BitOS/libbitmachine/shell.c (Change the version number)
-* Follow step 16 (Rebuild bitos in BitMachine)
+bemacs /usr/local/src/BitOS/libbitmachine/shell.c (Change the version function to print something else)
+* Follow previous step (Rebuild bitos in BitMachine)
 version
 
 Other Things To Try
 ===================
 
-bsh - simple shell with readline
 bemacs - emacs "like" editor (Ersatz emacs - https://github.com/stangelandcl/ersatz-emacs)
 rwolf - simple raycasting demo (http://lodev.org/cgtutor/raycasting.html)
 si - Start of a Space Invaders tribute
-bcc - BitOS front end to GCC
 ps - See some process information
 free - See some memory usage stats
 ls/dir/cat/rm/mkdir/pwd/mv/cp - simple unix commands
