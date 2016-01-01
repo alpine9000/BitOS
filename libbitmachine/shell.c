@@ -28,8 +28,7 @@ void shell_exec(char* cmd);
 #define shellWindowWidth  ((gfx_fontWidth+gfx_spaceWidth)*80)
 #define shellWindowHeight ( gfx_fontHeight*24)
 
-extern int
-wolf();
+#ifdef _INCLUDE_BUILDER
 
 extern int 
 build(int argc, char** argv);
@@ -37,8 +36,13 @@ build(int argc, char** argv);
 extern int 
 build2(int argc, char** argv);
 
+static int
+test(int argc, char** argv);
+
 extern int
 bcc(int argc, char** argv);
+
+#endif
 
 static int
 mv(int argc, char** argv);
@@ -71,13 +75,13 @@ static int
 runShell(int argc, char** argv);
 
 static int
-test(int argc, char** argv);
-
-static int
 sh(int argc, char** argv);
 
 static int
 version(int argc, char** argv);
+
+static int
+rwolf(int argc, char** argv);
 
 static int
 kernel(int argc, char** argv);
@@ -115,12 +119,14 @@ static builtin_t builtins[] = {
   {"cd", 0, cd},
   {"sh", 0, sh},
   {"mkdir", 0, _mkdir},
+  {"rwolf", 1, rwolf},
+#ifdef _INCLUDE_BUILDER
   {"bcc", 0, bcc},
-  {"rwolf", 1, wolf},
   {"b", 0, build},
   {"c", 0, build2},
-  {"shell", 1, runShell},
   {"test", 0, test},
+#endif
+  {"shell", 1, runShell},
   {"version", 0, version},
   {"kernel", 0, kernel},
   {"touch", 0, touch}
@@ -135,6 +141,12 @@ version(int argc, char** argv)
 {
   printf("BitOS version %s\n", _bft->kernel_version());
   return 0;
+}
+
+static int
+rwolf(int argc, char** argv)
+{
+  return _bft->wolf(argc, argv);
 }
 
 static char *
@@ -316,7 +328,7 @@ getSR()
  return r0;
 }
 
-
+#ifdef _INCLUDE_BUILDER
 static void 
 testBuild(char* cmd, int(*builder)(int, char**), unsigned x)
 {
@@ -366,6 +378,8 @@ test(int argc, char** argv)
   
   return 0;
 }
+
+#endif
 
 static int
 pwd(int argc, char** argv)

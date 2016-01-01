@@ -1,1 +1,1 @@
-static volatile char crti = 1;
+typedef void prevent_iso_warning;

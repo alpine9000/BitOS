@@ -1,1 +1,1 @@
-static volatile char crtend = 1;
+typedef void prevent_iso_warning;

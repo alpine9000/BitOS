@@ -94,6 +94,8 @@ typedef struct {
   thread_h (*thread_spawnFileDescriptors)(char* command, int in, int out, int err);
 
   const char* (*kernel_version)(void);
+  int (*wolf)(int argc, char** argv);
+
 } _bft_t;
 
 extern _bft_t* _bft;

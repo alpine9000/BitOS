@@ -1,3 +1,4 @@
+#ifdef _INCLUDE_BUILDER
 #include <stdio.h>
 #include <sys/syslimits.h>
 #include <string.h>
@@ -295,3 +296,6 @@ bcc(int argc, char** argv)
 
   printf("completed [%s] in %ld.%03ld\n", success ? "success" : "failed", diff.tv_sec, (diff.tv_usec/1000));
 }
+#else
+typedef void prevent_iso_warning;
+#endif

@@ -12,6 +12,9 @@
 extern void 
 dlmalloc_stats(void);
 
+extern int
+wolf(int argc, char** argv);
+
 // Changing this (except adding to the end) will stop all current client binaries from working.
 
 _bft_t __bft  = {
@@ -103,7 +106,8 @@ _bft_t __bft  = {
 
   &thread_spawnFileDescriptors,
 
-  &kernel_version
+  &kernel_version,
+  &wolf
 };
 
 _bft_t* _bft = &__bft;
