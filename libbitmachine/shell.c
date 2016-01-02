@@ -202,14 +202,14 @@ copy(char* s, char* dest_filename)
 
 static 
 char** 
-shell_argvDup2(int argc, char** argv, int skip)
+shell_argvDup(int argc, char** argv, int skip)
 {
 
   if (argv != 0) {
     char **vector = malloc((argc+1-skip)*sizeof(char*));
     int i;
     for (i = 0;i  <  argc-skip; i++) {
-      vector[i] = malloc(strlen(argv[i+skip]+1));
+      vector[i] = malloc(strlen(argv[i+skip])+1);
       strcpy(vector[i], argv[i+skip]);
     }
     vector[i] = 0;
@@ -232,7 +232,7 @@ sh(int argc, char** argv)
   char* cmd = argv_reconstruct(argv);
   shell_globArgv(cmd, &argc2, &argv2);
   free(cmd);
-  char** argv3 = shell_argvDup2(argc2, argv2, 2);
+  char** argv3 = shell_argvDup(argc2, argv2, 2);
   shell_execBuiltin(argc2-2, argv3);
   argv_free(argv2);
   argv_free(argv3);
@@ -649,25 +649,6 @@ typedef struct {
 } argv_t;
 
 static 
-char** 
-shell_argvDup(int argc, char** argv)
-{
-
-  if (argv != 0) {
-    char **vector = malloc((argc+1)*sizeof(char*));
-    int i;
-    for (i = 0;i  <  argc; i++) {
-      vector[i] = malloc(strlen(argv[i]+1));
-      strcpy(vector[i], argv[i]);
-    }
-    vector[i] = 0;
-    return vector;
-  }
-
-  return 0;
-}
-
-static 
 void
 shell_globArgv(char* command, int* out_argc, char*** out_argv)
 {
@@ -687,8 +668,9 @@ shell_globArgv(char* command, int* out_argc, char*** out_argv)
     
     g.gl_pathv[0] = argv[0];
     
-    *out_argv = shell_argvDup(g.gl_pathc + g.gl_offs, g.gl_pathv);
+    *out_argv = shell_argvDup(g.gl_pathc + g.gl_offs, g.gl_pathv, 0);
     *out_argc = g.gl_pathc + g.gl_offs;
+
     argv_free(argv);
   } else {
     *out_argv = argv;
