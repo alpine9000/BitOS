@@ -95,9 +95,11 @@ shell_malloc_stats(int argc, char** argv);
 int 
 shell_execBuiltin(int argc, char** argv);
 
-static 
-void
+static void
 shell_globArgv(char* command, int* out_argc, char*** out_argv);
+
+static int 
+shell_time(int argc, char** argv);
 
 typedef void(*arg_function)(int,char**);
 
@@ -129,7 +131,8 @@ static builtin_t builtins[] = {
   {"shell", 1, runShell},
   {"version", 0, version},
   {"kernel", 0, kernel},
-  {"touch", 0, touch}
+  {"touch", 0, touch},
+  {"time", 0,shell_time}
 };
 
 static unsigned numBuiltins = sizeof(builtins)/sizeof(builtin_t);
@@ -380,6 +383,60 @@ test(int argc, char** argv)
 }
 
 #endif
+
+static struct timeval* 
+shell_timeval_subtract (struct timeval *result, struct timeval *x, struct timeval *y)
+{
+  /* Perform the carry for the later subtraction by updating y. */
+  if (x->tv_usec < y->tv_usec) {
+    int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
+    y->tv_usec -= 1000000 * nsec;
+    y->tv_sec += nsec;
+  }
+  if (x->tv_usec - y->tv_usec > 1000000) {
+    int nsec = (x->tv_usec - y->tv_usec) / 1000000;
+    y->tv_usec += 1000000 * nsec;
+    y->tv_sec -= nsec;
+  }
+
+  /* Compute the time remaining to wait.
+     tv_usec is certainly positive. */
+  result->tv_sec = x->tv_sec - y->tv_sec;
+  result->tv_usec = x->tv_usec - y->tv_usec;
+  
+  /* Return 1 if result is negative. */
+  return result;
+}
+
+static int 
+shell_time(int argc, char** argv)
+{
+  if (argc == 1) {
+    printf("usage: %s command\n", argv[0]);
+    return -1;
+  }
+  
+
+  char** newArgv = shell_argvDup(argc, argv, 1);
+  char* command = argv_reconstruct(newArgv);
+
+  struct timeval start, end, diff;
+  
+  gettimeofday(&start,0);
+
+  int success = thread_load(command);
+  
+  gettimeofday(&end,0);
+
+  free(command);
+  argv_free(newArgv);
+  
+  shell_timeval_subtract(&diff, &end, &start);
+  
+  printf("completed [%s] in %ld.%03ld\n", success ? "success" : "failed", diff.tv_sec, (diff.tv_usec/1000));
+
+  return success;
+}
 
 static int
 pwd(int argc, char** argv)

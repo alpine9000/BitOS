@@ -112,9 +112,10 @@ filesystem:
 	-rm $(TOOLS_BASE)/filesystem.zip
 	mkdir $(FS_BASE)
 
-	-rm $(BINUTILS_BASE)/gas/as-new $(BINUTILS_BASE)/ld/ld-new $(BINUTILS_BASE)/binutils/ar
+	-rm $(BINUTILS_BASE)/gas/as-new $(BINUTILS_BASE)/ld/ld-new $(BINUTILS_BASE)/binutils/ar $(BINUTILS_BASE)/binutils/strip-new
 	make -C $(BINUTILS_BASE) all-gas all-ld
 	make -C $(BINUTILS_BASE)/binutils ar
+	make -C $(BINUTILS_BASE)/binutils strip-new
 	-mkdir $(FS_BASE)/usr
 	-mkdir $(FS_BASE)/usr/local
 	-mkdir $(FS_BASE)/usr/local/bin
@@ -145,6 +146,7 @@ filesystem:
 	cp $(GCC_BASE)/gcc/xg++ $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-g++
 	cp $(FS_BASE)/usr/local/bin/ld $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-ld
 	cp $(BINUTILS_BASE)/binutils/ar $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-ar
+	cp $(BINUTILS_BASE)/binutils/strip-new  $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-strip
 	cp $(GCC_BASE)/gcc/lto-wrapper $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus $(GCC_LIBEXEC)
 
 	rm -r $(FS_BASE)/usr/local/sh-elf/sh-elf/bin
