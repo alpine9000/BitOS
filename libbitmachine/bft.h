@@ -10,6 +10,7 @@ typedef struct {
   void (*window_close)(window_h window);
   unsigned (*window_isKeyDown)(window_h window, unsigned key);
 
+  const char* (*kernel_version)(void);
   int (*kernel_threadSetInfo)(thread_info_t type, unsigned info);
   void (*kernel_threadBlocked)();
   void (*kernel_spinLock)(void* ptr);
@@ -29,6 +30,9 @@ typedef struct {
   unsigned (*gfx_createFrameBuffer)(unsigned w, unsigned h);
   void (*gfx_loadData)(unsigned fb);
   void (*gfx_saveData)(unsigned fb);
+  unsigned (*gfx_getVideoWidth)();
+  unsigned (*gfx_getVideoHeight)();
+  void (*gfx_drawStringRetro)(unsigned fb, int  x, int y, char *c, unsigned color, int size, int spaceSize);
 
   void (*audio_execute)(unsigned channel);
   void (*audio_selectChannel)(unsigned channel);
@@ -56,9 +60,9 @@ typedef struct {
   void (*console_reset)();
 
   thread_h (*thread_spawn)(char* command);
+  thread_h (*thread_spawnFileDescriptors)(char* command, int in, int out, int err);
   int (*thread_load)(char* commandLine);
   int (*thread_wait)(thread_h tid);
-
 
   void (*_bitos_lock_init_recursive)(_LOCK_RECURSIVE_T* lock);
   void (*_bitos_lock_close_recursive)(_LOCK_RECURSIVE_T* lock);
@@ -75,10 +79,6 @@ typedef struct {
 
   void (*file_loadElfKernel)(unsigned fd);
 
-  unsigned (*gfx_getVideoWidth)();
-  unsigned (*gfx_getVideoHeight)();
-  void (*gfx_drawStringRetro)(unsigned fb, int  x, int y, char *c, unsigned color, int size, int spaceSize);
-
   int (*tputs)(const char *str, int affcnt, int (*putc)(int));
   int (*tcsetattr)(int fildes, int optional_actions, const struct termios *termios_p);
   int (*tcflow)(int fildes, int action);
@@ -91,9 +91,6 @@ typedef struct {
   int (*tgetent)(char *bp, const char *name);
   void (*cfmakeraw)(struct termios *termios_p);
 
-  thread_h (*thread_spawnFileDescriptors)(char* command, int in, int out, int err);
-
-  const char* (*kernel_version)(void);
   int (*wolf)(int argc, char** argv);
 
 } _bft_t;

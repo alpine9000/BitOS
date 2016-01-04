@@ -156,45 +156,17 @@ _file_read_stdin (int file, char *ptr, int len)
     return i;
 }
 
-//static 
-int 
-_file_read (int file, char *ptr, int len)
+static int 
+_file_read(int file, char *ptr, int len)
 {
   if (file == STDIN_FILENO) {
     return _file_read_stdin(file, ptr, len);
   } else {
     _file_lock();
     peripheral.file.fd = file;
-    int i;
-    for (i = 0; i < len; ++i) {
-      int val = peripheral.file.read;
-      if (val == -2) { // Blocked pipe
-	_file_unlock();
-	return val;
-      }
-      if (val >= 0) {
-	*ptr++ = (char)val;
-      } else {
-	break;
-      }
-    }
-    _file_unlock();
-    return i;
-  }
-}
-
-//static 
-int 
-_file_read2(int file, char *ptr, int len)
-{
-  if (file == STDIN_FILENO) {
-    return _file_read_stdin(file, ptr, len);
-  } else {
-    _file_lock();
-    peripheral.file.fd = file;
-    peripheral.file.writeAddress = (unsigned)ptr;
-    peripheral.file_readLength = len;
-    int val = peripheral.file_doRead;
+    peripheral.file.address = ptr;
+    peripheral.file.readLength = len;
+    int val = peripheral.file.doRead;
     if (val == -2) { // Blocked pipe
       _file_unlock();
       return val;
@@ -214,8 +186,7 @@ file_read (int fd, char *ptr, int len)
 {
   int val;
   do {
-    //val =  _file_read(fd, ptr, len);
-    val =  _file_read2(fd, ptr, len);
+    val =  _file_read(fd, ptr, len);
     if (val == -2) {
        kernel_threadBlocked();
     }
@@ -242,7 +213,7 @@ file_write ( int file, char *ptr, int len)
   } else {
     _file_lock();
     peripheral.file.fd = file;
-    peripheral.file.writeAddress = (unsigned)ptr;
+    peripheral.file.address = ptr;
     peripheral.file.writeLength = len;
     _file_unlock();
     return len;

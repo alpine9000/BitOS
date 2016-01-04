@@ -73,8 +73,10 @@ typedef struct {
 
   unsigned status;
 
-  int read;
-  unsigned writeAddress;
+  char* address; // Used for read/write DMA
+
+  unsigned readLength;
+  unsigned doRead;
   unsigned writeLength;
   unsigned close;
   unsigned closeStatus;
@@ -87,7 +89,6 @@ typedef struct {
   simulator_dir_t dir;
   file_rename_t rename;
   file_unlink_t unlink;
-
 } simulator_file_t;
 
 typedef struct {
@@ -172,9 +173,6 @@ typedef struct {
   malloc_track_t malloc;
 
   programmable_character_generator_t pcg;
-
-  unsigned file_readLength;
-  unsigned file_doRead;
 
 
 } peripheral_t;

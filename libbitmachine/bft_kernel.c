@@ -24,6 +24,7 @@ _bft_t __bft  = {
   &window_close,
   &window_isKeyDown,
 
+  &kernel_version,
   &kernel_threadSetInfo,
   &kernel_threadBlocked,
   &kernel_spinLock,
@@ -43,6 +44,10 @@ _bft_t __bft  = {
   &gfx_createFrameBuffer,
   &gfx_loadData,
   &gfx_saveData,
+  &gfx_getVideoWidth,
+  &gfx_getVideoHeight,
+  &gfx_drawStringRetro,
+
 
   &audio_execute,
   &audio_selectChannel,
@@ -70,6 +75,7 @@ _bft_t __bft  = {
   &console_reset,
 
   &thread_spawn,
+  &thread_spawnFileDescriptors,
   &thread_load,
   &kernel_threadWait,
 
@@ -88,10 +94,6 @@ _bft_t __bft  = {
 
   &file_loadElfKernel,
 
-  &gfx_getVideoWidth,
-  &gfx_getVideoHeight,
-  &gfx_drawStringRetro,
-
   &tputs,
   &tcsetattr,
   &tcflow,
@@ -104,9 +106,6 @@ _bft_t __bft  = {
   &tgetent,
   &cfmakeraw,
 
-  &thread_spawnFileDescriptors,
-
-  &kernel_version,
   &wolf
 };
 

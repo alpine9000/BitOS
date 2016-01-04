@@ -161,6 +161,8 @@ filesystem:
 	rm -f $(FS_BASE)/usr/local/src/BitOS.2/gitversion.mk
 	rm -f $(FS_BASE)/usr/local/src/BitOS/base.mk
 	rm -f $(FS_BASE)/usr/local/src/BitOS.2/base.mk
+	rm -rf $(FS_BASE)/usr/local/src/BitOS/readline-6.3-src
+	rm -rf $(FS_BASE)/usr/local/src/BitOS.2/readline-6.3-src
 	cp -r $(BITOS_PATH)/simple.mk $(FS_BASE)/usr/local/src/BitOS/base.mk
 	cp -r $(BITOS_PATH)/simple.mk $(FS_BASE)/usr/local/src/BitOS.2/base.mk
 	-rm -rf  $(FS_BASE)/usr/local/src/BitOS/newlib-2.0.0-r
@@ -180,6 +182,12 @@ filesystem:
 	cp $(BITOS_PATH)/Makefile.hello $(FS_BASE)/usr/local/home/Makefile
 	-rm $(TOOLS_BASE)/filesystem.zip
 	cd $(TOOLS_BASE)/filesystem; zip -r $(TOOLS_BASE)/filesystem.zip *
+
+
+localfs: fs
+	cp $(TOOLS_BASE)/filesystem.zip ~/Projects/BitMachine/BitFS
+
+gdrivefs: fs
 	cp $(TOOLS_BASE)/filesystem.zip ~/Google\ Drive/BitFS
 
 
