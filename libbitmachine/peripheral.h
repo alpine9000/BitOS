@@ -173,6 +173,10 @@ typedef struct {
 
   programmable_character_generator_t pcg;
 
+  unsigned file_readLength;
+  unsigned file_doRead;
+
+
 } peripheral_t;
 
 typedef struct {

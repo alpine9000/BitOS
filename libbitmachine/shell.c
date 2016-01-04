@@ -181,9 +181,9 @@ copy(char* s, char* dest_filename)
     int dest = open(d, O_WRONLY|O_CREAT);
     if (dest != -1) {
       int bytes;
-      char *buffer = malloc(1024*100);
+      char *buffer = malloc(1024*1024);
       do {
-	bytes = read(src, buffer, 1024*100);
+	bytes = read(src, buffer, 1024*1024);
 	if (bytes) {
 	  write(dest, buffer, bytes);
 	}

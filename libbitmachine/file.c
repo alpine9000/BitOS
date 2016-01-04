@@ -156,7 +156,8 @@ _file_read_stdin (int file, char *ptr, int len)
     return i;
 }
 
-static int 
+//static 
+int 
 _file_read (int file, char *ptr, int len)
 {
   if (file == STDIN_FILENO) {
@@ -182,12 +183,39 @@ _file_read (int file, char *ptr, int len)
   }
 }
 
+//static 
+int 
+_file_read2(int file, char *ptr, int len)
+{
+  if (file == STDIN_FILENO) {
+    return _file_read_stdin(file, ptr, len);
+  } else {
+    _file_lock();
+    peripheral.file.fd = file;
+    peripheral.file.writeAddress = (unsigned)ptr;
+    peripheral.file_readLength = len;
+    int val = peripheral.file_doRead;
+    if (val == -2) { // Blocked pipe
+      _file_unlock();
+      return val;
+    }
+    _file_unlock();
+
+    // If successful, the number of bytes actually read is returned.  
+    // Upon read-ing end-of-file, zero is returned.  
+    // Otherwise, a -1 is returned and the global variable errno is set to indicate the error.
+
+    return val;
+  }
+}
+
 int 
 file_read (int fd, char *ptr, int len)
 {
   int val;
   do {
-    val =  _file_read(fd, ptr, len);
+    //val =  _file_read(fd, ptr, len);
+    val =  _file_read2(fd, ptr, len);
     if (val == -2) {
        kernel_threadBlocked();
     }
