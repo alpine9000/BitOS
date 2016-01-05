@@ -34,7 +34,7 @@ extern void makename (char bname[], char fname[]);
 extern int readin (char fname[]);
 extern int linsert (int f, int n);
 extern int anycb ();
-extern BUFFER *bfind ();
+extern BUFFER* bfind (char *bname, int cflag, int bflag, int findtemp);
 
 int main (int argc, char *argv[]);
 void edinit (char bname[]);
@@ -106,7 +106,7 @@ int main (int argc, char *argv[])
       else
 	{
 	  /* set this to inactive */
-	  bp = bfind (bname, TRUE, 0);
+	  bp = bfind (bname, TRUE, 0, 0);
 	  strncpy (bp->b_fname, argv[carg], NFILEN);
 	  bp->b_active = FALSE;
 	}
@@ -237,8 +237,8 @@ void edinit (char bname[])
   BUFFER *bp;
   WINDOW *wp;
 
-  bp = bfind (bname, TRUE, 0);	/* First buffer */
-  blistp = bfind ("[List]", TRUE, BFTEMP); /* Buffer list buffer */
+  bp = bfind (bname, TRUE, 0, 0);	/* First buffer */
+  blistp = bfind ("[List]", TRUE, BFTEMP, 0); /* Buffer list buffer */
   wp = (WINDOW *) malloc (sizeof (WINDOW)); /* First window */
   if (bp == NULL || wp == NULL || blistp == NULL)
     exit (1);

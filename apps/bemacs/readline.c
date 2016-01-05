@@ -7,9 +7,11 @@
 static int aborted = 0;
 
 char * (*breadline_completion_generator) (const char *text, int state) = 0;
-
 char *command_generator PARAMS((const char *, int));
-static char **readline_completion PARAMS((const char *, int, int));
+static  char **readline_completion PARAMS((const char *, int, int));
+extern void buffer_display_completions (char **matches, int num_matches, int max_length);
+extern int onlywind(int, int);
+extern void update();
 
 static int quit (int a, int b)
 {
@@ -37,12 +39,16 @@ char* breadline(char* prompt, char * (*generator) (const char *text, int state))
   if (line) {
     add_history(line);
   }
+
+  onlywind(0, 0);
   return line;
 }
 
 void breadline_init()
 {
+  rl_terminal_name = "vt100";
   rl_attempted_completion_function = readline_completion;
+  rl_completion_display_matches_hook = buffer_display_completions;
   using_history();
   stifle_history(20);
   read_history("~/bemacs_history");

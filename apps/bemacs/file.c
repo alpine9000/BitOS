@@ -17,7 +17,7 @@ extern int ffgetline (char buf[], int nbuf);
 extern int ffwopen (char *fn);
 extern int ffclose ();
 extern int ffputline (char buf[], int nbuf);
-extern BUFFER *bfind ();
+extern BUFFER* bfind (char *bname, int cflag, int bflag, int findtemp);
 extern LINE *lalloc ();
 
 int fileread (int f, int n);
@@ -108,7 +108,7 @@ int getfile (char fname[])
 	}
     }
   makename (bname, fname);	/* New buffer name */
-  while ((bp = bfind (bname, FALSE, 0)) != (BUFFER*)0)
+  while ((bp = bfind (bname, FALSE, 0, 0)) != (BUFFER*)0)
     {
       s = mlreply ("Buffer name: ", bname, NBUFN);
       if (s == ABORT)		/* ^G to just quit */
@@ -119,7 +119,7 @@ int getfile (char fname[])
 	  break;
 	}
     }
-  if (bp == (BUFFER*)0 && (bp = bfind (bname, TRUE, 0)) == (BUFFER*)0)
+  if (bp == (BUFFER*)0 && (bp = bfind (bname, TRUE, 0, 0)) == (BUFFER*)0)
     {
       mlwrite ("Cannot create buffer");
       return (FALSE);

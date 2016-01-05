@@ -8,6 +8,7 @@
 #include <string.h>		/* strncpy(3) */
 #include "estruct.h"
 #include "edef.h"
+#include "bft.h"
 
 extern int mlreply (char *prompt, char *buf, int nbuf);
 extern int rlreplyg (char *prompt, char *buf, int nbuf, char * (*generator) (const char *text, int state));
@@ -18,6 +19,10 @@ extern int mlyesno (char *prompt);
 extern void lfree (LINE *lp);
 extern WINDOW *wpopup ();
 extern LINE *lalloc ();
+extern void update();
+extern void movecursor (int row, int col);
+extern char* rl_line_buffer;
+extern char* rl_prompt;
 
 int swbuffer (BUFFER *bp);
 int usebuffer (int f, int n);
@@ -29,8 +34,9 @@ int listbuffers (int f, int n);
 int makelist ();
 void itoa (char buf[], int width, int num);
 int addline (char *text);
+int buffer_addline (BUFFER* bptr, char *text);
 int anycb ();
-BUFFER* bfind (char *bname, int cflag, int bflag);
+BUFFER* bfind (char *bname, int cflag, int bflag, int findtemp);
 int bclear (BUFFER *bp);
 
 /*
@@ -115,9 +121,6 @@ buffer_generator ( const char *text,  int state)
     if ((bp->b_flag & BFTEMP) == 0) {
       i++;
     }
-
-    
-    
     bp = bp->b_bufp;
   } while (bp != NULL && i != list_index);  
 
@@ -152,7 +155,7 @@ int usebuffer (int f, int n)
   if (s != TRUE)  {
     return (s);
   }
-  if ((bp = bfind (bufn, TRUE, 0)) == NULL)
+  if ((bp = bfind (bufn, TRUE, 0, 0)) == NULL)
     return (FALSE);
   return (swbuffer (bp));
 }
@@ -191,7 +194,7 @@ int killbuffer (int f, int n)
 
   if ((s = mlreply ("Kill buffer: ", bufn, NBUFN)) != TRUE)
     return (s);
-  if ((bp = bfind (bufn, FALSE, 0)) == NULL) /* Easy if unknown */
+  if ((bp = bfind (bufn, FALSE, 0, 0)) == NULL) /* Easy if unknown */
     return (TRUE);
   return (zotbuf (bp));
 }
@@ -305,6 +308,7 @@ int listbuffers (int f, int n)
     }
   return (TRUE);
 }
+
 
 /*
  * This routine rebuilds the text in the special secret buffer that holds the
@@ -429,6 +433,25 @@ int addline (char *text)
   return (TRUE);
 }
 
+int buffer_addline (BUFFER* bptr, char *text)
+{
+  LINE *lp;
+  int ntext, i;
+
+  ntext = strlen (text);
+  if ((lp = lalloc (ntext)) == NULL)
+    return (FALSE);
+  for (i = 0; i < ntext; ++i)
+    lputc (lp, i, text[i]);
+  bptr->b_linep->l_bp->l_fp = lp; /* Hook onto the end */
+  lp->l_bp = bptr->b_linep->l_bp;
+  bptr->b_linep->l_bp = lp;
+  lp->l_fp = bptr->b_linep;
+  if (bptr->b_dotp == bptr->b_linep) /* If "." is at the end */
+    bptr->b_dotp = lp;	/* move it to new line */
+  return (TRUE);
+}
+
 /*
  * Look through the list of buffers. Return TRUE if there are any changed
  * buffers. Buffers that hold magic internal stuff are not considered; who
@@ -455,7 +478,7 @@ int anycb ()
  * buffer list) conplain. If the buffer is not found and the "cflag" is TRUE,
  * create it. The "bflag" is the settings for the flags in in buffer.
  */
-BUFFER* bfind (char *bname, int cflag, int bflag)
+BUFFER* bfind (char *bname, int cflag, int bflag, int findtemp)
 {
   BUFFER *bp, *sb;
   LINE *lp;
@@ -465,7 +488,7 @@ BUFFER* bfind (char *bname, int cflag, int bflag)
     {
       if (strcmp (bname, bp->b_bname) == 0)
 	{
-	  if ((bp->b_flag & BFTEMP) != 0)
+	  if (!findtemp && (bp->b_flag & BFTEMP) != 0)
 	    {
 	      mlwrite ("Cannot select builtin buffer");
 	      return (0);
@@ -546,4 +569,49 @@ int bclear (BUFFER *bp)
   bp->b_markp = 0;		/* Invalidate "mark" */
   bp->b_marko = 0;
   return (TRUE);
+}
+
+void buffer_display_completions (char **matches, int num_matches, int max_length)
+{
+  WINDOW *wp;
+  BUFFER *bp, *cbufp = bfind("*Completions*", TRUE, BFTEMP, TRUE);
+  int s;
+
+  cbufp->b_flag &= ~BFCHG;	/* Don't complain! */
+  if ((s = bclear (cbufp)) != TRUE) /* Blow old text away */
+    return;
+
+  for (int i = 1; i <= num_matches; i++) {
+    buffer_addline (cbufp, matches[i]);
+  }
+
+  if (cbufp->b_nwnd == 0)  {				/* Not on screen yet */
+    if ((wp = wpopup ()) == NULL)
+      return;
+    bp = wp->w_bufp;
+    if (--bp->b_nwnd == 0) {
+      bp->b_dotp = wp->w_dotp;
+      bp->b_doto = wp->w_doto;
+      bp->b_markp = wp->w_markp;
+      bp->b_marko = wp->w_marko;
+    }
+    wp->w_bufp = cbufp;
+    ++cbufp->b_nwnd;
+  }
+  wp = wheadp;
+  while (wp != 0) {
+    if (wp->w_bufp == cbufp) {
+      wp->w_linep = lforw (cbufp->b_linep);
+      wp->w_dotp = lforw (cbufp->b_linep);
+      wp->w_doto = 0;
+      wp->w_markp = 0;
+      wp->w_marko = 0;
+      wp->w_flag |= WFMODE | WFHARD;
+    }
+    wp = wp->w_wndp;
+  }
+
+  update();
+
+  movecursor(term.t_nrow, strlen(rl_line_buffer) + strlen(rl_prompt));
 }
