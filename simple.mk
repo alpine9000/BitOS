@@ -7,16 +7,16 @@ LD=$(ELF_PATH)sh-elf-ld
 STRIP=$(ELF_PATH)sh-elf-strip -g
 
 %.o: %.c
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 %.o: %.S
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 %.o: %.s
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 %.o: %.cpp
-	$(CPP) -c $(CPPFLAGS) $< -o $@
+	$(CPP) -c $(CPPFLAGS) -o $@ $<
 
 %.S: %.c
 	$(CC) -S $(CFLAGS) $*.c -o $*.s

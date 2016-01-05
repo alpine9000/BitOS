@@ -4,8 +4,8 @@ WARNINGS = -pedantic-errors -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-par
 include ./optimize.mk
 -include ./gitversion.mk
 CPP_WARNINGS = $(WARNINGS) -Wno-char-subscripts 
-CFLAGS=$(VERSION) -g $(OPTIMIZE) $(WARNINGS) -D_KERNEL_BUILD  -I/usr/local/sh-elf/include -I. -I./libbitmachine -m2e  -funit-at-a-time -falign-jumps -fdelete-null-pointer-checks
-CPPFLAGS = -D_KERNEL_BUILD $(OPTIMIZE) $(CPP_WARNINGS)  -m2e -funit-at-a-time -falign-jumps  -I./libbitmachine
+CFLAGS=$(VERSION) -g $(OPTIMIZE) $(WARNINGS) -D_KERNEL_BUILD  -I/usr/local/sh-elf/include -I. -I./libbitmachine -m2e -falign-jumps
+CPPFLAGS = -D_KERNEL_BUILD $(OPTIMIZE) $(CPP_WARNINGS)  -m2e -falign-jumps  -I./libbitmachine -fno-rtti -fno-exceptions
 LDFLAGS= -L$(LIB_PATH)sh-elf/lib/m2e/ -L/usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e/ -L/usr/local/sh-elf/lib
 
 LIBS =  /usr/local/sh-elf/sh-elf/lib/m2e/crt0.o -L.  -L./libbitmachine  --start-group -lwolf -lbitmachine -lc-kernel -lm -lgcc --end-group
@@ -154,19 +154,12 @@ filesystem:
 	rm -r $(FS_BASE)/usr/local/sh-elf/sh-elf/lib/*.*
 
 	cp -r $(BITOS_PATH) $(FS_BASE)/usr/local/src/BitOS
-	cp -r $(BITOS_PATH) $(FS_BASE)/usr/local/src/BitOS.2/
 	rm -rf $(FS_BASE)/usr/local/src/BitOS/.git
-	rm -rf $(FS_BASE)/usr/local/src/BitOS.2/.git
 	rm -f $(FS_BASE)/usr/local/src/BitOS/gitversion.mk
-	rm -f $(FS_BASE)/usr/local/src/BitOS.2/gitversion.mk
 	rm -f $(FS_BASE)/usr/local/src/BitOS/base.mk
-	rm -f $(FS_BASE)/usr/local/src/BitOS.2/base.mk
 	rm -rf $(FS_BASE)/usr/local/src/BitOS/readline-6.3-src
-	rm -rf $(FS_BASE)/usr/local/src/BitOS.2/readline-6.3-src
 	cp -r $(BITOS_PATH)/simple.mk $(FS_BASE)/usr/local/src/BitOS/base.mk
-	cp -r $(BITOS_PATH)/simple.mk $(FS_BASE)/usr/local/src/BitOS.2/base.mk
 	-rm -rf  $(FS_BASE)/usr/local/src/BitOS/newlib-2.0.0-r
-	-rm -rf  $(FS_BASE)/usr/local/src/BitOS.2/newlib-2.0.0-r
 	cp $(BITOS_PATH)/libbitmachine/libc-bitos.a $(FS_BASE)/usr/local/sh-elf/sh-elf/lib/m2e/libc.a
 	mv $(FS_BASE)/usr/local/sh-elf/sh-elf/include/c++  $(FS_BASE)/usr/local/sh-elf/include
 

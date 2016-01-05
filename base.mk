@@ -7,7 +7,7 @@ LD=$(ELF_PATH)sh-elf-ld
 STRIP=$(ELF_PATH)sh-elf-strip -g
 
 %.o: %.c
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c $(CFLAGS) -o $@ $<
 	@#$(CC) -S $< $(CFLAGS)
 	$(CC) -MM $(CFLAGS) $*.c > $*.d
 	@mv -f $*.d $*.d.tmp
@@ -17,13 +17,13 @@ STRIP=$(ELF_PATH)sh-elf-strip -g
 	@rm -f $*.d.tmp
 
 %.o: %.S
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 %.o: %.s
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 %.o: %.cpp
-	$(CPP) -c $(CPPFLAGS) $< -o $@
+	$(CPP) -c $(CPPFLAGS) -o $@ $<
 	$(CC) -MM $(CPPFLAGS) $*.cpp > $*.d
 	@mv -f $*.d $*.d.tmp
 	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
