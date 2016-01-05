@@ -5,20 +5,23 @@ Copyright (C) Enable Software Pty Ltd 2014
 
 BitOS is a very basic newlib based operating system. BitMachine is browser based emulator that emulates a basic SH7058 "like" computer.
 
-The operating system emulates file I?O, graphics, keyboard, mouse and sound. The most significant thing is can do is recompile itself using GCC (sans newlib).
+The operating system emulates file I/O, graphics, keyboard, mouse and sound. The most significant thing is can do is recompile itself using GCC (sans newlib).
 
 It was hacked together to excerise the BitMachine SH7058 instruction set emulation.
 
 Please refer to LICENSE for software license details for all files except those listed below:
 
-libbitmachine/argv.c - Copyright (C) 1992, 2001 Free Software Foundation, Inc (GNU Library General Public License v2 - LICENSES/LGPL-2.0.txt)
+libbitmachine/argv.c   - Copyright (C) 1992, 2001 Free Software Foundation, Inc (GNU Library General Public License v2 - LICENSES/LGPL-2.0.txt)
 libbitmachine/malloc.c - Written by Doug Lea and released to the public domain
-newlib-2.0.0-r/* - Copyright (C) 1991 Free Software Foundation, Inc. (GNU LIBRARY GENERAL PUBLIC LICENSE v2 - newlib-2.0.0-r/COPYING)
-readline-6.3-src/* Copyright (C) 2007 Free Software Foundation, Inc. (GNU GENERAL PUBLIC LICENSE v3 - readline-6.3-src/COPYING)
-apps/wolf/wolf.cpp Copyright (c) 2004-2007, Lode Vandevenne. (Simplified BSD License)
-apps/wolf/media/*  Copyright (C) Id Software, Inc. (LIMITED USE SOFTWARE LICENSE AGREEMENT - apps/wolf/media/LICENSE.DOC)
-apps/bemacs/* Various authors, released to the public domain (apps/bemacs/README.original)
-bin2c.c - Written by sandro AT sigala DOT it - BEER-WARE LICENSE
+newlib-2.0.0-r/*       - Copyright (C) 1991 Free Software Foundation, Inc. (GNU LIBRARY GENERAL PUBLIC LICENSE v2 - newlib-2.0.0-r/COPYING)
+readline-6.3-src/*     - Copyright (C) 2007 Free Software Foundation, Inc. (GNU GENERAL PUBLIC LICENSE v3 - readline-6.3-src/COPYING)
+apps/wolf/wolf.cpp     - Copyright (c) 2004-2007, Lode Vandevenne. (Simplified BSD License)
+apps/wolf/media/*      - Copyright (C) Id Software, Inc. (LIMITED USE SOFTWARE LICENSE AGREEMENT - apps/wolf/media/LICENSE.DOC)
+apps/bemacs/*          - Various authors, released to the public domain (apps/bemacs/README.original)
+apps/bemacs/dirname.c  - Copyright (C) 2001 Matt Kraai. (GNU General Public License v2 LICENSES/gpl-2.0.txt)
+bin2c.c                - Written by sandro AT sigala DOT it - BEER-WARE LICENSE
+
+If you are distributing this software, the safest course of action would be to distribute it under the terms of the GNU GENERAL PUBLIC LICENSE v3 (LICENSES?gpl-3.0.txt) with all of the above copyright notices and licenses included in some form of documenation or similar (To meet the conditions of the BSD licensed stuff).
 
 Notes:
 ------

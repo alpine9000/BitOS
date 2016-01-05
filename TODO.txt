@@ -5,8 +5,6 @@ http://mrale.ph/talks/goto2015/#/178
 o - convert
 o - bemacs no <CR> on last line
 o - argv ownership
-o - file locking
-o - bemacs readline for buffers
 o - fix up tcsetattr raw mess
 o - window close callback
 o - Handle gdrive errors (https://developers.google.com/drive/web/handle-errors)

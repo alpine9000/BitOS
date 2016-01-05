@@ -3,6 +3,8 @@
  * All details about the reading and writing of the disk are in "fileio.c"
  */
 
+#include <unistd.h>
+#include <libgen.h>
 #include <string.h>		/* strncpy(3) */
 #include "estruct.h"
 #include "edef.h"
@@ -151,6 +153,8 @@ int readin (char fname[])
   char line[NLINE];
   int nbytes, nline, s, i;
   int lflag;			/* any lines longer than allowed? */
+
+  chdir(dirname(fname));
 
   bp = curbp;			/* Cheap */
   if ((s = bclear (bp)) != TRUE) /* Might be old */
