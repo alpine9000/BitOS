@@ -239,9 +239,9 @@ int readpattern (char *prompt)
   strncpy (tpat, prompt, NPAT-12); /* copy prompt to output string */
   strncat (tpat, " [", 3);	/* build new prompt string */
   expandp (&pat[0], &tpat[strlen (tpat)], NPAT / 2); /* add old pattern */
-  strncat (tpat, "]<ESC>: ", 9);
+  strncat (tpat, "]: ", 4);
 
-  s = mlreplyt (tpat, tpat, NPAT, 27); /* Read pattern */
+  s = mlreplyt (tpat, tpat, NPAT, '\n'); /* Read pattern */
 
   if (s == TRUE)		/* Specified */
     strncpy (pat, tpat, NPAT);

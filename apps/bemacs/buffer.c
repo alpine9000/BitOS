@@ -10,6 +10,7 @@
 #include "edef.h"
 
 extern int mlreply (char *prompt, char *buf, int nbuf);
+extern int rlreplyg (char *prompt, char *buf, int nbuf, char * (*generator) (const char *text, int state));
 extern int readin (char fname[]);
 extern void mlwrite ();
 extern void mlerase ();
@@ -82,6 +83,59 @@ int swbuffer (BUFFER *bp)
   return (TRUE);
 }
 
+static char *
+dupstr (char *s)
+{
+  char *r = malloc (strlen (s) + 1);
+  strcpy (r, s);
+  return (r);
+}
+
+
+char *
+buffer_generator ( const char *text,  int state)
+{
+  static int list_index, len;
+
+  /* If this is a new word to complete, initialize now.  This includes
+     saving the length of TEXT for efficiency, and initializing the index
+     variable to 0. */
+  if (!state)
+    {
+      list_index = 0;
+      len = strlen (text);
+    }
+
+  BUFFER *bp;
+  int i = 0;
+
+  bp = bheadp;
+
+  do {
+    if ((bp->b_flag & BFTEMP) == 0) {
+      i++;
+    }
+
+    
+    
+    bp = bp->b_bufp;
+  } while (bp != NULL && i != list_index);  
+
+  while (bp != NULL) {
+    if ((bp->b_flag & BFTEMP) == 0) {    
+      list_index++;
+      if (strncmp (text, bp->b_bname, len) == 0) {
+       return (dupstr(bp->b_bname));
+      }
+    }
+    bp = bp->b_bufp;
+  }
+
+  /* If no names matched, then return NULL. */
+  return ((char *)NULL);
+}
+
+
 /*
  * Attach a buffer to a window. The values of dot and mark come from the buffer
  * if the use count is 0. Otherwise, they come from some other window.
@@ -93,8 +147,11 @@ int usebuffer (int f, int n)
   char bufn[NBUFN];
   int s;
 
-  if ((s = mlreply ("Use buffer: ", bufn, NBUFN)) != TRUE)
+  s = rlreplyg ("Use buffer: ", bufn, NBUFN, buffer_generator);
+
+  if (s != TRUE)  {
     return (s);
+  }
   if ((bp = bfind (bufn, TRUE, 0)) == NULL)
     return (FALSE);
   return (swbuffer (bp));

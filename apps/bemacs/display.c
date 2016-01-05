@@ -736,12 +736,18 @@ int mlyesno (char *prompt)
  * "<NL>"
  */
 
-int rlreplyt (char *prompt, char *buf, int nbuf, char eolchar)
+int rlreplyt (char *prompt, char *buf, int nbuf, char eolchar, char * (*generator) (const char *text, int state))
 {
-  extern char* breadline(char*);
+  extern char* breadline(char* prompt, char * (*generator) (const char *text, int state));
   movecursor (term.t_nrow, 0);
-  char* line = breadline(prompt);
+  char* line = breadline(prompt, generator);
+
   if (line) {
+    eolexist = 0;
+    movecursor (term.t_nrow, 1);	  /* force the move! */
+    movecursor (term.t_nrow, 0);
+    mlerase();
+    (*term.t_flush) ();
     strncpy(buf, line, nbuf);
     free(line);
   } else {
@@ -905,7 +911,12 @@ int mlreply (char *prompt, char *buf, int nbuf)
 
 int rlreply (char *prompt, char *buf, int nbuf)
 {
-  return (rlreplyt (prompt, buf, nbuf, '\n'));
+  return (rlreplyt (prompt, buf, nbuf, '\n', 0));
+}
+
+int rlreplyg (char *prompt, char *buf, int nbuf, char * (*generator) (const char *text, int state))
+{
+  return (rlreplyt (prompt, buf, nbuf, '\n', generator));
 }
 
 /*
