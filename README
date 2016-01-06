@@ -14,14 +14,13 @@ Please refer to LICENSE for software license details for all files except those 
 libbitmachine/argv.c   - Copyright (C) 1992, 2001 Free Software Foundation, Inc (GNU Library General Public License v2 - LICENSES/LGPL-2.0.txt)
 libbitmachine/malloc.c - Written by Doug Lea and released to the public domain
 newlib-2.0.0-r/*       - Copyright (C) 1991 Free Software Foundation, Inc. (GNU LIBRARY GENERAL PUBLIC LICENSE v2 - newlib-2.0.0-r/COPYING)
-readline-6.3-src/*     - Copyright (C) 2007 Free Software Foundation, Inc. (GNU GENERAL PUBLIC LICENSE v3 - readline-6.3-src/COPYING)
 apps/wolf/wolf.cpp     - Copyright (c) 2004-2007, Lode Vandevenne. (Simplified BSD License)
 apps/wolf/media/*      - Copyright (C) Id Software, Inc. (LIMITED USE SOFTWARE LICENSE AGREEMENT - apps/wolf/media/LICENSE.DOC)
 apps/bemacs/*          - Various authors, released to the public domain (apps/bemacs/README.original)
 apps/bemacs/dirname.c  - Copyright (C) 2001 Matt Kraai. (GNU General Public License v2 LICENSES/gpl-2.0.txt)
 bin2c.c                - Written by sandro AT sigala DOT it - BEER-WARE LICENSE
 
-If you are distributing this software, the safest course of action would be to distribute it under the terms of the GNU GENERAL PUBLIC LICENSE v3 (LICENSES?gpl-3.0.txt) with all of the above copyright notices and licenses included in some form of documenation or similar (To meet the conditions of the BSD licensed stuff).
+If you are distributing this software, the safest course of action would be to distribute it under the terms of the GNU GENERAL PUBLIC LICENSE v3 (LICENSES/gpl-3.0.txt) with all of the above copyright notices and licenses included in some form of documenation or similar (To meet the conditions of the BSD licensed stuff).
 
 Notes:
 ------
@@ -35,76 +34,41 @@ o You need a google drive with a folder called ~/Google Drive/BitFS that syncs f
 #(1) install xcode command line tools
 #====================================
 xcode-select --install
-
-#(2) install wget
-#================
 mkdir ~/Projects
 mkdir ~/Projects/bitos-build/
 mkdir ~/Projects/bitos-build/src
-cd ~/Projects/bitos-build/src
-ftp ftp://ftp.gnu.org/gnu/wget/wget-1.16.tar.xz
-tar zxfv ~/Downloads/wget-1.16.tar.xz
-mkdir ~/Projects/bitos-build/wget
-cd  ~/Projects/bitos-build/wget
-../src/wget-1.16/configure --without-ssl
-make
-sudo make install
+cd ~/Projects
+git clone https://github.com/alpine9000/BitOS.git
+
+#(2) install wget
+#================
+cd ~/Projects/BitOS/external
+sudo make -f wget.mk
 
 #(3) osx gcc (5.3.0)
 #===================
-svn checkout svn://gcc.gnu.org/svn/gcc/tags/gcc_5_3_0_release ~/Projects/bitos-build/src/gcc-5.3.0
-cd ~/Projects/bitos-build/src/gcc-5.3.0
-patch -p0 < ~/Projects/BitOS/external/patches/gcc-5.3.0.patch
-./contrib/download_prerequisites
-mkdir ~/Projects/bitos-build/osx-gcc-5.3.0
-cd ~/Projects/bitos-build/osx-gcc-5.3.0
-../src/gcc-5.3.0/configure --prefix=/usr/local --enable-languages=c,c++
-make -j 4
-sudo make install
+cd ~/Projects/BitOS/external
+sudo make -f gcc-5.3.0.osx.mk
 
 #(4) sh-elf cross bintuils
 #=========================
-cd ~/Projects/bitos-build/src/
-wget http://ftp.gnu.org/gnu/binutils/binutils-2.25.tar.gz
-tar zxfv binutils-2.25.tar.gz
-mkdir ~/Projects/bitos-build/binutils
-cd ~/Projects/bitos-build/binutils
-../src/binutils-2.25/configure --target=sh-elf --prefix=/usr/local/sh-elf --disable-nls --disable-werror
-make
-sudo make install
+cd ~/Projects/BitOS/external
+sudo make -f binutils.cross.mk
 
 #(5) sh-elf cross gcc (5.3.0) stage 1
 #====================================
-mkdir ~/Projects/bitos-build/gcc-5.3.0
-cd ~/Projects/bitos-build/gcc-5.3.0
-../src/gcc-5.3.0/configure --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp --disable-libstdcxx
-make -j 4
-sudo make install
+cd ~/Projects/BitOS/external
+sudo make -f gcc-5.3.0.cross.stage1.mk
 
 #(6) newlib 2.0.0
 #================
-cd ~/Projects
-git clone https://github.com/alpine9000/BitOS.git
-export PATH=$PATH:/usr/local/sh-elf/bin
-mkdir ~/Projects/bitos-build/newlib-2.0.0-r
-cd ~/Projects/bitos-build/newlib-2.0.0-r
-../../BitOS/newlib-2.0.0-r/configure --prefix=/usr/local/sh-elf --target=sh-elf --enable-newlib-multithread CFLAGS=-DMALLOC_PROVIDED target_alias=sh-elf
-make
-sudo make install
-cd /usr/local/sh-elf/sh-elf/lib/m2e
-sudo mv libc.a libc.a.newlib
-sudo ln -sf ~/Projects/BitOS/libbitmachine/libc-bitos.a libc.a
-sudo cp ~/Projects/BitOS/newlib-override/sys/* /usr/local/sh-elf/sh-elf/include/sys/
-cd ~/Projects/BitOS/libbitmachine/libc
-rm *.o
-sh-elf-ar -x /usr/local/sh-elf/sh-elf/lib/m2e/libc.a.newlib 
+cd ~/Projects/BitOS/external
+sudo make -f newlib-2.0.0.mk
 
 #(7) sh-elf cross gcc (5.3.0) stage 2
 #====================================
-cd ~/Projects/bitos-build/gcc-5.3.0
-../src/gcc-5.3.0/configure --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp
-make -j 4
-sudo make install
+cd ~/Projects/BitOS/external
+sudo make -f gcc-5.3.0.cross.stage2.mk
 
 #(8) BitOS stage 1
 #=================
@@ -118,10 +82,8 @@ sudo ln -sf /Users/alex/Projects/BitOS/libbitmachine/crtn.o /usr/local/sh-elf/li
 
 #(9) readline
 #============
-mkdir ~/Projects/bitos-build/readline-6.3
-cd ~/Projects/bitos-build/readline-6.3
-../../BitOS/readline-6.3-src/configure --prefix="/usr/local/sh-elf" --host=sh-elf CFLAGS="-Os -D_POSIX_VERSION -m2e -pie " bash_cv_wcwidth_broken=no  --disable-shared -disable-multibyte --disable-largefile
-sudo make install
+cd ~/Projects/BitOS/external
+sudo make -f readline-6.3.mk
 
 #(10) BitOS stage 2
 #===================
@@ -130,35 +92,18 @@ make
 
 (11) gcc.bitos (5.3.0)
 ======================
-mkdir ~/Projects/bitos-build/gcc-5.3.0.bitos
-cd  ~/Projects/bitos-build/gcc-5.3.0.bitos
-../src/gcc-5.3.0/configure --host=sh-elf --target=sh-elf --prefix=/usr/local/sh-elf/ --with-gnu-as --with-gnu-ld --with-newlib --with-multilib-list=m2e --without-headers --enable-languages=c,c++ --disable-nls --disable-libssp --disable-libada --disable-libquadmath --disable-libgomp CFLAGS="-D__BITOS__ -O2 -g -m2e -pie" CXXFLAGS="-D__BITOS__ -O2 -m2e -pie -fpermissive -g" --disable-libstdcxx --enable-checking=release
-make
-(Build will fail - (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=53579) - need to edit a makefile to remove CXXFLAGS from host build)
-
-emacs build-x86_64-apple-darwin15.2.0/libcpp/Makefile  (path will differ depending on OS version)
-
-ALL_CXXFLAGS = $(CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
-        $(CPPFLAGS) $(PICFLAG)
-
-== becomes ==
-
-ALL_CXXFLAGS = $(_CXXFLAGS) $(WARN_CXXFLAGS) $(NOEXCEPTION_FLAGS) $(INCLUDES) \
-        $(CPPFLAGS) $(PICFLAG)
-make -j 4
-
+cd ~/Projects/BitOS/external
+make -fgcc-5.3.0.bitos.mk
 
 (12) bintuils.bitos
 ===================
-mkdir ~/Projects/bitos-build/binutils.bitos
-cd ~/Projects/bitos-build/binutils.bitos
-../src/binutils-2.25/configure --host=sh-elf --target=sh-elf --prefix=/usr/local --disable-nls --disable-nls --disable-werror CFLAGS="-O2 -m2e -pie"
-make all-gas all-ld
+cd ~/Projects/BitOS/external
+make -f binutils.bitos.mk
 
 (13) make
 =========
 cd ~/Projects/BitOS/external
-make -f make.mk
+make -f make-4.1.mk
 
 (14) make filesystem.zip
 ===================

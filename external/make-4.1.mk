@@ -1,7 +1,4 @@
-PATH := $(PATH):/usr/local/sh-elf/bin
-BITOS_DIR=~/Projects/BitOS
-TOOLS_BASE=~/Projects/bitos-build
-SRC_BASE=~/Projects/bitos-build/src
+include common.mk
 PATCH_FILE=$(BITOS_DIR)/external/patches/make-4.1.patch
 MAKE_DIST=$(TOOLS_BASE)/src/make-4.1.tar.gz
 MAKE_SRC=$(SRC_BASE)/make-4.1

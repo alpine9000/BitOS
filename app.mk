@@ -18,7 +18,7 @@ touch:
 	touch $(OBJ_FILES)
 
 gdrive: $(ELF_FILE)
-	sh-elf-strip -g $(ELF_FILE)
+	$(STRIP) -g $(ELF_FILE)
 	cp $(ELF_FILE) ~/Google\ Drive/BitFS/bin/
 
 clean:

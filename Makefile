@@ -1,3 +1,4 @@
+PATH := $(PATH):/usr/local/sh-elf/bin
 BITOS_PATH=~/Projects/BitOS
 TOOLS_BASE=~/Projects/bitos-build
 WARNINGS = -pedantic-errors -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -Wshadow
@@ -157,7 +158,6 @@ filesystem:
 	rm -rf $(FS_BASE)/usr/local/src/BitOS/.git
 	rm -f $(FS_BASE)/usr/local/src/BitOS/gitversion.mk
 	rm -f $(FS_BASE)/usr/local/src/BitOS/base.mk
-	rm -rf $(FS_BASE)/usr/local/src/BitOS/readline-6.3-src
 	cp -r $(BITOS_PATH)/simple.mk $(FS_BASE)/usr/local/src/BitOS/base.mk
 	-rm -rf  $(FS_BASE)/usr/local/src/BitOS/newlib-2.0.0-r
 	cp $(BITOS_PATH)/libbitmachine/libc-bitos.a $(FS_BASE)/usr/local/sh-elf/sh-elf/lib/m2e/libc.a
