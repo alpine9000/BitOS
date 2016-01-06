@@ -18,8 +18,10 @@ $(MAKE_SRC): $(MAKE_DIST) $(PATCH_FILE)
 
 
 $(MAKE_MAKEFILE): $(MAKE_SRC)
-	$(BITOS_DIR)/external/configure.scripts/make.sh
-
+	rm -rf $(MAKE_BUILD_DIR)
+	mkdir $(MAKE_BUILD_DIR)
+	cd $(MAKE_BUILD_DIR) && \
+	../src/make-4.1/configure --host=sh-elf --prefix=/usr/local/sh-elf/ CFLAGS="-g -m2e -pie -D__BITOS__"
 
 $(MAKE_BIN): $(MAKE_MAKEFILE)
 	make -C $(MAKE_BUILD_DIR)

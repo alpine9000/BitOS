@@ -16,8 +16,10 @@ $(MAKE_SRC): $(MAKE_DIST)
 
 
 $(MAKE_MAKEFILE): $(MAKE_SRC)
-	$(BITOS_DIR)/external/configure.scripts/binutils.bitos.sh
-
+	rm -f $(MAKE_BUILD_DIR)
+	mkdir $(MAKE_BUILD_DIR)
+	cd $(MAKE_BUILD_DIR) && \
+	../src/binutils-2.25/configure --host=sh-elf --target=sh-elf --prefix=/usr/local --disable-nls --disable-nls --disable-werror CFLAGS="-O2 -m2e -pie"
 
 $(MAKE_BIN): $(MAKE_MAKEFILE)
 	make -C $(MAKE_BUILD_DIR)

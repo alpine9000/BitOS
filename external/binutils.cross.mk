@@ -16,7 +16,10 @@ $(MAKE_SRC): $(MAKE_DIST)
 
 
 $(MAKE_MAKEFILE): $(MAKE_SRC)
-	$(BITOS_DIR)/external/configure.scripts/binutils.cross.sh
+	rm -f $(MAKE_BUILD_DIR)
+	mkdir $(MAKE_BUILD_DIR)
+	cd $(MAKE_BUILD_DIR) && \
+	../src/binutils-2.25/configure --target=sh-elf --prefix=/usr/local/sh-elf --disable-nls --disable-werror
 
 
 $(MAKE_BIN): $(MAKE_MAKEFILE)
