@@ -1,5 +1,5 @@
 #-D_KERNEL_ASSERTS
-include ../optimize.mk
+include ../makefiles/optimize.mk
 WARNINGS = -pedantic-errors -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -Wshadow
 #-D_INCLUDE_BUILDER
 CFLAGS= -D_KERNEL_BUILD $(OPTIMIZE) $(WARNINGS) -I. -m2e -falign-jumps
@@ -8,8 +8,8 @@ ASMOBJ=start.o
 CLIENTOBJ=bft.o kernel_client_asm.o syscalls.o panic.o client.o shell.o argv.o build.o
 CRT_OBJS=crt1.o crti.o crtbegin.o crtend.o crtn.o
 
-include ../base.mk
-include libc.mk
+include ../makefiles/base.mk
+include ../makefiles/libc.mk
 
 all: libbitmachine.a libc-bitos.a libc-kernel.a $(CRT_OBJS)
 
@@ -21,7 +21,6 @@ libc-bitos.a: $(CLIENTOBJ)
 
 libc-kernel.a: libc-bitos.a
 	$(AR) rcs libc-kernel.a $(LIBC_OBJS) 
-	cp libc-kernel.a ..
 
 touch:
 	touch $(LIBOBJ) $(ASMOBJ) $(CLIENTOBJ) $(CRT_OBJS)

@@ -3,4 +3,4 @@ SOUND_OBJ=media/fastinvader1.o media/fastinvader2.o media/fastinvader3.o media/f
 OBJ_FILES=si.o $(IMG_OBJ) $(SOUND_OBJ)
 ELF_FILE=si
 
-include ../../app.mk
+include ../../makefiles/app.mk

@@ -18,7 +18,7 @@ apps/wolf/wolf.cpp     - Copyright (c) 2004-2007, Lode Vandevenne. (Simplified B
 apps/wolf/media/*      - Copyright (C) Id Software, Inc. (LIMITED USE SOFTWARE LICENSE AGREEMENT - apps/wolf/media/LICENSE.DOC)
 apps/bemacs/*          - Various authors, released to the public domain (apps/bemacs/README.original)
 apps/bemacs/dirname.c  - Copyright (C) 2001 Matt Kraai. (GNU General Public License v2 LICENSES/gpl-2.0.txt)
-bin2c.c                - Written by sandro AT sigala DOT it - BEER-WARE LICENSE
+external/bin2c.c       - Written by sandro AT sigala DOT it - BEER-WARE LICENSE
 
 If you are distributing this software, the safest course of action would be to distribute it under the terms of the GNU GENERAL PUBLIC LICENSE v3 (LICENSES/gpl-3.0.txt) with all of the above copyright notices and licenses included in some form of documenation or similar (To meet the conditions of the BSD licensed stuff).
 

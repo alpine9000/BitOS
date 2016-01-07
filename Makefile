@@ -2,8 +2,8 @@ PATH := $(PATH):/usr/local/sh-elf/bin
 BITOS_PATH=~/Projects/BitOS
 TOOLS_BASE=~/Projects/bitos-build
 WARNINGS = -pedantic-errors -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -Wshadow
-include ./optimize.mk
--include ./gitversion.mk
+include ./makefiles/optimize.mk
+-include ./makefiles/gitversion.mk
 CPP_WARNINGS = $(WARNINGS) -Wno-char-subscripts 
 CFLAGS=$(VERSION) -g $(OPTIMIZE) $(WARNINGS) -D_KERNEL_BUILD  -I/usr/local/sh-elf/include -I. -I./libbitmachine -m2e -falign-jumps
 CPPFLAGS = -D_KERNEL_BUILD $(OPTIMIZE) $(CPP_WARNINGS)  -m2e -falign-jumps  -I./libbitmachine -fno-rtti -fno-exceptions
@@ -59,7 +59,7 @@ $(BSH):
 	make  -C $(BEMACS)
 	make  -C $(SI)
 
-include base.mk
+include ./makefiles/base.mk
 
 touch:
 	touch $(IMG_OBJ) $(SOUND_OBJ) $(WOLF_OBJ)
@@ -156,9 +156,9 @@ filesystem:
 
 	cp -r $(BITOS_PATH) $(FS_BASE)/usr/local/src/BitOS
 	rm -rf $(FS_BASE)/usr/local/src/BitOS/.git
-	rm -f $(FS_BASE)/usr/local/src/BitOS/gitversion.mk
-	rm -f $(FS_BASE)/usr/local/src/BitOS/base.mk
-	cp -r $(BITOS_PATH)/simple.mk $(FS_BASE)/usr/local/src/BitOS/base.mk
+	rm -f $(FS_BASE)/usr/local/src/BitOS/makefiles/gitversion.mk
+	rm -f $(FS_BASE)/usr/local/src/BitOS/makefiles/base.mk
+	cp -r $(BITOS_PATH)/makefiles/simple.mk $(FS_BASE)/usr/local/src/BitOS/makefiles/base.mk
 	-rm -rf  $(FS_BASE)/usr/local/src/BitOS/newlib-2.0.0-r
 	cp $(BITOS_PATH)/libbitmachine/libc-bitos.a $(FS_BASE)/usr/local/sh-elf/sh-elf/lib/m2e/libc.a
 	mv $(FS_BASE)/usr/local/sh-elf/sh-elf/include/c++  $(FS_BASE)/usr/local/sh-elf/include
@@ -171,8 +171,7 @@ filesystem:
 	$(STRIP) $(FS_BASE)/usr/local/sh-elf/bin/* 
 
 
-	cp $(BITOS_PATH)/hello.c $(FS_BASE)/usr/local/home
-	cp $(BITOS_PATH)/Makefile.hello $(FS_BASE)/usr/local/home/Makefile
+	cp $(BITOS_PATH)/apps/hello/* $(FS_BASE)/usr/local/home/
 	-rm $(TOOLS_BASE)/filesystem.zip
 	cd $(TOOLS_BASE)/filesystem; zip -r $(TOOLS_BASE)/filesystem.zip *
 

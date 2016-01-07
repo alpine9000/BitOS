@@ -1,7 +1,7 @@
-    ram    (rwx) : ORIGIN = 0xFf7fffff, LENGTH = 0x800000
+    ram    (rwx) : ORIGIN = 0xf7ffffff, LENGTH = 0x8000000
     rom    (rx)  : ORIGIN = 0x00000000, LENGTH = 0xFFFFFF
     peripheral (rw) : ORIGIN = 0x10000000, LENGTH = 0x29F7 
     videoRam (rw) : ORIGIN = 0x20000000, LENGTH = 0x10000000
 
-ram:  0x800000 = 8,388,608
-heap: 0x7F0000 = 8,323,072
+ram:  0x8000000 = 134,217,728
+heap: 0x7F00000 = 133,169,152

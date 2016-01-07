@@ -1,6 +1,6 @@
 WARNINGS = -pedantic-errors -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -Wshadow
 CPP_WARNINGS = $(WARNINGS) -Wno-char-subscripts 
-include ../../optimize.mk
+include ../../makefiles/optimize.mk
 CFLAGS=$(OPTIMIZE) -g $(WARNINGS) -m2e -I../../libbitmachine  -I/usr/local/sh-elf/include
 CPPFLAGS=$(OPTIMIZE) -g $(CPP_WARNINGS) -m2e -I../../libbitmachine -I/usr/local/sh-elf/include
 LIB_PATH=/usr/local/sh-elf/
@@ -8,7 +8,7 @@ LDFLAGS=-L../../libbitmachine -L/usr/local/sh-elf/lib
 
 all: $(ELF_FILE)
 
-include ../../base.mk
+include ../../makefiles/base.mk
 
 .SECONDARY:
 $(ELF_FILE): $(OBJ_FILES) ../../libbitmachine/libc-bitos.a
