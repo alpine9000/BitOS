@@ -91,7 +91,7 @@ $(ELF_FILE): $(OBJ_FILES) libwolf.a libbitmachine/libc-kernel.a libbitmachine/li
 	$(LD) $(LDFLAGS) -T start.l -no-keep-memory -Map bin/bitos.map -o $(ELF_FILE) $(OBJ_FILES) $(LIBS) 
 
 strip:
-	$(STRIP) -g $(ELF_FILE)
+	$(STRIP) $(ELF_FILE)
 
 $(BIN_FILE): $(ELF_FILE)
 	sh-elf-objcopy --remove-section=.bss --remove-section=.peripheral -v -O binary $(ELF_FILE) $(BIN_FILE)
@@ -153,6 +153,11 @@ filesystem:
 	rm -r $(FS_BASE)/usr/local/sh-elf/sh-elf/bin
 	rm -r $(FS_BASE)/usr/local/sh-elf/sh-elf/lib/ml
 	rm -r $(FS_BASE)/usr/local/sh-elf/sh-elf/lib/*.*
+	rm -r $(FS_BASE)/usr/local/sh-elf/lib/libcc1.*
+	rm -r $(FS_BASE)/usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/ml
+	rm -r $(FS_BASE)/usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/plugin
+	rm -r $(FS_BASE)/usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/*.o
+	rm -r $(FS_BASE)/usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/*.a
 
 	cp -r $(BITOS_PATH) $(FS_BASE)/usr/local/src/BitOS
 	rm -rf $(FS_BASE)/usr/local/src/BitOS/.git
