@@ -1,0 +1,4 @@
+cd /usr/local/src/BitOS
+make clean
+time make elf
+1669
