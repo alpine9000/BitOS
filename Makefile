@@ -125,16 +125,8 @@ filesystem:
 	-mkdir $(FS_BASE)/usr/local/src
 
 	cp $(MAKE_BASE)/make $(FS_BASE)/usr/local/bin
-	cp $(BINUTILS_BASE)/binutils/ar $(FS_BASE)/usr/local/bin
-	cp $(BINUTILS_BASE)/gas/as-new  $(FS_BASE)/usr/local/bin/as
-	cp $(BINUTILS_BASE)/ld/ld-new  $(FS_BASE)/usr/local/bin/ld
 	cp $(BITOS_PATH)/apps/bemacs/bemacs $(FS_BASE)/usr/local/bin	
 	cp $(BITOS_PATH)/apps/bsh/bsh $(FS_BASE)/usr/local/bin
-	cp $(BITOS_PATH)/apps/bsh/bsh $(FS_BASE)/bin/sh
-	cp $(BITOS_PATH)/apps/bsh/bsh $(FS_BASE)/usr/local/bin/sh
-	cp $(BITOS_PATH)/apps/bsh/bsh $(FS_BASE)/usr/local/bin/cp
-	cp $(BITOS_PATH)/apps/bsh/bsh $(FS_BASE)/usr/local/bin/rm
-	cp $(BITOS_PATH)/apps/bsh/bsh $(FS_BASE)/usr/local/bin/touch
 	cp $(BITOS_PATH)/apps/si/si $(FS_BASE)/usr/local/bin
 	cp $(BITOS_PATH)/bin/bitos.elf $(FS_BASE)/usr/local/bin
 	cp -r /usr/local/sh-elf $(FS_BASE)/usr/local
@@ -143,9 +135,10 @@ filesystem:
 	mkdir $(FS_BASE)/usr/local/sh-elf/bin
 
 	rm -r $(GCC_LIBEXEC)/*
+	cp $(BINUTILS_BASE)/gas/as-new $(FS_BASE)/usr/local/bin/as
 	cp $(GCC_BASE)/gcc/xgcc $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-gcc
 	cp $(GCC_BASE)/gcc/xg++ $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-g++
-	cp $(FS_BASE)/usr/local/bin/ld $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-ld
+	cp $(BINUTILS_BASE)/ld/ld-new  $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-ld
 	cp $(BINUTILS_BASE)/binutils/ar $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-ar
 	cp $(BINUTILS_BASE)/binutils/strip-new  $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-strip
 	cp $(GCC_BASE)/gcc/lto-wrapper $(GCC_BASE)/gcc/cc1 $(GCC_BASE)/gcc/cc1plus $(GCC_LIBEXEC)
@@ -175,6 +168,14 @@ filesystem:
 	$(STRIP) $(GCC_LIBEXEC)/cc1plus
 	$(STRIP) $(FS_BASE)/usr/local/sh-elf/bin/* 
 
+
+	cp $(BITOS_PATH)/links/sh-elf-ar $(FS_BASE)/usr/local/bin/ar
+	cp $(BITOS_PATH)/links/sh-elf-ld $(FS_BASE)/usr/local/bin/ld
+	cp $(BITOS_PATH)/links/bsh $(FS_BASE)/bin/sh
+	cp $(BITOS_PATH)/links/bsh $(FS_BASE)/usr/local/bin/sh
+	cp $(BITOS_PATH)/links/bsh $(FS_BASE)/usr/local/bin/cp
+	cp $(BITOS_PATH)/links/bsh $(FS_BASE)/usr/local/bin/rm
+	cp $(BITOS_PATH)/links/bsh $(FS_BASE)/usr/local/bin/touch
 
 	cp $(BITOS_PATH)/apps/hello/* $(FS_BASE)/usr/local/home/
 	-rm $(TOOLS_BASE)/filesystem.zip
