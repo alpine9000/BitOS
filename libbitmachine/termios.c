@@ -114,8 +114,6 @@ tcsetattr(int fildes, int optional_actions, const struct termios *termios_p)
   printf("c_oflag = %x\n", termios_p->c_oflag);
   printf("c_cflag = %x\n", termios_p->c_cflag);
   printf("c_lflag = %x\n", termios_p->c_lflag);
-  //printf("raw = %d\n", termios_p->raw);
-  //  console_setRaw(termios_p->raw);
   
   return 1;
 }

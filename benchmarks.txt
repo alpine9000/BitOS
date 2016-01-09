@@ -2,3 +2,6 @@ cd /usr/local/src/BitOS
 make clean
 time make elf
 1669
+
+make gfx.o
+134.4
