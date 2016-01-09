@@ -2,7 +2,7 @@
 include ../makefiles/optimize.mk
 WARNINGS = -pedantic-errors -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -Wshadow
 #-D_INCLUDE_BUILDER
-CFLAGS= -D_KERNEL_BUILD $(OPTIMIZE) $(WARNINGS) -I. -m2e -falign-jumps
+CFLAGS= -D_KERNEL_ASSERTS -D_KERNEL_BUILD $(OPTIMIZE) $(WARNINGS) -I. -m2e -falign-jumps
 LIBOBJ=cpp.o glcdfont.o gfx.o console.o audio.o simulator.o interrupts.o file.o syscall.o kernel_asm.o kernel_client_asm.o kernel.o window.o memory.o syscalls.o bft_kernel.o malloc.o  panic.o argv.o thread.o shell.o build.o termios.o
 ASMOBJ=start.o
 CLIENTOBJ=bft.o kernel_client_asm.o syscalls.o panic.o client.o shell.o argv.o build.o

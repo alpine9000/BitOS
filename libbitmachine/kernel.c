@@ -96,6 +96,17 @@ kernel_exitKernelMode(unsigned ___ints_disabled)
   _kernel_enableInts(___ints_disabled);  
 }
 
+static inline unsigned
+_kernel_getSR()
+{
+  volatile unsigned sr;
+  __asm__ volatile ("stc sr,r0\n"
+		    "mov.l r0,%0" 
+		    :"=m"(sr)
+		    :
+		    :"r0", "memory");
+  return sr;
+}
 
 static void 
 _kernel_scheduleFromBlocked()
@@ -237,17 +248,12 @@ _kernel_isArgvAddress(char* address, char** vector)
 static inline unsigned 
 _kernel_disableInts()
 {
-  register unsigned r0 __asm__("r0");
-
-  __asm__ volatile (
-	  "stc sr,r0\n"
-          :::"r0", "memory");
-
-  if ((r0 & 0xF0) == 0xF0) { // Already disabled
+  if ((_kernel_getSR() & 0xF0) == 0xF0) { // Already disabled
     return 0;
   }
   
   __asm__ volatile (
+	  "stc sr,r0\n"
 	  "or #0xF0,r0\n"
 	  "ldc r0,sr"
 	  :
@@ -264,14 +270,9 @@ _kernel_enableInts(unsigned enable)
   if (enable) {
 
 #ifdef _KERNEL_ASSERTS
-    register unsigned r0 __asm__("r0");
-  __asm__ volatile (
-	  "stc sr,r0\n"
-          :::"r0", "memory");
-
-  if ((r0 & 0xF0) != 0xF0) { // Already enabled
-    panic("_kernel_enableInts: already enabled");
-  }
+    if ((_kernel_getSR() & 0xF0) != 0xF0) { // Already enabled
+      panic("_kernel_enableInts: already enabled");
+    }
 #endif
 
     __asm__ volatile ("stc sr,r0\n"
@@ -393,7 +394,7 @@ static int
 _kernel_getIsThreadAlive(thread_h tid)
 {
   _threadTable_lock();
-  
+
   int result = 0;
   for (unsigned i = 0; i < _thread_max; i++) {
     if (threadTable[i].tid == tid) {
@@ -401,9 +402,9 @@ _kernel_getIsThreadAlive(thread_h tid)
       break;
     }
   }
-  
+
   _threadTable_unlock();
-  
+
   return result;
 }
 
@@ -493,15 +494,11 @@ kernel_threadDie(int status)
 void
 kernel_threadBlocked()
 {
-  register unsigned r1 __asm__("r1");
-  
-  __asm__ volatile (
-		    "stc sr,r1\n"
-		    :::"r1", "memory");
-  
-  if ((r1 & 0xF0) == 0xF0) { // Already disabled
-    panic("kernel_threadBlocked: called with interupts disabled");
+#ifdef _KERNEL_ASSERTS
+  if ((_kernel_getSR() & 0xF0) == 0xF0) { // Already disabled
+    panic("kernel_threadBlocked: called with interrupts disabled");
   }
+#endif
   
   __asm__ volatile("trapa #36":::"memory");
 }
@@ -606,6 +603,7 @@ thread_h
 kernel_threadGetIdForStdout(unsigned fd)
 {
   _threadTable_lock();
+
   for (unsigned i = 0; i < _thread_max; i++) {
     if (threadTable[i].fd._stdout == (int)fd) {
       thread_h tid = threadTable[i].tid;
@@ -621,6 +619,8 @@ kernel_threadGetIdForStdout(unsigned fd)
       return tid;
     }
   }
+
+  _threadTable_unlock();
 
   return INVALID_THREAD;
 }
