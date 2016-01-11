@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "gfx.h"
 #include "kernel.h"
 #include "window.h"
@@ -33,8 +34,13 @@ runShell(int argc, char** argv)
 int
 go(int argc, char** argv)
 {
-  if (thread_spawn("bsh") == INVALID_THREAD) {
-    kernel_threadSpawn(&runShell, argv_build("bsh"), 0); 
+  extern int shell_test(int argc, char** argv);
+  if (argc == 2 && strncmp(argv[1], "test", 5) == 0) {
+    kernel_threadSpawn(&shell_test, argv_build("test"), 0);
+  } else {
+    if (thread_spawn("bsh") == INVALID_THREAD) {
+      kernel_threadSpawn(&runShell, argv_build("bsh"), 0); 
+    }
   }
   window_loop();
   return 0;

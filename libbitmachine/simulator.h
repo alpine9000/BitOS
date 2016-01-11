@@ -15,6 +15,6 @@ unsigned simulator_timeMicroSeconds();
 unsigned simulator_elapsedMilliSeconds();
 int simulator_gtod(struct timeval *tv, void *tz);
 int simulator_printf(const char *format, ...);
-
+char** simulator_kernelArgv();
 
 #endif

@@ -31,6 +31,14 @@ _kernel_atomic_lock_asm(void* ptr);
 #define _thread_stack_size_words  (_thread_stack_size_bytes/4)
 #define _KERNEL_STACK_CANARY 0xDEADBEEF
 
+#ifdef _KERNEL_ASSERTS
+#define _KA_interruptsDisabled()  if ((_kernel_getSR() & 0xF0) != 0xF0) {  panic(" kernel assesrtion failed: interrupts not disabled");}
+#define _KA_interruptsEnabled()  if ((_kernel_getSR() & 0xF0) != 0x00) {  panic(" kernel assesrtion failed: interrupts not enabled");}
+#else
+#define _KA_interruptsDisabled() kernel_memoryBarrier()
+#define _KA_interruptsEnabled() kernel_memoryBarrier()
+#endif
+
 enum {
     _THREAD_DEAD = 0,
     _THREAD_RUNNING = 1,
@@ -74,6 +82,7 @@ static volatile unsigned kernel_threadMax = _thread_max;
 
 static inline unsigned _kernel_disableInts();
 static inline void _kernel_enableInts(unsigned);
+static inline unsigned _kernel_getSR();
 
 #define _threadTable_lock() unsigned ___ints_disabled = _kernel_disableInts()
 #define _threadTable_unlock() _kernel_enableInts(___ints_disabled)
@@ -111,6 +120,8 @@ _kernel_getSR()
 static void 
 _kernel_scheduleFromBlocked()
 {
+  _KA_interruptsDisabled();
+
   unsigned int i, previous = currentThread;
 
   for (i = (currentThread+1) % _thread_max; i != currentThread; i = (i+1) % _thread_max) {
@@ -135,6 +146,8 @@ _kernel_scheduleFromBlocked()
 static void 
 _kernel_schedule()
 {
+  _KA_interruptsDisabled();
+
   unsigned int i;
 
   for (i = 0; i < _thread_max; ++i) {
@@ -160,6 +173,7 @@ _kernel_schedule()
 static thread_h 
 _kernel_threadCreate(unsigned int threadIndex, unsigned* image, unsigned imageSize, int(* ptr)(int,char**),  char**argv, fds_t* fds)
 {
+    _KA_interruptsDisabled();
   _thread_entry_t *entry = &threadTable[threadIndex];
   entry->tid = (thread_h)nextTid++;
   entry->argc = argv_argc(argv);
@@ -212,13 +226,15 @@ _kernel_threadAllocate()
 static int
 _kernel_threadSetInfo(unsigned threadIndex, thread_info_t type, unsigned info)
 {
+  _KA_interruptsDisabled();
+
   _thread_entry_t *entry = &threadTable[threadIndex];
   switch (type) {
   case KERNEL_THREAD_WINDOW:
     entry->window = (window_h)info;
     return 1;
   case KERNEL_CURRENT_WORKING_DIRECTORY:
-    strncpy(threadTable[currentThread].cwd, (char*)info, PATH_MAX);
+    strncpy(threadTable[threadIndex].cwd, (char*)info, PATH_MAX);
     return 1;
   }
 
@@ -249,6 +265,7 @@ static inline unsigned
 _kernel_disableInts()
 {
   if ((_kernel_getSR() & 0xF0) == 0xF0) { // Already disabled
+    _KA_interruptsDisabled();
     return 0;
   }
   
@@ -260,6 +277,7 @@ _kernel_disableInts()
 	  :
           :"r0", "memory");
 
+  _KA_interruptsDisabled();
   return 1;
 }
 
@@ -267,13 +285,9 @@ _kernel_disableInts()
 static inline void 
 _kernel_enableInts(unsigned enable)
 {
-  if (enable) {
+  _KA_interruptsDisabled();
 
-#ifdef _KERNEL_ASSERTS
-    if ((_kernel_getSR() & 0xF0) != 0xF0) { // Already enabled
-      panic("_kernel_enableInts: already enabled");
-    }
-#endif
+  if (enable) {
 
     __asm__ volatile ("stc sr,r0\n"
 		      "and #0xFFFFFF0F,r0\n"
@@ -281,6 +295,8 @@ _kernel_enableInts(unsigned enable)
 		      :
 		      :
 		      :"r0", "memory");
+
+    _KA_interruptsEnabled();
   }
 }
 
@@ -289,6 +305,8 @@ _kernel_enableInts(unsigned enable)
 void 
 _from_asm_kernel_tick(unsigned int *sp)
 {
+  _KA_interruptsDisabled();
+
   threadTable[currentThread].sp = sp;
   threadTable[currentThread].state = _THREAD_WAIT;
 
@@ -298,6 +316,8 @@ _from_asm_kernel_tick(unsigned int *sp)
         panic("_from_asm_kernel_tick: dead canary");
    }
 
+  _KA_interruptsDisabled();
+
   _kernel_resume_asm(threadTable[currentThread].sp);
 }
 
@@ -306,6 +326,8 @@ _from_asm_kernel_tick(unsigned int *sp)
 void 
 _from_asm_kernel_blocked(unsigned int *sp)
 {
+  _KA_interruptsDisabled();
+
   threadTable[currentThread].sp = sp;
   ktrace_thread_blocked();
   threadTable[currentThread].state = _THREAD_BLOCKED;
@@ -313,6 +335,9 @@ _from_asm_kernel_blocked(unsigned int *sp)
   if (threadTable[currentThread].thread_stack[0] != _KERNEL_STACK_CANARY) {
     panic("_from_asm_kernel_blocked: dead canary");
   }
+
+  _KA_interruptsDisabled();
+
   _kernel_resume_asm(threadTable[currentThread].sp);
 }
 
@@ -321,6 +346,8 @@ _from_asm_kernel_blocked(unsigned int *sp)
 void 
 _from_asm_kernel_kill(int status, int context)
 {
+  _KA_interruptsDisabled();
+
   _thread_entry_t *entry = &threadTable[currentThread];
   unsigned long _currentThreadSave = currentThread;
   currentThread = 0;
@@ -365,7 +392,9 @@ _from_asm_kernel_kill(int status, int context)
   if (threadTable[currentThread].thread_stack[0] != _KERNEL_STACK_CANARY) {
     panic("_from_asm_kernel_kill:  dead canary");
   }
-  
+
+  _KA_interruptsDisabled();  
+
   _kernel_resume_asm(threadTable[currentThread].sp);
 }
 
@@ -385,7 +414,12 @@ kernel_init(int (*ptr)(int argc, char** argv), const char* version)
     threadTable[i].thread_stack = malloc(_thread_stack_size_bytes);
     threadTable[i].thread_stack[0] = _KERNEL_STACK_CANARY;
   }
-  _kernel_threadCreate(currentThread, 0, 0, ptr, argv_build("kernel"), 0);
+
+  char** argv = simulator_kernelArgv();
+
+  
+
+  _kernel_threadCreate(currentThread, 0, 0, ptr, argv, 0);
   _kernel_resume_asm(threadTable[currentThread].sp);
 }
 
@@ -394,6 +428,8 @@ static int
 _kernel_getIsThreadAlive(thread_h tid)
 {
   _threadTable_lock();
+
+  _KA_interruptsDisabled();
 
   int result = 0;
   for (unsigned i = 0; i < _thread_max; i++) {
@@ -494,11 +530,7 @@ kernel_threadDie(int status)
 void
 kernel_threadBlocked()
 {
-#ifdef _KERNEL_ASSERTS
-  if ((_kernel_getSR() & 0xF0) == 0xF0) { // Already disabled
-    panic("kernel_threadBlocked: called with interrupts disabled");
-  }
-#endif
+  _KA_interruptsEnabled();
   
   __asm__ volatile("trapa #36":::"memory");
 }
@@ -630,6 +662,9 @@ static int
 _kernel_threadGetExitStatus(thread_h tid, int* status)
 {
   _threadTable_lock();
+
+  _KA_interruptsDisabled();
+
   int success = 0;
 
   for (unsigned i = 0; i < _thread_historyMax; i++) {
@@ -746,7 +781,7 @@ _kernel_newlib_lock_release_recursive(_LOCK_RECURSIVE_T* lock)
 #ifdef _KERNEL_ASSERTS
   if (lock->thread != (unsigned)tid) {
     if (lock->count == 0) { //? Never locked maybe ?
-      // panic("_kernel_newlib_lock_release_recursive: lock->thread != tid (count = 0)");
+      panic("_kernel_newlib_lock_release_recursive: lock->thread != tid (count = 0)");
       kernel_unlock(&lock->lock);
       return;
     }
@@ -802,9 +837,15 @@ void _kernel_newlib_lock_release(unsigned* lock)
 int 
 kernel_threadWait(thread_h tid)
 {
+  _KA_interruptsEnabled();
+
   while (_kernel_getIsThreadAlive(tid)) {
+    _KA_interruptsEnabled();
     kernel_threadBlocked();
+    _KA_interruptsEnabled();
   }
+
+  _KA_interruptsEnabled();
 
   return kernel_threadGetExitStatus(tid);
 }

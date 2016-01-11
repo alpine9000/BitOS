@@ -28,21 +28,8 @@ void shell_exec(char* cmd);
 #define shellWindowWidth  ((gfx_fontWidth+gfx_spaceWidth)*80)
 #define shellWindowHeight ( gfx_fontHeight*24)
 
-#ifdef _INCLUDE_BUILDER
-
-extern int 
-build(int argc, char** argv);
-
-extern int 
-build2(int argc, char** argv);
-
-static int
-test(int argc, char** argv);
-
-extern int
-bcc(int argc, char** argv);
-
-#endif
+int
+shell_test(int argc, char** argv);
 
 static int
 mv(int argc, char** argv);
@@ -126,8 +113,8 @@ static builtin_t builtins[] = {
   {"bcc", 0, bcc},
   {"b", 0, build},
   {"c", 0, build2},
-  {"test", 0, test},
 #endif
+  {"test", 0, shell_test},
   {"shell", 1, runShell},
   {"version", 0, version},
   {"kernel", 0, kernel},
@@ -331,58 +318,73 @@ getSR()
  return r0;
 }
 
-#ifdef _INCLUDE_BUILDER
-static void 
-testBuild(char* cmd, int(*builder)(int, char**), unsigned x)
-{
-  static int numTestBuilds = 2;
-  unsigned w = shellWindowWidth, h = shellWindowHeight;
-  setbuf(stdout, NULL); 
-  window_h window = window_create(cmd, x, 0, w, h);
-  gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
-  kernel_threadSetWindow(window);
-  char** argv = argv_build(cmd);
-  int argc = argv_argc(argv);
-  for (int i = 0; i < numTestBuilds; i++) {
-    builder(argc, argv);
-  }
-
-  printf("Success!!!\n");
-
-  for (;;) {
-    kernel_threadBlocked();
-  }
-}
-
 
 static int 
 runTestBuild1(int argc, char** argv)
 {
-  testBuild("b -f", build, 0);
+  unsigned w = shellWindowWidth, h = shellWindowHeight;
+  setbuf(stdout, NULL);
+  window_h window = window_create("BitOS", 0, 0, w, h);
+  gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
+  kernel_threadSetWindow(window);
+
+  if (thread_load("make -C /usr/local/src/BitOS clean")
+      && thread_load("make -C /usr/local/src/BitOS elf")  
+      && thread_load("make -C /usr/local/src/BitOS clean") 
+      && thread_load("make -C /usr/local/src/BitOS elf")
+      ) {
+    printf("Success!\n");
+  } else {
+    printf(":-(\n");
+  }
+
+  do {
+    kernel_threadBlocked();
+  } while(1);
+
   return 0;
 }
 
 static int
 runTestBuild2(int argc, char** argv)
 {
-  testBuild("c -f", build2, shellWindowWidth);
+  unsigned w = shellWindowWidth, h = shellWindowHeight;
+  setbuf(stdout, NULL);
+  window_h window = window_create("BitOS.2", w, 0, w, h);
+  gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
+  kernel_threadSetWindow(window);
+  if (thread_load("make -C /usr/local/src/BitOS.2 clean")
+      && thread_load("make -C /usr/local/src/BitOS.2 elf")   
+      && thread_load("make -C /usr/local/src/BitOS.2 clean")
+      && thread_load("make -C /usr/local/src/BitOS.2 elf")
+      ) {
+    printf("Success!\n");
+  } else {
+    printf(":-(\n");
+  }
+
+
+  do {
+    kernel_threadBlocked();
+  } while(1);
+
   return 0;
 }
 
 
-static int
-test(int argc, char** argv)
+int
+shell_test(int argc, char** argv)
 {
-  kernel_threadSpawn(&runTestBuild1, 0, 0);
+  //  rcopy("/usr/local/src/BitOS", "/usr/local/src/BitOS.2");
   kernel_threadSpawn(&runTestBuild2, 0, 0); 
+  kernel_threadSpawn(&runTestBuild1, 0, 0);
+
   do {
     kernel_threadBlocked();
   } while(1);
   
   return 0;
 }
-
-#endif
 
 static struct timeval* 
 shell_timeval_subtract (struct timeval *result, struct timeval *x, struct timeval *y)

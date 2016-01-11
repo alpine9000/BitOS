@@ -1,9 +1,11 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "simulator.h"
 #include "peripheral.h"
 #include "kernel.h"
+#include "argv.h"
 
 #define lock() unsigned ___ints_disabled = kernel_disableInts()
 #define unlock() kernel_enableInts(___ints_disabled)
@@ -83,3 +85,42 @@ simulator_printf(const char * format, ...)
 
   return 1;
 }
+
+static void 
+_simulator_argvDump(char** vector)
+{
+  int argc = 0;
+
+  if (vector != 0) {
+    for (; argc < 255 && vector[argc] != 0; argc++) {
+      if (argc != 0) {
+	simulator_printf(" ");
+      }
+      simulator_printf("%s", vector[argc]);
+    }
+  }
+}
+
+
+char** 
+simulator_kernelArgv()
+{
+  lock();
+
+  int length = peripheral.kernelCmdLength;
+  char* cmd = malloc(length+1);
+  cmd[length] = 0;
+  for (int i = 0; i < length; ++i) {
+    cmd[i] = (char)peripheral.kernelCmd;
+  }
+  char **argv = argv_build(cmd);
+
+  simulator_printf("kernel command line: ");
+  _simulator_argvDump(argv);
+  simulator_printf("\n");
+  
+  unlock();
+
+  return argv;
+}
+

@@ -174,6 +174,8 @@ typedef struct {
 
   programmable_character_generator_t pcg;
 
+  unsigned kernelCmdLength;
+  unsigned kernelCmd;
 
 } peripheral_t;
 

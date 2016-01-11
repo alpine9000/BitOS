@@ -169,13 +169,21 @@ filesystem:
 	$(STRIP) $(FS_BASE)/usr/local/sh-elf/bin/* 
 
 
-	cp $(BITOS_PATH)/links/sh-elf-ar $(FS_BASE)/usr/local/bin/ar
-	cp $(BITOS_PATH)/links/sh-elf-ld $(FS_BASE)/usr/local/bin/ld
-	cp $(BITOS_PATH)/links/bsh $(FS_BASE)/bin/sh
-	cp $(BITOS_PATH)/links/bsh $(FS_BASE)/usr/local/bin/sh
-	cp $(BITOS_PATH)/links/bsh $(FS_BASE)/usr/local/bin/cp
-	cp $(BITOS_PATH)/links/bsh $(FS_BASE)/usr/local/bin/rm
-	cp $(BITOS_PATH)/links/bsh $(FS_BASE)/usr/local/bin/touch
+	cp $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-ar $(FS_BASE)/usr/local/bin/ar
+	cp $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-ld $(FS_BASE)/usr/local/bin/ld
+	cp $(FS_BASE)/usr/local/bin/bsh $(FS_BASE)/bin/sh
+	cp $(FS_BASE)/usr/local/bin/bsh $(FS_BASE)/usr/local/bin/s
+	cp $(FS_BASE)/usr/local/bin/bsh $(FS_BASE)/usr/local/bin/cp
+	cp $(FS_BASE)/usr/local/bin/bsh $(FS_BASE)/usr/local/bin/rm
+	cp $(FS_BASE)/usr/local/bin/bsh $(FS_BASE)/usr/local/bin/touch
+
+	#cp $(BITOS_PATH)/links/sh-elf-ar $(FS_BASE)/usr/local/bin/ar
+	#cp $(BITOS_PATH)/links/sh-elf-ld $(FS_BASE)/usr/local/bin/ld
+	#cp $(BITOS_PATH)/links/bsh $(FS_BASE)/bin/sh
+	#cp $(BITOS_PATH)/links/bsh $(FS_BASE)/usr/local/bin/sh
+	#cp $(BITOS_PATH)/links/bsh $(FS_BASE)/usr/local/bin/cp
+	#cp $(BITOS_PATH)/links/bsh $(FS_BASE)/usr/local/bin/rm
+	#cp $(BITOS_PATH)/links/bsh $(FS_BASE)/usr/local/bin/touch
 
 	cp $(BITOS_PATH)/apps/hello/* $(FS_BASE)/usr/local/home/
 	-rm $(TOOLS_BASE)/filesystem.zip
