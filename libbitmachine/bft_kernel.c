@@ -106,7 +106,9 @@ _bft_t __bft  = {
   &tgetent,
   &cfmakeraw,
 
-  &wolf
+  &wolf,
+
+  &kernel_threadGetExitStatus
 };
 
 _bft_t* _bft = &__bft;

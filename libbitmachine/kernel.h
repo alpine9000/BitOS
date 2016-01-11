@@ -48,7 +48,7 @@ int
 kernel_threadWait(thread_h pid);
 
 void    
-kernel_threadDie(int status);
+kernel_threadDie(int status)  __attribute__ ((noreturn));
 
 int      
 kernel_threadSetInfo(thread_info_t type, unsigned info);
@@ -137,5 +137,6 @@ kernel_version();
 #define kernel_threadDie(x) _bft->kernel_threadDie(x)
 #define kernel_threadSpawn(x,v,f) _bft->kernel_threadSpawn(x,v,f)
 #define kernel_threadGetFds(x) _bft->kernel_threadGetFds(x)
+#define kernel_threadGetExitStatus(x) _bft->kernel_threadGetExitStatus(x)
 
 #endif

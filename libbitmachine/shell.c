@@ -26,7 +26,8 @@
 void shell_exec(char* cmd);
 
 #define shellWindowWidth  ((gfx_fontWidth+gfx_spaceWidth)*80)
-#define shellWindowHeight ( gfx_fontHeight*24)
+#define shellWindowHeight (gfx_fontHeight*24)
+#define titlebarHeight    (gfx_fontHeight+4)
 
 int
 shell_test(int argc, char** argv);
@@ -319,69 +320,75 @@ getSR()
 }
 
 
-static int 
-runTestBuild1(int argc, char** argv)
-{
-  unsigned w = shellWindowWidth, h = shellWindowHeight;
-  setbuf(stdout, NULL);
-  window_h window = window_create("BitOS", 0, 0, w, h);
-  gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
-  kernel_threadSetWindow(window);
-
-  if (thread_load("make -C /usr/local/src/BitOS clean")
-      && thread_load("make -C /usr/local/src/BitOS elf")  
-      && thread_load("make -C /usr/local/src/BitOS clean") 
-      && thread_load("make -C /usr/local/src/BitOS elf")
-      ) {
-    printf("Success!\n");
-  } else {
-    printf(":-(\n");
-  }
-
-  do {
-    kernel_threadBlocked();
-  } while(1);
-
-  return 0;
-}
-
 static int
-runTestBuild2(int argc, char** argv)
+runTestBuild(int argc, char** argv)
 {
   unsigned w = shellWindowWidth, h = shellWindowHeight;
   setbuf(stdout, NULL);
-  window_h window = window_create("BitOS.2", w, 0, w, h);
+  int offset = atoi(argv[1]);
+  window_h window = window_create("BitOS", (w+2)*offset, 0, w, h);
   gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
   kernel_threadSetWindow(window);
-  if (thread_load("make -C /usr/local/src/BitOS.2 clean")
-      && thread_load("make -C /usr/local/src/BitOS.2 elf")   
-      && thread_load("make -C /usr/local/src/BitOS.2 clean")
-      && thread_load("make -C /usr/local/src/BitOS.2 elf")
+  int exitStatus = 1;
+  int pathLen = strlen(argv[0]);
+
+  char* cleanCommand = "make clean -C ";
+  char* cleanCommandPtr = malloc(strlen(cleanCommand) + pathLen+1);
+  sprintf(cleanCommandPtr, "%s%s", cleanCommand, argv[0]);
+
+  char* elfCommand = "make elf -C ";
+  char* elfCommandPtr = malloc(strlen(elfCommand) + pathLen+1);
+  sprintf(elfCommandPtr, "%s%s", elfCommand, argv[0]);
+
+  if (thread_load(cleanCommandPtr)
+      && thread_load(elfCommandPtr)
+       && thread_load(cleanCommandPtr)
+       && thread_load(elfCommandPtr)
       ) {
     printf("Success!\n");
+    exitStatus = 0;
   } else {
     printf(":-(\n");
   }
 
-
-  do {
-    kernel_threadBlocked();
-  } while(1);
+  kernel_threadDie(exitStatus);
 
   return 0;
 }
-
 
 int
 shell_test(int argc, char** argv)
 {
-  //  rcopy("/usr/local/src/BitOS", "/usr/local/src/BitOS.2");
-  kernel_threadSpawn(&runTestBuild2, 0, 0); 
-  kernel_threadSpawn(&runTestBuild1, 0, 0);
+  unsigned w = shellWindowWidth, h = shellWindowHeight;
+  setbuf(stdout, NULL);
+  window_h window = window_create("Torture", 0, h+titlebarHeight+2, w, h);
+  gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
+  kernel_threadSetWindow(window);
 
+  rcopy("/usr/local/src/BitOS", "/usr/local/src/BitOS.2");
+  thread_h t1 = kernel_threadSpawn(&runTestBuild, argv_build("/usr/local/src/BitOS 0"), 0); 
+  thread_h t2 = kernel_threadSpawn(&runTestBuild, argv_build("/usr/local/src/BitOS.2 1"), 0);
+
+
+  int result1 = -1;
+  int result2 = -1;
+  
   do {
+    if (result1 == -1) {
+      result1 = kernel_threadGetExitStatus(t1);
+    }
+
+    if (result2 == -1) {
+      result2 = kernel_threadGetExitStatus(t2);
+    }
+
     kernel_threadBlocked();
-  } while(1);
+  } while(result1 == -1 || result2 == -1);
+
+
+  printf("Results = %s\n", result1 == 0 && result2 == 0 ? "Success" : "Failed");
+  
+  kernel_threadDie(0);
   
   return 0;
 }

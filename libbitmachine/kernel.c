@@ -524,6 +524,7 @@ void
 kernel_threadDie(int status)
 {
   __asm__ volatile("trapa #37":::"memory");
+  for(;;);
 }
 
 

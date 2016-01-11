@@ -16,7 +16,7 @@ typedef struct {
   void (*kernel_spinLock)(void* ptr);
   void (*kernel_unlock)(void* ptr);
   thread_h (*kernel_threadGetId)();
-  void (*kernel_threadDie)(int status);
+  void (*kernel_threadDie)(int status)__attribute__ ((noreturn));
   window_h (*kernel_threadGetWindow)(void);
   thread_h (*kernel_threadSpawn)(int (*entry)(int argc, char**argv),  char**argv, fds_t* fds);
   void (*kernel_stats)();
@@ -92,6 +92,8 @@ typedef struct {
   void (*cfmakeraw)(struct termios *termios_p);
 
   int (*wolf)(int argc, char** argv);
+
+  int (*kernel_threadGetExitStatus)(thread_h);
 
 } _bft_t;
 
