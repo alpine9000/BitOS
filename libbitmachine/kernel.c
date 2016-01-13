@@ -27,17 +27,11 @@ _kernel_atomic_lock_asm(void* ptr);
 #define _thread_historyMax 32
 
 //#define _thread_stack_size_bytes  (0x2800000)
-#define _thread_stack_size_bytes  (0x200000)
+#define _thread_stack_size_bytes  (0x10000)
 #define _thread_stack_size_words  (_thread_stack_size_bytes/4)
 #define _KERNEL_STACK_CANARY 0xDEADBEEF
 
-#ifdef _KERNEL_ASSERTS
-#define _KA_interruptsDisabled()  if ((_kernel_getSR() & 0xF0) != 0xF0) {  panic(" kernel assesrtion failed: interrupts not disabled");}
-#define _KA_interruptsEnabled()  if ((_kernel_getSR() & 0xF0) != 0x00) {  panic(" kernel assesrtion failed: interrupts not enabled");}
-#else
-#define _KA_interruptsDisabled() kernel_memoryBarrier()
-#define _KA_interruptsEnabled() kernel_memoryBarrier()
-#endif
+static volatile unsigned _kernel_thread_stack_size_bytes = _thread_stack_size_bytes;
 
 enum {
     _THREAD_DEAD = 0,
@@ -91,18 +85,22 @@ static inline unsigned _kernel_getSR();
 unsigned 
 kernel_enterKernelMode()
 {
-  unsigned ___ints_disabled = _kernel_disableInts();
+  unsigned modeFlag = _kernel_disableInts() << 1 | (currentThread != 0);
   currentThreadSave = currentThread;
   currentThread = 0;
-  return ___ints_disabled;
+  return modeFlag;
 }
 
 
 void
-kernel_exitKernelMode(unsigned ___ints_disabled)
+kernel_exitKernelMode(unsigned modeFlag)
 {
-  currentThread = currentThreadSave;
-  _kernel_enableInts(___ints_disabled);  
+  unsigned exitMode = modeFlag & 1;
+  unsigned intsDisabled = modeFlag & 2;
+  if (exitMode) {
+    currentThread = currentThreadSave;
+  }
+  _kernel_enableInts(intsDisabled);  
 }
 
 static inline unsigned
@@ -117,10 +115,10 @@ _kernel_getSR()
   return sr;
 }
 
-static void 
+static unsigned 
 _kernel_scheduleFromBlocked()
 {
-  _KA_interruptsDisabled();
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
 
   unsigned int i, previous = currentThread;
 
@@ -130,23 +128,22 @@ _kernel_scheduleFromBlocked()
     }
   }
 
-  currentThread = i; 
-  
-  if (currentThread == previous) {
+  if (i == previous) {
     ktrace_simulator_yield();
     peripheral.simulator.yieldOnRTE = 1;
   } else {
     ktrace_current_thread();
   }
 
-  threadTable[currentThread].state = _THREAD_RUNNING;
+  threadTable[i].state = _THREAD_RUNNING;
+  return i;
 }
 
 
-static void 
+static unsigned 
 _kernel_schedule()
 {
-  _KA_interruptsDisabled();
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
 
   unsigned int i;
 
@@ -163,17 +160,18 @@ _kernel_schedule()
     }
   }
   
-  currentThread = i; 
   ktrace_current_thread();
 
-  threadTable[currentThread].state = _THREAD_RUNNING;
+  threadTable[i].state = _THREAD_RUNNING;
+  return i;
 }
 
 
 static thread_h 
 _kernel_threadCreate(unsigned int threadIndex, unsigned* image, unsigned imageSize, int(* ptr)(int,char**),  char**argv, fds_t* fds)
 {
-    _KA_interruptsDisabled();
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
+
   _thread_entry_t *entry = &threadTable[threadIndex];
   entry->tid = (thread_h)nextTid++;
   entry->argc = argv_argc(argv);
@@ -226,7 +224,7 @@ _kernel_threadAllocate()
 static int
 _kernel_threadSetInfo(unsigned threadIndex, thread_info_t type, unsigned info)
 {
-  _KA_interruptsDisabled();
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
 
   _thread_entry_t *entry = &threadTable[threadIndex];
   switch (type) {
@@ -265,7 +263,7 @@ static inline unsigned
 _kernel_disableInts()
 {
   if ((_kernel_getSR() & 0xF0) == 0xF0) { // Already disabled
-    _KA_interruptsDisabled();
+    KERNEL_ASSERT_INTERRUPTS_DISABLED();
     return 0;
   }
   
@@ -277,7 +275,7 @@ _kernel_disableInts()
 	  :
           :"r0", "memory");
 
-  _KA_interruptsDisabled();
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
   return 1;
 }
 
@@ -285,7 +283,7 @@ _kernel_disableInts()
 static inline void 
 _kernel_enableInts(unsigned enable)
 {
-  _KA_interruptsDisabled();
+  KERNEL_ASSERT_INTERRUPTS_DISABLED()
 
   if (enable) {
 
@@ -296,27 +294,51 @@ _kernel_enableInts(unsigned enable)
 		      :
 		      :"r0", "memory");
 
-    _KA_interruptsEnabled();
+    KERNEL_ASSERT_INTERRUPTS_ENABLED();
   }
 }
 
+void 
+kernel_assertKernelMode(unsigned pr)
+{
+#ifdef _KERNEL_ASSERTS
+  if (currentThread != 0) {
+    
+    static char buffer[1024];
+    sprintf(buffer, "kernel_assertKernelMode: not in kernel mode pr = 0x%x", pr);
+    panic(buffer);
+  }
+#endif
+}
+
+static inline void
+_kernel_checkStack()
+{
+#ifdef _KERNEL_ASSERTS
+  if (threadTable[currentThread].thread_stack[0] != _KERNEL_STACK_CANARY) {
+    panic("kernel assesrtion failed: dead canary");
+  }
+
+  if (threadTable[currentThread].sp < &threadTable[currentThread].thread_stack[0] ||
+      threadTable[currentThread].sp >= &threadTable[currentThread].thread_stack[_thread_stack_size_words]) {
+    panic("kernel assesrtion failed: invalid stack pointer");
+  }
+#endif
+}
 
 /* called from kernel_asm.S via simulated clock tick - level 15 interrupt (ints disabled) */
 void 
 _from_asm_kernel_tick(unsigned int *sp)
 {
-  _KA_interruptsDisabled();
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
 
   threadTable[currentThread].sp = sp;
   threadTable[currentThread].state = _THREAD_WAIT;
 
-  _kernel_schedule();
+  _kernel_checkStack();
+ 
+  currentThread = _kernel_schedule();
 
-  if (threadTable[currentThread].thread_stack[0] != _KERNEL_STACK_CANARY) {
-        panic("_from_asm_kernel_tick: dead canary");
-   }
-
-  _KA_interruptsDisabled();
 
   _kernel_resume_asm(threadTable[currentThread].sp);
 }
@@ -326,17 +348,15 @@ _from_asm_kernel_tick(unsigned int *sp)
 void 
 _from_asm_kernel_blocked(unsigned int *sp)
 {
-  _KA_interruptsDisabled();
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
 
   threadTable[currentThread].sp = sp;
   ktrace_thread_blocked();
   threadTable[currentThread].state = _THREAD_BLOCKED;
-  _kernel_scheduleFromBlocked();
-  if (threadTable[currentThread].thread_stack[0] != _KERNEL_STACK_CANARY) {
-    panic("_from_asm_kernel_blocked: dead canary");
-  }
 
-  _KA_interruptsDisabled();
+  _kernel_checkStack();
+
+  currentThread = _kernel_scheduleFromBlocked();
 
   _kernel_resume_asm(threadTable[currentThread].sp);
 }
@@ -346,7 +366,7 @@ _from_asm_kernel_blocked(unsigned int *sp)
 void 
 _from_asm_kernel_kill(int status, int context)
 {
-  _KA_interruptsDisabled();
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
 
   _thread_entry_t *entry = &threadTable[currentThread];
   unsigned long _currentThreadSave = currentThread;
@@ -387,13 +407,10 @@ _from_asm_kernel_kill(int status, int context)
 
   currentThread = _currentThreadSave;
 
-  _kernel_schedule();
+  _kernel_checkStack();
 
-  if (threadTable[currentThread].thread_stack[0] != _KERNEL_STACK_CANARY) {
-    panic("_from_asm_kernel_kill:  dead canary");
-  }
+  currentThread = _kernel_schedule();
 
-  _KA_interruptsDisabled();  
 
   _kernel_resume_asm(threadTable[currentThread].sp);
 }
@@ -429,7 +446,7 @@ _kernel_getIsThreadAlive(thread_h tid)
 {
   _threadTable_lock();
 
-  _KA_interruptsDisabled();
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
 
   int result = 0;
   for (unsigned i = 0; i < _thread_max; i++) {
@@ -531,7 +548,7 @@ kernel_threadDie(int status)
 void
 kernel_threadBlocked()
 {
-  _KA_interruptsEnabled();
+  KERNEL_ASSERT_INTERRUPTS_ENABLED();
   
   __asm__ volatile("trapa #36":::"memory");
 }
@@ -664,7 +681,7 @@ _kernel_threadGetExitStatus(thread_h tid, int* status)
 {
   _threadTable_lock();
 
-  _KA_interruptsDisabled();
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
 
   int success = 0;
 
@@ -838,15 +855,16 @@ void _kernel_newlib_lock_release(unsigned* lock)
 int 
 kernel_threadWait(thread_h tid)
 {
-  _KA_interruptsEnabled();
+  KERNEL_ASSERT_INTERRUPTS_ENABLED();
 
   while (_kernel_getIsThreadAlive(tid)) {
-    _KA_interruptsEnabled();
+    KERNEL_ASSERT_INTERRUPTS_ENABLED();
     kernel_threadBlocked();
-    _KA_interruptsEnabled();
+    KERNEL_ASSERT_INTERRUPTS_ENABLED();
   }
 
-  _KA_interruptsEnabled();
+
+  KERNEL_ASSERT_INTERRUPTS_ENABLED();
 
   return kernel_threadGetExitStatus(tid);
 }

@@ -7,6 +7,8 @@ struct tms;
 
 #ifdef _KERNEL_BUILD
 
+#include "kernel_asserts.h"
+
 #define kernel_memoryBarrier() do { asm volatile ("" : : : "memory"); } while (0)
 #define kernel_threadSetWindow(w) kernel_threadSetInfo(KERNEL_THREAD_WINDOW, (unsigned)w)
 
@@ -19,12 +21,6 @@ kernel_getcwd(char *buf, unsigned size);
 
 void 
 kernel_stats();
-
-unsigned 
-kernel_enterKernelMode();
-
-void     
-kernel_exitKernelMode(unsigned ___ints_disabled);
 
 void     
 kernel_enableInts(unsigned enable);
@@ -71,6 +67,8 @@ kernel_threadGetIdForStdout(unsigned fd);
 unsigned 
 kernel_threadGetIsActiveImage(void* ptr);
 
+void 
+kernel_assertKernelMode(unsigned pr);
 
 void     
 kernel_spinLock(void* ptr);
@@ -112,6 +110,7 @@ _kernel_newlib_lock_release(unsigned* lock);
 const char*
 kernel_version();
 
+
 //#define KTRACE
 
 #ifdef KTRACE
@@ -140,3 +139,14 @@ kernel_version();
 #define kernel_threadGetExitStatus(x) _bft->kernel_threadGetExitStatus(x)
 
 #endif
+
+#define KERNEL_MODE() unsigned __kernelMode = kernel_enterKernelMode();
+#define USER_MODE() kernel_exitKernelMode(__kernelMode);
+
+unsigned 
+kernel_enterKernelMode();
+
+void     
+kernel_exitKernelMode(unsigned ___ints_disabled);
+
+

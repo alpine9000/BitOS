@@ -78,6 +78,7 @@ wolf()
 
 /* I am guessing these are needed because clients use these without the header that redefines them */
 
+
 void *  
 malloc(size_t size)
 {
@@ -201,3 +202,14 @@ basename(char *path)
   return p + 1;
 }
 
+unsigned 
+kernel_enterKernelMode()
+{
+  return 0;
+}
+
+void     
+kernel_exitKernelMode(unsigned ___ints_disabled)
+{
+
+}

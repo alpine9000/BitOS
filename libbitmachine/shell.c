@@ -329,8 +329,11 @@ runTestBuild(int argc, char** argv)
   window_h window = window_create("BitOS", (w+2)*offset, 0, w, h);
   gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
   kernel_threadSetWindow(window);
-  int exitStatus = 1;
+  int exitStatus = 0;
   int pathLen = strlen(argv[0]);
+  int numLoops = atoi(argv[2]);
+
+  KERNEL_MODE(); // This only has an effect when running on the kernel side (executing this code directly from init
 
   char* cleanCommand = "make clean -C ";
   char* cleanCommandPtr = malloc(strlen(cleanCommand) + pathLen+1);
@@ -340,13 +343,18 @@ runTestBuild(int argc, char** argv)
   char* elfCommandPtr = malloc(strlen(elfCommand) + pathLen+1);
   sprintf(elfCommandPtr, "%s%s", elfCommand, argv[0]);
 
-  if (thread_load(cleanCommandPtr)
-      && thread_load(elfCommandPtr)
-       && thread_load(cleanCommandPtr)
-       && thread_load(elfCommandPtr)
-      ) {
+  USER_MODE();// This only has an effect when running on the kernel side (executing this code directly from init
+
+  for (int i = 0; i < numLoops; i++) {
+    if (!thread_load(cleanCommandPtr) ||
+	!thread_load(elfCommandPtr)) {
+      exitStatus = 1;
+      break;
+    }
+  }
+
+  if (exitStatus == 0) {
     printf("Success!\n");
-    exitStatus = 0;
   } else {
     printf(":-(\n");
   }
@@ -360,15 +368,31 @@ int
 shell_test(int argc, char** argv)
 {
   unsigned w = shellWindowWidth, h = shellWindowHeight;
+
   setbuf(stdout, NULL);
+
   window_h window = window_create("Torture", 0, h+titlebarHeight+2, w, h);
   gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
   kernel_threadSetWindow(window);
 
-  rcopy("/usr/local/src/BitOS", "/usr/local/src/BitOS.2");
-  thread_h t1 = kernel_threadSpawn(&runTestBuild, argv_build("/usr/local/src/BitOS 0"), 0); 
-  thread_h t2 = kernel_threadSpawn(&runTestBuild, argv_build("/usr/local/src/BitOS.2 1"), 0);
+  //rcopy("/usr/local/src/BitOS", "/usr/local/src/BitOS.2");
 
+  char cmd1[1024];
+  char cmd2[1024];
+
+
+  sprintf(cmd1, "/usr/local/src/BitOS 0 %s", argv[1]);
+  sprintf(cmd2, "/usr/local/src/BitOS.2 1 %s", argv[1]);
+
+
+  KERNEL_MODE(); // This only has an effect when running on the kernel side (executing this code directly from init
+  char** argv1 = argv_build(cmd1);
+  char** argv2 = argv_build(cmd2);
+  USER_MODE(); // This only has an effect when running on the kernel side (executing this code directly from init
+
+
+  thread_h t1 = kernel_threadSpawn(&runTestBuild, argv1, 0); 
+  thread_h t2 = kernel_threadSpawn(&runTestBuild, argv2, 0);
 
   int result1 = -1;
   int result2 = -1;
@@ -763,7 +787,9 @@ shell_exec(char* cmd)
   char** argv;
   int argc;
 
+  KERNEL_MODE(); // This only has an effect when running on the kernel side (executing this code directly from init
   shell_globArgv(cmd, &argc, &argv);
+  USER_MODE(); // This only has an effect when running on the kernel side (executing this code directly from init
 
   if (argc > 0) {
     for (unsigned i = 0; i < numBuiltins; i++) {

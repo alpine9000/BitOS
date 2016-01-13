@@ -408,7 +408,9 @@ file_opendir(const char *dirname)
 {
   unsigned loaded;
   void * malloc(size_t);
+  KERNEL_MODE(); // This shouldn't be kernel mode
   DIR* p = malloc(sizeof(struct dirent));
+  USER_MODE();
 
   _file_opendir(p, dirname);
   
@@ -576,7 +578,9 @@ int (*file_loadElf(unsigned fd, unsigned** image, unsigned *imageSize))(int, cha
   
   peripheral.file.fd = fd;
   peripheral.file.elf.load = 1;
+  KERNEL_MODE();
   *image = malloc(peripheral.file.elf.size);
+  USER_MODE();
   *imageSize = peripheral.file.elf.size;
   peripheral.file.elf.relocate = (unsigned)*image;
   //  void* entry = (void(*)())peripheral.file.elf.entry;

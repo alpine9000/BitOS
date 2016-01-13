@@ -30,9 +30,19 @@ dlrealloc(void *ptr, size_t size);
 #define _sbrk_lock() unsigned ___ints_disabled = kernel_disableInts()
 #define _sbrk_unlock() kernel_enableInts(___ints_disabled)
 
+extern unsigned getSR();
+#define _KA_interruptsDisabled()  if ((getSR() & 0xF0) != 0xF0) {  panic(" kernel assesrtion failed: interrupts not disabled");}
+
 void* 
 memory_sbrk(ptrdiff_t incr)
 {
+
+  _KA_interruptsDisabled();
+
+  if (incr < 0) {
+    panic("memory_sbrk: negative incr");
+  }
+
   //  _sbrk_lock();
   static char *heap_end;
   char *prev_heap_end;
@@ -122,6 +132,7 @@ memory_cleanupThread(thread_h tid)
 void* 
 malloc(size_t size)
 {
+  KERNEL_ASSERT_KERNEL_MODE();
   return memory_malloc(size);
 }
 
@@ -140,12 +151,14 @@ malloc(size_t size)
 void 
 free(void *ptr)
 {
+  KERNEL_ASSERT_KERNEL_MODE();
   memory_free(ptr);
 }
 
 
 void *realloc(void *ptr, size_t size)
 {
+  KERNEL_ASSERT_KERNEL_MODE();
   return memory_realloc(ptr, size);
 }
 

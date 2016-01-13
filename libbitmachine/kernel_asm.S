@@ -2,6 +2,7 @@
 .global __kernel_blocked_asm
 .global __kernel_kill_asm
 .global __kernel_resume_asm
+.global _stack
 	
 __kernel_resume_asm:
 	mov r4,r15
@@ -83,6 +84,8 @@ __kernel_tick_asm:
     fmov.s fr14,@-r15
     fmov.s fr15,@-r15
     mov r15, r4
+    mov.l kernel_stack,r0
+    mov.l @r0,r15
     mov.l kernel_tick,r0
     jmp @r0
     nop
@@ -135,6 +138,8 @@ __kernel_blocked_asm:
     fmov.s fr14,@-r15
     fmov.s fr15,@-r15
     mov r15, r4
+    mov.l kernel_stack,r0
+    mov.l @r0,r15
     mov.l kernel_blocked,r0
     jmp @r0
     nop
@@ -144,6 +149,8 @@ __kernel_blocked_asm:
 kernel_blocked:
    .long __from_asm_kernel_blocked
 
+kernel_stack:
+    .long _stack
 	
 .align 4
 __kernel_kill_asm:

@@ -35,8 +35,8 @@ int
 go(int argc, char** argv)
 {
   extern int shell_test(int argc, char** argv);
-  if (argc == 2 && strncmp(argv[1], "test", 5) == 0) {
-    kernel_threadSpawn(&shell_test, argv_build("test"), 0);
+  if (strncmp(argv[0], "test", 5) == 0) {
+    kernel_threadSpawn(&shell_test, argv, 0);
   } else {
     if (thread_spawn("bsh") == INVALID_THREAD) {
       kernel_threadSpawn(&runShell, argv_build("bsh"), 0); 

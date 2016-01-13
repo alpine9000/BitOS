@@ -30,7 +30,9 @@ static int
 _thread_load(char* command, _thread_info_t* info)
 {
   char buffer[PATH_MAX];
+  KERNEL_MODE();
   char** argv = argv_build((char*)command);
+  USER_MODE();
   char* name = argv[0];
   int fd;
   struct stat s;
@@ -83,9 +85,9 @@ thread_open(char* command)
 
   if (_thread_load(command, &info)) {
 
-    unsigned x = kernel_enterKernelMode();
+    KERNEL_MODE();
     FILE* fp = fopen("/dev/pipe", "rw");  
-    kernel_exitKernelMode(x);
+    USER_MODE();
 
     fds_t fds = {STDIN_FILENO, fileno(fp), STDERR_FILENO};
     
