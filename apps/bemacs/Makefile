@@ -3,4 +3,4 @@ OBJ_FILES=readline.o basic.o buffer.o display.o file.o fileio.o line.o main.o ra
 LIBS=-lreadline
 
 include ../../makefiles/app.mk
-OPTIMIZE=-O2
+#OPTIMIZE=-O2
