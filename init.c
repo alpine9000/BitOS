@@ -5,6 +5,7 @@
 #include "window.h"
 #include "argv.h"
 #include "thread.h"
+#include "shell.h"
 
 #ifdef GITVERSION
 static const char* version=GITVERSION;
@@ -34,7 +35,6 @@ runShell(int argc, char** argv)
 int
 go(int argc, char** argv)
 {
-  extern int shell_test(int argc, char** argv);
   if (strncmp(argv[0], "test", 5) == 0) {
     kernel_threadSpawn(&shell_test, argv, 0);
   } else {
@@ -42,6 +42,7 @@ go(int argc, char** argv)
       kernel_threadSpawn(&runShell, argv_build("bsh"), 0); 
     }
   }
+
   window_loop();
   return 0;
 }

@@ -19,18 +19,17 @@
 #include "window.h"
 #include "gfx.h"
 #include "file.h"
+#include "shell.h"
 
 #define print(x) printf(x);fflush(stdout)
 #define flushc(x) putchar(x); fflush(stdout)
 
 void shell_exec(char* cmd);
 
-#define shellWindowWidth  ((gfx_fontWidth+gfx_spaceWidth)*80)
-#define shellWindowHeight (gfx_fontHeight*24)
-#define titlebarHeight    (gfx_fontHeight+4)
+unsigned shell_windowWidth = ((gfx_fontWidth+gfx_spaceWidth)*80);
+unsigned shell_windowHeight = (gfx_fontHeight*24);
+unsigned shell_titlebarHeight =  (gfx_fontHeight+4);
 
-int
-shell_test(int argc, char** argv);
 
 static int
 mv(int argc, char** argv);
@@ -110,6 +109,7 @@ static builtin_t builtins[] = {
   {"sh", 0, sh},
   {"mkdir", 0, _mkdir},
   {"rwolf", 1, rwolf},
+  {"stress", 0, shell_stress},
 #ifdef _INCLUDE_BUILDER
   {"bcc", 0, bcc},
   {"b", 0, build},
@@ -147,8 +147,8 @@ basename(char *path)
   return base ? base+1 : path;
 }
 
-static int 
-copy(char* s, char* dest_filename)
+int 
+shell_copy(char* s, char* dest_filename)
 {
   char d[PATH_MAX];
 
@@ -254,7 +254,7 @@ rcopy(char* src, char* dest)
       closedir(dirp);
     } else {
       printf("copy from %s to %s\n", src, dest);
-      copy(src, dest);
+      shell_copy(src, dest);
     }
   }
   return 0;
@@ -291,7 +291,7 @@ cp(int argc, char** argv)
   char* s = argv[argvIndex++];
   char* d = argv[argvIndex++];
   if (!recursive) {
-    return copy(s, d);
+    return shell_copy(s, d);
   } else {
     return rcopy(s, d);
   }
@@ -323,7 +323,7 @@ getSR()
 static int
 runTestBuild(int argc, char** argv)
 {
-  unsigned w = shellWindowWidth, h = shellWindowHeight;
+  unsigned w = shell_windowWidth, h = shell_windowHeight;
   setbuf(stdout, NULL);
   int offset = atoi(argv[1]);
   window_h window = window_create("BitOS", (w+2)*offset, 0, w, h);
@@ -367,11 +367,11 @@ runTestBuild(int argc, char** argv)
 int
 shell_test(int argc, char** argv)
 {
-  unsigned w = shellWindowWidth, h = shellWindowHeight;
+   unsigned w = shell_windowWidth, h = shell_windowHeight;
 
   setbuf(stdout, NULL);
 
-  window_h window = window_create("Torture", 0, h+titlebarHeight+2, w, h);
+  window_h window = window_create("Torture", 0, h+shell_titlebarHeight+2, w, h);
   gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
   kernel_threadSetWindow(window);
 

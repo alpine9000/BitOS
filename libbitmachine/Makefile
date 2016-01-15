@@ -3,9 +3,9 @@ WARNINGS = -pedantic-errors -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-par
 #-D_INCLUDE_BUILDER
 #ASSERTS=-D_KERNEL_ASSERTS
 CFLAGS=$(ASSERTS) -D_KERNEL_BUILD $(OPTIMIZE) $(WARNINGS) -I. -m2e -falign-jumps
-LIBOBJ=cpp.o glcdfont.o gfx.o console.o audio.o simulator.o interrupts.o file.o syscall.o kernel_asm.o kernel_client_asm.o kernel.o window.o memory.o syscalls.o bft_kernel.o malloc.o  panic.o argv.o thread.o shell.o termios.o
+LIBOBJ=cpp.o glcdfont.o gfx.o console.o audio.o simulator.o interrupts.o file.o syscall.o kernel_asm.o kernel_client_asm.o kernel.o window.o memory.o syscalls.o bft_kernel.o malloc.o  panic.o argv.o thread.o shell.o stress.o termios.o
 ASMOBJ=start.o
-CLIENTOBJ=bft.o kernel_client_asm.o syscalls.o panic.o client.o shell.o argv.o
+CLIENTOBJ=bft.o kernel_client_asm.o syscalls.o panic.o client.o shell.o stress.o argv.o
 CRT_OBJS=crt1.o crti.o crtbegin.o crtend.o crtn.o
 
 include ../makefiles/base.mk
