@@ -28,7 +28,7 @@ void shell_exec(char* cmd);
 
 unsigned shell_windowWidth = ((gfx_fontWidth+gfx_spaceWidth)*80);
 unsigned shell_windowHeight = (gfx_fontHeight*24);
-
+static unsigned shell_fileBlockSize = 1024*1024;
 
 static int
 mv(int argc, char** argv);
@@ -44,6 +44,9 @@ pwd(int argc, char** argv);
 
 static int
 ls(int argc, char** argv);
+
+static int 
+diff(int argc, char** argv);
 
 static int
 rm(int argc, char** argv);
@@ -109,6 +112,7 @@ static builtin_t builtins[] = {
   {"mkdir", 0, _mkdir},
   {"rwolf", 1, rwolf},
   {"stress", 0, shell_stress},
+  {"diff", 0, diff},
 #ifdef _INCLUDE_BUILDER
   {"bcc", 0, bcc},
   {"b", 0, build},
@@ -168,9 +172,9 @@ shell_copy(char* s, char* dest_filename)
     int dest = open(d, O_WRONLY|O_CREAT);
     if (dest != -1) {
       int bytes;
-      char *buffer = malloc(1024*1024);
+      char *buffer = malloc(shell_fileBlockSize);
       do {
-	bytes = read(src, buffer, 1024*1024);
+	bytes = read(src, buffer, shell_fileBlockSize);
 	if (bytes) {
 	  write(dest, buffer, bytes);
 	}
@@ -380,8 +384,8 @@ shell_test(int argc, char** argv)
   char cmd2[1024];
 
 
-  sprintf(cmd1, "/usr/local/src/BitOS 0 %s", argv[1]);
-  sprintf(cmd2, "/usr/local/src/BitOS.2 1 %s", argv[1]);
+  snprintf(cmd1, 1024, "/usr/local/src/BitOS 0 %s", argv[1]);
+  snprintf(cmd2, 1024, "/usr/local/src/BitOS.2 1 %s", argv[1]);
 
 
   KERNEL_MODE(); // This only has an effect when running on the kernel side (executing this code directly from init
@@ -561,6 +565,63 @@ listPath(char* path, char* cwd, int argc, char** argv)
     printf("%ld %s %s\n", statBuffer.st_size, timbuf, path);
   }
 
+  return 0;
+}
+
+int 
+shell_filesAreIdentical(char* p1, char* p2)
+{
+  struct stat statBuffer;
+  int length1 = -1, length2 = -1;
+  if (stat(p1, &statBuffer) == 0) {
+    length1 = statBuffer.st_size;
+  }
+  if (stat(p2, &statBuffer) == 0) {
+    length2 = statBuffer.st_size;
+  }
+  if (length1 != length2) {
+    return 0;
+  }
+
+  int src = open(p1, O_RDONLY);
+  int dest = open(p2, O_RDONLY);
+  char *buffer1 = malloc(shell_fileBlockSize);
+  char *buffer2 = malloc(shell_fileBlockSize);
+  int result = 1;
+  
+  if (src != -1 && dest != -1) {
+    int bytes1, bytes2;
+
+    do {
+      bytes1 = read(src, buffer1, shell_fileBlockSize);
+      bytes2 = read(dest, buffer2, shell_fileBlockSize);
+      if (bytes1 != bytes2 || memcmp(buffer1, buffer2, bytes1) != 0) {
+	  result = 0;
+	  break;
+      }
+    } while (bytes1 > 0 && bytes2 > 0);
+  }
+  
+  close(src);
+  close(dest);
+  free(buffer1);
+  free(buffer2);
+
+  return result;
+}
+
+static int 
+diff(int argc, char** argv)
+{
+  if (argc != 3) {
+    fprintf(stderr, "usage: %s file1 file2\n", argv[0]);
+    return 1;
+  }
+
+  if (!shell_filesAreIdentical(argv[1], argv[2])) {
+    printf("Files %s and %s differ\n", argv[1], argv[2]);
+  }
+  
   return 0;
 }
 

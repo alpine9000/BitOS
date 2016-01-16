@@ -10,6 +10,7 @@
 #include <string.h>
 #include <malloc.h>
 #include <errno.h>
+#include <stdarg.h>
 #include "bft.h"
 #include "kernel.h"
 #include "simulator.h"
@@ -23,6 +24,15 @@
 
 #define SUCCESS 0
 #define FAIL -1
+
+static void 
+stress_error(const char * format, ...)
+{
+  va_list argList;
+  va_start(argList, format);
+  fprintf(stderr, format, argList);
+  va_end(argList);
+}
 
 static window_h _stress_newWindow(char* title, int xOff, int yOff)
 {
@@ -57,8 +67,6 @@ _stress_tickleRam(char* ptr, unsigned len, int pid)
   
   memset(ptr, pid, len);
   
-  kernel_threadBlocked();
-
   _stress_checkRam(ptr, len, pid);
 }
 
@@ -70,11 +78,7 @@ _stress_testMalloc(int divisor, int pid)
     
     printf("malloc'd  %05x bytes -> %x\n", length, (unsigned)ptr);
 
-    kernel_threadBlocked();
-
     _stress_tickleRam(ptr, length, pid);
-
-    kernel_threadBlocked();
 
     int length2 = rand()/divisor;
 
@@ -89,8 +93,6 @@ _stress_testMalloc(int divisor, int pid)
     }
 
     _stress_tickleRam(ptr, length2, pid);
-
-    kernel_threadBlocked();
 
     return ptr;
 
@@ -125,9 +127,14 @@ static int
 _stress_rcopyToRand(char* src)
 {
 
+  if (strstr(src, "/usr/local/home") != NULL) {
+    printf("Skipping home dir...\n");
+    return SUCCESS;
+  }
+
   struct stat buf;
   char dest[PATH_MAX];
-  sprintf(dest, "/usr/local/home/%d", rand());
+  sprintf(dest, "/usr/local/home/%d-%d", getpid(), rand());
 
   if (stat(src, &buf) == 0) {
     if (S_ISDIR(buf.st_mode)) {
@@ -140,26 +147,43 @@ _stress_rcopyToRand(char* src)
 	  sprintf(sbuffer, "%s/%s", src, dp->d_name);
 	  printf("rcopy %s\n", sbuffer);
 	  if (_stress_rcopyToRand(sbuffer) == FAIL) {
-	    fprintf(stderr, "_stress_rcopyToRand: failed to _stress_rcopyToRand\n");
 	    return FAIL;
 	  }
 	}
       } while (dp != NULL);	
       if (closedir(dirp) == FAIL) {
 	// closedir not supported on BITOS yet
-	//fprintf(stderr, "_stress_rcopyToRand: failed to closedir\n");
-	//	return FAIL;
       }
     } else {
       printf("copy from %s to %s\n", src, dest);
       if (shell_copy(src, dest) == FAIL) {
-	    fprintf(stderr, "_stress_rcopyToRand: failed to shell_copy\n");
+	    stress_error("_stress_rcopyToRand: failed to shell_copy\n");
 	return FAIL;
       }
-      if (unlink(dest) == FAIL) {
-	fprintf(stderr, "_stress_rcopyToRand: failed to unlink\n");
+
+      if (!shell_filesAreIdentical(src, dest)) {
+	stress_error("_stress_rcopyToRand: diff failed\n");
 	return FAIL;
       }
+
+      char* mvdest = malloc(strlen(dest)*2);
+      sprintf(mvdest, "%s-2", dest);
+
+      printf("mv %s -> %s\n", dest, mvdest);
+      if (rename(dest, mvdest) == FAIL) {
+	free(mvdest);
+	stress_error("_stress_rcopyToRand: failed to rename\n");
+	return FAIL;
+      }
+	
+      printf("rm %s\n", mvdest);
+      if (unlink(mvdest) == FAIL) {
+	free(mvdest);
+	stress_error("_stress_rcopyToRand: failed to unlink\n");
+	return FAIL;
+      }
+
+      free(mvdest);
     }
   }
   return SUCCESS;
@@ -188,8 +212,8 @@ int
 shell_stress(int argc, char** argv)
 {
   char* cmds[] = {
-    "malloc 0 0", 
-    "malloc 1 0", 
+    //"malloc 0 0", 
+    //"malloc 1 0", 
     "malloc 0 1", 
     "malloc 1 1",
     "filesystem 0 2", 

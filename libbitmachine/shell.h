@@ -11,3 +11,6 @@ shell_stress(int argc, char** argv);
 
 int
 shell_test(int argc, char** argv);
+
+int 
+shell_filesAreIdentical(char* p1, char* p2);
