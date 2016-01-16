@@ -14,7 +14,7 @@ extern const unsigned char martini_rgba[];
 //static const unsigned systemBarHeight = 12;
 static const unsigned systemBarHeight = (gfx_fontHeight+4);
 //static const unsigned titleBarHeight = 12;
-static const unsigned titleBarHeight = (gfx_fontHeight+4);
+
 
 static const unsigned windowBackgroundColor = 0xFFFFFFFF;
 static const unsigned windowColor = 0xFF000000;
@@ -119,12 +119,12 @@ window_composite(unsigned fb)
 
       window_t* w = &windowTable.windows[wi];
       unsigned y = w->y+systemBarHeight; 
-      gfx_fillRect(fb, w->x, y, w->w, titleBarHeight, windowBackgroundColor);
+      gfx_fillRect(fb, w->x, y, w->w, window_titleBarHeight, windowBackgroundColor);
       unsigned titleWidth = strlen(w->title);
       unsigned textWidth = titleWidth*(gfx_fontWidth+gfx_spaceWidth);
-      gfx_bitBltEx(fb, 0, 0, w->x+textWidth+4, y+2, 1, 8, w->w-6-textWidth, titleBarHeight-4, windowTable.titleFrameBuffer);
+      gfx_bitBltEx(fb, 0, 0, w->x+textWidth+4, y+2, 1, 8, w->w-6-textWidth, window_titleBarHeight-4, windowTable.titleFrameBuffer);
       gfx_drawString(fb, w->x+2, y+2, w->title, windowColor);
-      gfx_bitBltEx(fb, 0, 0, w->x, y+titleBarHeight, w->w, w->h, w->w, w->h, w->frameBuffer);
+      gfx_bitBltEx(fb, 0, 0, w->x, y+window_titleBarHeight, w->w, w->h, w->w, w->h, w->frameBuffer);
 
       if (!window_fullRefresh && gfx_frameFrameBufferDirty(w->frameBuffer)) {
 	if (w->x < dirtyX1) {
@@ -136,8 +136,8 @@ window_composite(unsigned fb)
 	if (w->y < dirtyY1) {
 	  dirtyY1 = w->y;
 	}
-	if ((int)(w->y+w->h+titleBarHeight+systemBarHeight) > dirtyY2) {
-	  dirtyY2 = w->y+w->h+titleBarHeight+systemBarHeight;
+	if ((int)(w->y+w->h+window_titleBarHeight+systemBarHeight) > dirtyY2) {
+	  dirtyY2 = w->y+w->h+window_titleBarHeight+systemBarHeight;
 	}
       }
     }
@@ -148,7 +148,7 @@ window_composite(unsigned fb)
   if (topIndex != -1) {
     window_t* w = &windowTable.windows[topIndex];
     if (w->state == WINDOW_VISIBLE && w->cursorOn) {
-      gfx_fillRect(fb, w->x+w->cursorX, w->y+w->cursorY+systemBarHeight+titleBarHeight-1, gfx_fontWidth+1, gfx_fontHeight+2, cursorColor); 
+      gfx_fillRect(fb, w->x+w->cursorX, w->y+w->cursorY+systemBarHeight+window_titleBarHeight-1, gfx_fontWidth+1, gfx_fontHeight+2, cursorColor); 
     }
   }
 

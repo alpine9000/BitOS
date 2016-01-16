@@ -1,6 +1,6 @@
 #pragma once
 
-#define PERIPHERAL_MAX_FRAMEBUFFERS 10
+#define PERIPHERAL_MAX_FRAMEBUFFERS 20
 
 typedef struct {
   unsigned channelSelect;

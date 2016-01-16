@@ -26,9 +26,9 @@
 
 static window_h _stress_newWindow(char* title, int xOff, int yOff)
 {
-  unsigned w = shell_windowWidth, h = shell_windowHeight;
+  unsigned w = shell_windowWidth, h = shell_windowHeight/2;
   setbuf(stdout, NULL);
-  window_h window = window_create(title, (w+2)*xOff, (h+2)*yOff, w, h);
+  window_h window = window_create(title, (w)*xOff, (h)*yOff, w, h);
   gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
   kernel_threadSetWindow(window);
   return window;
@@ -170,9 +170,12 @@ static int
 _stress_filesystem(int argc, char** argv)
 {
   _stress_newWindow(argv[0], atoi(argv[1]),  atoi(argv[2]));
-  _stress_rcopyToRand("/");
-  printf("Success!\n");
-  //  kernel_threadDie(0);
+  if (_stress_rcopyToRand("/") == SUCCESS) {
+    printf("Success!\n");
+  } else {
+    printf("Failed\n");
+  }
+
   for (;;) {
     kernel_threadBlocked();
   }
@@ -187,8 +190,12 @@ shell_stress(int argc, char** argv)
   char* cmds[] = {
     "malloc 0 0", 
     "malloc 1 0", 
-    "filesystem 0 1", 
-    "filesystem 1 1",
+    "malloc 0 1", 
+    "malloc 1 1",
+    "filesystem 0 2", 
+    "filesystem 1 2", 
+    "filesystem 0 3", 
+    "filesystem 1 3",
     0};
    
   for (unsigned i = 0; cmds[i] != 0; i++) {

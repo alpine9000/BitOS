@@ -28,7 +28,6 @@ void shell_exec(char* cmd);
 
 unsigned shell_windowWidth = ((gfx_fontWidth+gfx_spaceWidth)*80);
 unsigned shell_windowHeight = (gfx_fontHeight*24);
-unsigned shell_titlebarHeight =  (gfx_fontHeight+4);
 
 
 static int
@@ -371,7 +370,7 @@ shell_test(int argc, char** argv)
 
   setbuf(stdout, NULL);
 
-  window_h window = window_create("Torture", 0, h+shell_titlebarHeight+2, w, h);
+  window_h window = window_create("Torture", 0, h+window_titleBarHeight+2, w, h);
   gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
   kernel_threadSetWindow(window);
 

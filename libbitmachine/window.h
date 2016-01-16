@@ -1,7 +1,7 @@
 #pragma once
 #include "bft.h"
 
-#define WINDOWS_MAX 5
+#define WINDOWS_MAX 20
 
 typedef enum {
   WINDOW_DEAD = 0,
@@ -92,3 +92,4 @@ window_enableCursor(window_h window, unsigned enabled);
 
 #endif
 
+#define window_titleBarHeight  (gfx_fontHeight+4)

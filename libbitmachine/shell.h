@@ -2,7 +2,6 @@
 
 extern unsigned shell_windowWidth;
 extern unsigned shell_windowHeight;
-extern unsigned shell_titlebarHeight;
 
 int 
 shell_copy(char* s, char* dest_filename);

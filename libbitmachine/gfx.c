@@ -8,6 +8,9 @@ static unsigned frameBufferAllocator_lock ;
 static thread_h frameBufferAllocator[PERIPHERAL_MAX_FRAMEBUFFERS];
 static int frameBufferDirty[PERIPHERAL_MAX_FRAMEBUFFERS];
 
+#define _gfx_lock() unsigned ___ints_disabled = kernel_disableInts()
+#define _gfx_unlock() kernel_enableInts(___ints_disabled)
+
 //unsigned int videoWidth = 640;
 //unsigned int videoHeight = 480;
 
@@ -248,13 +251,15 @@ gfx_drawCharRetro(unsigned fb, int x, int y, char c, unsigned color, unsigned ch
 void 
 gfx_drawChar(unsigned fb, int x, int y, char c, unsigned color, unsigned char size) {
   char text[2] = {c,0};
-  kernel_spinLock(&frameBufferAllocator_lock);
+  //  kernel_spinLock(&frameBufferAllocator_lock);
+  _gfx_lock();
   peripheral.pcg.fb = fb;
   peripheral.pcg.x = x;
   peripheral.pcg.y = y;
   peripheral.pcg.color = color;
   peripheral.pcg.text = (unsigned)text;
-  kernel_unlock(&frameBufferAllocator_lock);
+  //  kernel_unlock(&frameBufferAllocator_lock);
+  _gfx_unlock();
   dirty();
 }
 
