@@ -26,8 +26,8 @@ _kernel_atomic_lock_asm(void* ptr);
 #define _thread_max 16
 #define _thread_historyMax 32
 
-//#define _thread_stack_size_bytes  (0x2800000)
-#define _thread_stack_size_bytes  (0x10000)
+#define _thread_stack_size_bytes  (0x100000)
+//#define _thread_stack_size_bytes  (0x10000)
 #define _thread_stack_size_words  (_thread_stack_size_bytes/4)
 #define _KERNEL_STACK_CANARY 0xDEADBEEF
 

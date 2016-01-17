@@ -520,7 +520,7 @@ lsdir(char* path, int argc, char** argv)
       }
     } while (dp != NULL);
 
-
+    closedir(dirp);
     dirp = opendir(path);
     
     do {
@@ -537,6 +537,8 @@ lsdir(char* path, int argc, char** argv)
 	}
       }
     } while (dp != NULL);
+
+    closedir(dirp);
   } else {
     printf("%s: %s: No such file or directory\n", argv[0], path);
   }
@@ -720,8 +722,11 @@ touch(int argc, char** argv)
     if (argv[i][0] != '-') {
       int fd = open(argv[i], O_RDWR|O_APPEND);     
       if (fd < 0) {
-	printf("%s: %s: %s\n", argv[0], argv[1], strerror(errno));
-	return 1;
+	fd = open(argv[i], O_WRONLY|O_CREAT);
+	if (fd < 0) {
+	  printf("%s: %s: %s\n", argv[0], argv[1], strerror(errno));
+	  return 1;
+	}
       }
   
       close(fd);

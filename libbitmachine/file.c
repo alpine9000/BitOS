@@ -11,6 +11,7 @@
 #include "kernel.h"
 #include "types.h"
 #include "simulator.h"
+#include "memory.h"
 
 #define _file_lock() unsigned ___ints_disabled = kernel_disableInts()
 #define _file_unlock() kernel_enableInts(___ints_disabled)
@@ -407,10 +408,8 @@ DIR *
 file_opendir(const char *dirname)
 {
   unsigned loaded;
-  void * malloc(size_t);
-  KERNEL_MODE(); // This shouldn't be kernel mode
-  DIR* p = malloc(sizeof(struct dirent));
-  USER_MODE();
+  // Don't use kernel mode malloc for this
+  DIR* p = memory_malloc(sizeof(struct dirent));
 
   _file_opendir(p, dirname);
   

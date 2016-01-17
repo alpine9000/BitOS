@@ -30,14 +30,11 @@ dlrealloc(void *ptr, size_t size);
 #define _sbrk_lock() unsigned ___ints_disabled = kernel_disableInts()
 #define _sbrk_unlock() kernel_enableInts(___ints_disabled)
 
-extern unsigned getSR();
-#define _KA_interruptsDisabled()  if ((getSR() & 0xF0) != 0xF0) {  panic(" kernel assesrtion failed: interrupts not disabled");}
 
 void* 
 memory_sbrk(ptrdiff_t incr)
 {
-
-  _KA_interruptsDisabled();
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
 
   if (incr < 0) {
     panic("memory_sbrk: negative incr");
@@ -114,15 +111,17 @@ _sbrk_r(struct _reent *ptr, ptrdiff_t incr)
 void 
 memory_cleanupThread(thread_h tid)
 {
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
+
   if (tid != 0) {
 
     peripheral.malloc.list = (unsigned)tid;
     
     unsigned address;
     while ((address = peripheral.malloc.mallocAddress) != 0) {
-      if (!kernel_threadGetIsActiveImage((void*)address)) {
+      //if (!kernel_threadGetIsActiveImage((void*)address)) {
 	free((void*)address);
-      } 
+      //} 
     }
 
     peripheral.malloc.freePid = (unsigned)tid;
@@ -135,7 +134,6 @@ malloc(size_t size)
   KERNEL_ASSERT_KERNEL_MODE();
   return memory_malloc(size);
 }
-
 
 /*void * calloc(size_t count, size_t size)
 {						

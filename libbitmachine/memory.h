@@ -19,6 +19,9 @@ memory_realloc(void* ptr, size_t size);
 void  
 memory_cleanupThread(thread_h tid);
 
+void* 
+memory_clientMalloc(size_t size);
+
 extern unsigned _memory_total;
 
 #define memory_total() _memory_total

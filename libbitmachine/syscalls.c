@@ -283,8 +283,9 @@ lstat(const char *restrict path, struct stat *restrict buf)
 int 
 closedir(DIR *dirp)
 {
-  //panic("closedir - not implemented");
-  return -1;
+  // //panic("closedir - not implemented");
+  free(dirp);
+  return 0;
 }
 
 
