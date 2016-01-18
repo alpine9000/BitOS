@@ -15,6 +15,7 @@ $(MAKE_MAKEFILE):
 
 
 $(BIN): $(MAKE_MAKEFILE)
+	rm -f /usr/local/sh-elf/sh-elf/lib/m2e/libc.a
 	make -C $(BUILD_DIR)
 	make -C $(BUILD_DIR) install
 	cd /usr/local/sh-elf/sh-elf/lib/m2e &&\
