@@ -10,6 +10,7 @@
 #include <string.h>
 #include <malloc.h>
 #include <errno.h>
+#include <libgen.h>
 #include "bft.h"
 #include "kernel.h"
 #include "simulator.h"
@@ -20,11 +21,11 @@
 #include "gfx.h"
 #include "file.h"
 #include "shell.h"
+#include "runtest.h"
 
 #define print(x) printf(x);fflush(stdout)
 #define flushc(x) putchar(x); fflush(stdout)
 
-void shell_exec(char* cmd);
 
 unsigned shell_windowWidth = ((gfx_fontWidth+gfx_spaceWidth)*80);
 unsigned shell_windowHeight = (gfx_fontHeight*24);
@@ -84,9 +85,6 @@ shell_malloc_stats(int argc, char** argv);
 int 
 shell_execBuiltin(int argc, char** argv);
 
-static void
-shell_globArgv(char* command, int* out_argc, char*** out_argv);
-
 static int 
 shell_time(int argc, char** argv);
 
@@ -113,6 +111,7 @@ static builtin_t builtins[] = {
   {"rwolf", 1, rwolf},
   {"stress", 0, shell_stress},
   {"diff", 0, diff},
+  {"rt", 0,runtest},
 #ifdef _INCLUDE_BUILDER
   {"bcc", 0, bcc},
   {"b", 0, build},
@@ -143,12 +142,14 @@ rwolf(int argc, char** argv)
   return _bft->wolf(argc, argv);
 }
 
-static char *
-basename(char *path)
+const char *
+shell_getFilenameExt(const char *filename) 
 {
-  char *base = strrchr(path, '/');
-  return base ? base+1 : path;
+  const char *dot = strrchr(filename, '.');
+  if(!dot || dot == filename) return "";
+  return dot + 1;
 }
+
 
 int 
 shell_copy(char* s, char* dest_filename)
@@ -194,7 +195,6 @@ shell_copy(char* s, char* dest_filename)
   }
 }
 
-static 
 char** 
 shell_argvDup(int argc, char** argv, int skip)
 {
@@ -378,7 +378,7 @@ shell_test(int argc, char** argv)
   gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
   kernel_threadSetWindow(window);
 
-  //rcopy("/usr/local/src/BitOS", "/usr/local/src/BitOS.2");
+  rcopy("/usr/local/src/BitOS", "/usr/local/src/BitOS.2");
 
   char cmd1[1024];
   char cmd2[1024];
@@ -803,7 +803,6 @@ typedef struct {
   char** argv;
 } argv_t;
 
-static 
 void
 shell_globArgv(char* command, int* out_argc, char*** out_argv)
 {

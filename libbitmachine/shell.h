@@ -14,3 +14,15 @@ shell_test(int argc, char** argv);
 
 int 
 shell_filesAreIdentical(char* p1, char* p2);
+
+void 
+shell_exec(char* cmd);
+
+void
+shell_globArgv(char* command, int* out_argc, char*** out_argv);
+
+char** 
+shell_argvDup(int argc, char** argv, int skip);
+
+const char *
+shell_getFilenameExt(const char *filename);

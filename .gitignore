@@ -4,6 +4,7 @@
 *.obj
 *.elf
 
+
 # Precompiled Headers
 *.gch
 *.pch
@@ -27,6 +28,9 @@
 *.i*86
 *.x86_64
 *.hex
+# Test executables
+*.test
+
 
 # Debug files
 *.dSYM/

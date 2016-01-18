@@ -9,12 +9,11 @@
 #include "window.h"
 #include "gfx.h"
 #include "console.h"
+#include "argv.h"
+#include "shell.h"
 
 extern void 
 shell();
-
-extern int 
-shell_exec(char*);
 
 extern int 
 shell_execBuiltin(int argc, char** argv);
@@ -29,6 +28,19 @@ int endsWith(char* str, char* end)
 }
 
 
+static int
+execBuiltin(int argc, char** argv)
+{
+  int argc2;
+  char** argv2;
+  char* cmd = argv_reconstruct(argv);
+  shell_globArgv(cmd, &argc2, &argv2);
+  int retval = shell_execBuiltin(argc2, argv2);
+  argv_free(argv2);
+  free(cmd);
+  return retval;
+}
+
 int main(int argc, char**argv)
 {
 
@@ -37,11 +49,13 @@ int main(int argc, char**argv)
     if (strcmp(base, "bsh") != 0) {
       char* argvSave = argv[0];
       argv[0] = base;
-      int retval = shell_execBuiltin(argc, argv);
+      int retval = execBuiltin(argc, argv);
       argv[0] = argvSave;
       return retval;
     }
   }
+
+
 
 #define OPEN_WINDOW
  

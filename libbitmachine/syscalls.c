@@ -357,8 +357,7 @@ execvp(const char *file, char *const argv[])
 pid_t  
 fork(void)
 {
-  panic("fork - not implemented");
-  return 0;
+  return -1;
 }
 
 pid_t 
@@ -445,3 +444,28 @@ _calloc_r(struct _reent* reent, size_t n, size_t m)
   memset(ptr, 0, n*m);
   return ptr;
 }
+
+/*char *
+basename(char *path)
+{
+  char *base = strrchr(path, '/');
+  return base ? base+1 : path;
+  }*/
+
+char* 
+basename(char *path)
+{
+  char *p;
+  if( path == NULL || *path == '\0' )
+    return ".";
+  p = path + strlen(path) - 1;
+  while( *p == '/' ) {
+    if( p == path )
+      return path;
+    *p-- = '\0';
+  }
+  while( p >= path && *p != '/' )
+    p--;
+  return p + 1;
+}
+
