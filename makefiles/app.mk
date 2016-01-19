@@ -6,12 +6,12 @@ CPPFLAGS=$(OPTIMIZE) -g $(CPP_WARNINGS) -m2e -I../../libbitmachine -I/usr/local/
 LIB_PATH=/usr/local/sh-elf/
 LDFLAGS=-L../../libbitmachine -L/usr/local/sh-elf/lib
 
-all: $(ELF_FILE)
+all: $(ELF_FILE) 
 
 include ../../makefiles/base.mk
 
 .SECONDARY:
-$(ELF_FILE): $(OBJ_FILES) ../../libbitmachine/libc-bitos.a
+$(ELF_FILE): $(OBJ_FILES) ../../libbitmachine/libc-bitos.a $(EXTRA_DEPS)
 	$(CC) -m2e $(LDFLAGS) -Wl,-Map -Wl,a.map -pie -o $(ELF_FILE) $(OBJ_FILES) $(LIBS) 
 
 touch:

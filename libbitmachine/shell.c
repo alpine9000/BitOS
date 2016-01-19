@@ -132,7 +132,7 @@ int _shell_complete = 0;
 static int
 version(int argc, char** argv)
 {
-  printf("BitOS version %s\n", _bft->kernel_version());
+  printf("BitOS %s\n", _bft->kernel_version());
   return 0;
 }
 
