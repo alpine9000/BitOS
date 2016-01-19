@@ -1,0 +1,160 @@
+
+;; Function foo (foo, funcdef_no=5, decl_uid=1520, cgraph_uid=5, symbol_order=5)
+
+foo (char * p, const char * q, const char * r)
+{
+  char * _6;
+  char * _7;
+  unsigned int _8;
+  unsigned int _11;
+  char * _12;
+  unsigned int _13;
+  unsigned int _14;
+
+  <bb 2>:
+  _6 = __builtin_stpcpy (p_2(D), q_3(D));
+  _7 = __builtin_stpcpy (_6, r_5(D));
+  _8 = (unsigned int) _7;
+  _13 = (unsigned int) p_2(D);
+  _14 = _8 - _13;
+  _11 = _14;
+  _12 = _7;
+  __builtin_memcpy (_12, "abcd", 5);
+  return;
+
+}
+
+
+
+;; Function bar (bar, funcdef_no=6, decl_uid=1525, cgraph_uid=6, symbol_order=6)
+
+bar (char * p, const char * q, const char * r)
+{
+  char * _5;
+  char * _7;
+
+  <bb 2>:
+  __builtin_memcpy (p_2(D), "abcd", 4);
+  _5 = p_2(D) + 4;
+  _7 = __builtin_stpcpy (_5, q_4(D));
+  __builtin_strcpy (_7, r_6(D));
+  return;
+
+}
+
+
+
+;; Function baz (baz, funcdef_no=7, decl_uid=1530, cgraph_uid=7, symbol_order=7)
+
+baz (char * p, const char * q, const char * r)
+{
+  unsigned int _5;
+  char * _7;
+  char * _8;
+  unsigned int _9;
+  unsigned int _13;
+  char * _14;
+  unsigned int _15;
+  char * _16;
+  unsigned int _17;
+  unsigned int _18;
+  unsigned int _19;
+  char * _20;
+  char * _21;
+  unsigned int _22;
+  unsigned int _23;
+  unsigned int _24;
+
+  <bb 2>:
+  _5 = __builtin_strlen (p_2(D));
+  _7 = p_2(D) + _5;
+  _8 = __builtin_stpcpy (_7, q_3(D));
+  _9 = (unsigned int) _8;
+  _17 = (unsigned int) p_2(D);
+  _18 = _9 - _17;
+  _13 = _18;
+  _14 = _8;
+  __builtin_memcpy (_14, "abcd", 4);
+  _19 = _13 + 4;
+  _20 = p_2(D) + _19;
+  _21 = __builtin_stpcpy (_20, r_6(D));
+  _22 = (unsigned int) _21;
+  _23 = (unsigned int) p_2(D);
+  _24 = _22 - _23;
+  _15 = _24;
+  _16 = _21;
+  __builtin_memcpy (_16, "efgh", 5);
+  return;
+
+}
+
+
+
+;; Function main (main, funcdef_no=8, decl_uid=1533, cgraph_uid=8, symbol_order=9) (executed once)
+
+main ()
+{
+  const char * volatile r;
+  const char * volatile q;
+  char * volatile p;
+  char * p.0_5;
+  const char * q.1_6;
+  const char * r.2_7;
+  int _9;
+  char * p.3_11;
+  const char * q.4_12;
+  const char * r.5_13;
+  int _15;
+  char * p.6_18;
+  const char * q.7_19;
+  const char * r.8_20;
+  int _22;
+
+  <bb 2>:
+  p ={v} &buf;
+  q ={v} "ij";
+  r ={v} "klmno";
+  p.0_5 ={v} p;
+  q.1_6 ={v} q;
+  r.2_7 ={v} r;
+  foo (p.0_5, q.1_6, r.2_7);
+  _9 = memcmp (&buf, "ijklmnoabcd", 20);
+  if (_9 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  memset (&buf, 0, 64);
+  p.3_11 ={v} p;
+  q.4_12 ={v} q;
+  r.5_13 ={v} r;
+  bar (p.3_11, q.4_12, r.5_13);
+  _15 = memcmp (&buf, "abcdijklmno", 20);
+  if (_15 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 5>;
+
+  <bb 5>:
+  memset (&buf, 118, 3);
+  memset (&MEM[(void *)&buf + 3B], 0, 61);
+  p.6_18 ={v} p;
+  q.7_19 ={v} q;
+  r.8_20 ={v} r;
+  baz (p.6_18, q.7_19, r.8_20);
+  _22 = memcmp (&buf, "vvvijabcdklmnoefgh", 20);
+  if (_22 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 6>;
+
+  <bb 6>:
+  return 0;
+
+}
+
+

@@ -1,0 +1,26 @@
+
+;; Function main (main, funcdef_no=0, decl_uid=1488, cgraph_uid=0, symbol_order=0) (executed once)
+
+main ()
+{
+  char p[12];
+  unsigned int _3;
+
+  <bb 2>:
+  p = "hello world";
+  _3 = 11;
+  if (_3 != 11)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  p ={v} {CLOBBER};
+  return 0;
+
+}
+
+

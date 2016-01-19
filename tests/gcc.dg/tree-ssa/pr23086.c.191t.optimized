@@ -1,0 +1,56 @@
+
+;; Function g (g, funcdef_no=0, decl_uid=1459, cgraph_uid=0, symbol_order=1)
+
+g (int * a)
+{
+  <bb 2>:
+  t = a_2(D);
+  *a_2(D) = 2;
+  return;
+
+}
+
+
+
+;; Function f (f, funcdef_no=1, decl_uid=1462, cgraph_uid=1, symbol_order=2)
+
+f (int * a)
+{
+  int b;
+
+  <bb 2>:
+  b = 1;
+  g (&b);
+  *a_4(D) = 1;
+  b ={v} {CLOBBER};
+  return;
+
+}
+
+
+
+;; Function main (main, funcdef_no=2, decl_uid=1466, cgraph_uid=2, symbol_order=3) (executed once)
+
+main ()
+{
+  int t;
+  int t.1_3;
+
+  <bb 2>:
+  f (&t);
+  t.1_3 = t;
+  if (t.1_3 != 1)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  t ={v} {CLOBBER};
+  return 0;
+
+}
+
+

@@ -1,0 +1,214 @@
+
+;; Function fn1 (fn1, funcdef_no=0, decl_uid=1490, cgraph_uid=0, symbol_order=0)
+
+fn1 (int x, int y)
+{
+  const char * p;
+  const char * _2;
+  const char * _8;
+  const char * _9;
+  unsigned int _10;
+  const char * _11;
+
+  <bb 2>:
+  switch (x_4(D)) <default: <L3>, case 0: <L0>, case 1: <L9>, case 2: <L8>>
+
+<L9>:
+  goto <bb 6> (<L8>);
+
+<L0>:
+  __asm__ __volatile__("" :  :  : "memory");
+  goto <bb 6> (<L8>);
+
+<L3>:
+
+  # p_1 = PHI <"abcd"(4), "efgh"(3), "ijkl"(2), "mnop"(5)>
+<L8>:
+  if (y_7(D) != 0)
+    goto <bb 7>;
+  else
+    goto <bb 8>;
+
+  <bb 7>:
+  _8 = p_1 + 4;
+  goto <bb 9>;
+
+  <bb 8>:
+  _9 = p_1 + 1;
+  _10 = 3;
+  _11 = p_1 + _10;
+
+  <bb 9>:
+  # _2 = PHI <_8(7), _11(8)>
+  return _2;
+
+}
+
+
+
+;; Function fn2 (fn2, funcdef_no=1, decl_uid=1500, cgraph_uid=1, symbol_order=1)
+
+fn2 (char * p, char * q)
+{
+  size_t l;
+  unsigned int _8;
+
+  <bb 2>:
+  __builtin_memcpy (p_2(D), "abc", 4);
+  MEM[(char *)p_2(D) + 3B] = 100;
+  l_5 = strlen (p_2(D));
+  _8 = l_5 + 1;
+  __builtin_memcpy (q_6(D), p_2(D), _8);
+  return l_5;
+
+}
+
+
+
+;; Function fn3 (fn3, funcdef_no=2, decl_uid=1504, cgraph_uid=2, symbol_order=2)
+
+fn3 (char * p)
+{
+  char * c;
+  unsigned int _6;
+  char * _7;
+  unsigned int _9;
+  unsigned int _10;
+  unsigned int _11;
+
+  <bb 2>:
+  __builtin_memcpy (p_2(D), "abc", 4);
+  MEM[(char *)p_2(D) + 3B] = 100;
+  c_5 = strchr (p_2(D), 0);
+  _9 = (unsigned int) c_5;
+  _10 = (unsigned int) p_2(D);
+  _11 = _9 - _10;
+  _6 = _11;
+  _7 = c_5;
+  __builtin_memcpy (_7, "efgh", 5);
+  return c_5;
+
+}
+
+
+
+;; Function main (main, funcdef_no=3, decl_uid=1507, cgraph_uid=3, symbol_order=3) (executed once)
+
+main ()
+{
+  const char * q;
+  const char * p;
+  char buf2[64];
+  char buf[64];
+  int i;
+  int _4;
+  int _5;
+  sizetype _6;
+  const void * _10;
+  int _11;
+  char _12;
+  const void * _15;
+  int _16;
+  char _17;
+  unsigned int _24;
+  int _25;
+  int _26;
+  char * _30;
+  int _31;
+
+  <bb 2>:
+
+  <bb 3>:
+  # i_38 = PHI <i_18(8), 0(2)>
+  _4 = MIN_EXPR <i_38, 3>;
+  _5 = _4 * 4;
+  _6 = (sizetype) _5;
+  p_7 = "abcdefghijklmnop" + _6;
+  q_9 = fn1 (i_38, 1);
+  _10 = q_9 + 4294967292;
+  _11 = memcmp (_10, p_7, 4);
+  if (_11 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 5>;
+
+  <bb 4>:
+  abort ();
+
+  <bb 5>:
+  _12 = *q_9;
+  if (_12 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 6>;
+
+  <bb 6>:
+  q_14 = fn1 (i_38, 0);
+  _15 = q_14 + 4294967293;
+  _16 = memcmp (_15, p_7, 4);
+  if (_16 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 7>;
+
+  <bb 7>:
+  _17 = MEM[(const char *)q_14 + 1B];
+  if (_17 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 8>;
+
+  <bb 8>:
+  i_18 = i_38 + 1;
+  if (i_18 != 5)
+    goto <bb 3>;
+  else
+    goto <bb 9>;
+
+  <bb 9>:
+  memset (&buf, 0, 64);
+  memset (&MEM[(void *)&buf + 4B], 122, 2);
+  _24 = fn2 (&buf, &buf2);
+  if (_24 != 6)
+    goto <bb 4>;
+  else
+    goto <bb 10>;
+
+  <bb 10>:
+  _25 = memcmp (&buf, "abcdzz", 7);
+  if (_25 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 11>;
+
+  <bb 11>:
+  _26 = memcmp (&buf2, "abcdzz", 7);
+  if (_26 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 12>;
+
+  <bb 12>:
+  memset (&buf, 0, 64);
+  memset (&MEM[(void *)&buf + 4B], 122, 2);
+  _30 = fn3 (&buf);
+  if (&MEM[(void *)&buf + 6B] != _30)
+    goto <bb 4>;
+  else
+    goto <bb 13>;
+
+  <bb 13>:
+  _31 = memcmp (&buf, "abcdzzefgh", 11);
+  if (_31 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 14>;
+
+  <bb 14>:
+  buf ={v} {CLOBBER};
+  buf2 ={v} {CLOBBER};
+  return 0;
+
+}
+
+

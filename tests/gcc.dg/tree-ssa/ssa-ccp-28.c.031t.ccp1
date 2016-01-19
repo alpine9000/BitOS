@@ -1,0 +1,28 @@
+
+;; Function main (main, funcdef_no=0, decl_uid=1459, cgraph_uid=0, symbol_order=3)
+
+main ()
+{
+  int _4;
+  int _6;
+
+  <bb 2>:
+  g[0] = 1;
+  g[0] = 0;
+  _4 = g[0];
+  g[0] = _4;
+  _6 = g[0];
+  if (_6 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  return 0;
+
+}
+
+

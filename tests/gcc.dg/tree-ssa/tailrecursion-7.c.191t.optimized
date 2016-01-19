@@ -1,0 +1,188 @@
+
+;; Function foo (foo, funcdef_no=0, decl_uid=1458, cgraph_uid=0, symbol_order=0)
+
+Removing basic block 6
+Removing basic block 7
+Removing basic block 8
+foo (int n)
+{
+  unsigned int ivtmp.12;
+  int add_acc_1;
+  int _2;
+  int acc_tmp_6;
+  int _8;
+  int _9;
+  int acc_tmp_13;
+  int add_acc_14;
+  int mult_acc_15;
+  int add_acc_18;
+  int mult_acc_19;
+  int mult_acc_20;
+
+  <bb 2>:
+  if (n_11(D) != 0)
+    goto <bb 3>;
+  else
+    goto <bb 5>;
+
+  <bb 3>:
+  _2 = -n_11(D);
+  ivtmp.12_16 = (unsigned int) _2;
+
+  <bb 4>:
+  # n_17 = PHI <n_11(D)(3), n_4(4)>
+  # add_acc_18 = PHI <0(3), add_acc_14(4)>
+  # mult_acc_19 = PHI <1(3), mult_acc_15(4)>
+  # ivtmp.12_12 = PHI <ivtmp.12_16(3), ivtmp.12_7(4)>
+  n_4 = n_17 + -1;
+  _8 = (int) ivtmp.12_12;
+  _9 = n_17 * n_17;
+  acc_tmp_13 = _9 * mult_acc_19;
+  mult_acc_15 = _8 * mult_acc_19;
+  add_acc_14 = acc_tmp_13 + add_acc_18;
+  ivtmp.12_7 = ivtmp.12_12 + 1;
+  if (n_4 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 5>;
+
+  <bb 5>:
+  # add_acc_1 = PHI <add_acc_14(4), 0(2)>
+  # mult_acc_20 = PHI <mult_acc_15(4), 1(2)>
+  acc_tmp_6 = add_acc_1 + mult_acc_20;
+  return acc_tmp_6;
+
+}
+
+
+
+;; Function bar (bar, funcdef_no=1, decl_uid=1461, cgraph_uid=1, symbol_order=1)
+
+Removing basic block 6
+Removing basic block 7
+Removing basic block 8
+bar (int n)
+{
+  unsigned int ivtmp.19;
+  int mult_acc_1;
+  int _8;
+  int mult_acc_9;
+  int mult_acc_12;
+  int _13;
+
+  <bb 2>:
+  if (n_11(D) != 0)
+    goto <bb 3>;
+  else
+    goto <bb 5>;
+
+  <bb 3>:
+  _13 = -n_11(D);
+  ivtmp.19_2 = (unsigned int) _13;
+
+  <bb 4>:
+  # mult_acc_12 = PHI <1(3), mult_acc_9(4)>
+  # ivtmp.19_10 = PHI <ivtmp.19_2(3), ivtmp.19_6(4)>
+  _8 = (int) ivtmp.19_10;
+  mult_acc_9 = _8 * mult_acc_12;
+  ivtmp.19_6 = ivtmp.19_10 + 1;
+  if (ivtmp.19_6 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 5>;
+
+  <bb 5>:
+  # mult_acc_1 = PHI <mult_acc_9(4), 1(2)>
+  return mult_acc_1;
+
+}
+
+
+
+;; Function baz (baz, funcdef_no=2, decl_uid=1465, cgraph_uid=2, symbol_order=2)
+
+Removing basic block 6
+Removing basic block 7
+Removing basic block 8
+baz (int n, int m)
+{
+  int _2;
+  int add_acc_3;
+  int add_acc_6;
+  int acc_tmp_8;
+  int _9;
+  int _12;
+
+  <bb 2>:
+  if (n_11(D) != 0)
+    goto <bb 3>;
+  else
+    goto <bb 5>;
+
+  <bb 3>:
+  # n_7 = PHI <n_11(D)(2), n_4(3)>
+  n_4 = n_7 + -1;
+  if (n_4 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 4>:
+  _12 = -m_10(D);
+  _9 = n_11(D) + -1;
+  _2 = _9 * _12;
+  add_acc_3 = _2 - m_10(D);
+
+  <bb 5>:
+  # add_acc_6 = PHI <add_acc_3(4), 0(2)>
+  acc_tmp_8 = add_acc_6 + 100;
+  return acc_tmp_8;
+
+}
+
+
+
+;; Function main (main, funcdef_no=3, decl_uid=1468, cgraph_uid=3, symbol_order=3) (executed once)
+
+main ()
+{
+  int _2;
+  int _3;
+  int _4;
+
+  <bb 2>:
+  _2 = foo (6);
+  if (_2 != 726)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  _3 = bar (7);
+  if (_3 != -5040)
+    goto <bb 5>;
+  else
+    goto <bb 6>;
+
+  <bb 5>:
+  abort ();
+
+  <bb 6>:
+  _4 = baz (10, 5);
+  if (_4 != 50)
+    goto <bb 7>;
+  else
+    goto <bb 8>;
+
+  <bb 7>:
+  abort ();
+
+  <bb 8>:
+  exit (0);
+
+}
+
+

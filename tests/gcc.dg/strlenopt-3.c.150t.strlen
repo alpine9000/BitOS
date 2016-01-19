@@ -1,0 +1,176 @@
+
+;; Function fn1 (fn1, funcdef_no=0, decl_uid=1490, cgraph_uid=0, symbol_order=0)
+
+fn1 (char * p, char * q)
+{
+  size_t s;
+  unsigned int _6;
+  size_t _7;
+  unsigned int _9;
+
+  <bb 2>:
+  s_3 = strlen (q_2(D));
+  _9 = s_3 + 1;
+  __builtin_memcpy (p_4(D), q_2(D), _9);
+  _6 = s_3;
+  _7 = s_3 - _6;
+  return _7;
+
+}
+
+
+
+;; Function fn2 (fn2, funcdef_no=1, decl_uid=1495, cgraph_uid=1, symbol_order=1)
+
+fn2 (char * p, char * q)
+{
+  size_t s;
+  unsigned int _4;
+  unsigned int _7;
+  size_t _8;
+
+  <bb 2>:
+  s_3 = strlen (q_2(D));
+  _4 = s_3 + 1;
+  memcpy (p_5(D), q_2(D), _4);
+  _7 = s_3;
+  _8 = s_3 - _7;
+  return _8;
+
+}
+
+
+
+;; Function fn3 (fn3, funcdef_no=2, decl_uid=1499, cgraph_uid=2, symbol_order=2)
+
+fn3 (char * p)
+{
+  size_t _4;
+
+  <bb 2>:
+  memcpy (p_2(D), "abcd", 5);
+  _4 = 4;
+  return _4;
+
+}
+
+
+
+;; Function fn4 (fn4, funcdef_no=3, decl_uid=1502, cgraph_uid=3, symbol_order=3)
+
+fn4 (char * p)
+{
+  size_t _4;
+
+  <bb 2>:
+  memcpy (p_2(D), "efg", 6);
+  _4 = 3;
+  return _4;
+
+}
+
+
+
+;; Function main (main, funcdef_no=4, decl_uid=1504, cgraph_uid=4, symbol_order=4) (executed once)
+
+main ()
+{
+  char * volatile q;
+  char * volatile p;
+  char buf[64];
+  char * p.0_5;
+  char * q.1_6;
+  unsigned int _8;
+  int _9;
+  char * p.2_11;
+  char * _12;
+  char * q.3_13;
+  unsigned int _15;
+  int _16;
+  char * p.4_18;
+  char * _19;
+  unsigned int _21;
+  int _22;
+  char * p.5_23;
+  unsigned int _25;
+  int _26;
+
+  <bb 2>:
+  p ={v} &buf;
+  q ={v} "ABCDEF";
+  buf[7] = 71;
+  p.0_5 ={v} p;
+  q.1_6 ={v} q;
+  _8 = fn1 (p.0_5, q.1_6);
+  if (_8 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  _9 = memcmp (&buf, "ABCDEF", 8);
+  if (_9 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 5>;
+
+  <bb 5>:
+  q ={v} "HIJ";
+  p.2_11 ={v} p;
+  _12 = p.2_11 + 1;
+  q.3_13 ={v} q;
+  _15 = fn2 (_12, q.3_13);
+  if (_15 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 6>;
+
+  <bb 6>:
+  _16 = memcmp (&buf, "AHIJ", 8);
+  if (_16 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 7>;
+
+  <bb 7>:
+  buf[6] = 75;
+  p.4_18 ={v} p;
+  _19 = p.4_18 + 1;
+  _21 = fn3 (_19);
+  if (_21 != 4)
+    goto <bb 3>;
+  else
+    goto <bb 8>;
+
+  <bb 8>:
+  _22 = memcmp (&buf, "Aabcd", 8);
+  if (_22 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 9>;
+
+  <bb 9>:
+  p.5_23 ={v} p;
+  _25 = fn4 (p.5_23);
+  if (_25 != 3)
+    goto <bb 3>;
+  else
+    goto <bb 10>;
+
+  <bb 10>:
+  _26 = memcmp (&buf, "efg", 8);
+  if (_26 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 11>;
+
+  <bb 11>:
+  buf ={v} {CLOBBER};
+  return 0;
+
+}
+
+

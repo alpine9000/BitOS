@@ -1,0 +1,53 @@
+
+;; Function fn1 (fn1, funcdef_no=0, decl_uid=1497, cgraph_uid=0, symbol_order=0)
+
+fn1 (char * p, const char * q)
+{
+  char * _5;
+  char * _6;
+
+  <bb 2>:
+  _6 = __builtin_stpcpy (p_2(D), q_3(D));
+  _5 = _6;
+  return _5;
+
+}
+
+
+
+;; Function main (main, funcdef_no=1, decl_uid=1499, cgraph_uid=1, symbol_order=1) (executed once)
+
+main ()
+{
+  const char * volatile q;
+  char buf[64];
+  const char * q.0_3;
+  char * _5;
+  int _6;
+
+  <bb 2>:
+  q ={v} "ABCDEFGH";
+  q.0_3 ={v} q;
+  _5 = fn1 (&buf, q.0_3);
+  if (&MEM[(void *)&buf + 8B] != _5)
+    goto <bb 4>;
+  else
+    goto <bb 3>;
+
+  <bb 3>:
+  _6 = memcmp (&buf, "ABCDEFGH", 9);
+  if (_6 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 5>;
+
+  <bb 4>:
+  abort ();
+
+  <bb 5>:
+  buf ={v} {CLOBBER};
+  return 0;
+
+}
+
+

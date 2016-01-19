@@ -1,0 +1,124 @@
+
+;; Function foo (foo, funcdef_no=0, decl_uid=1490, cgraph_uid=0, symbol_order=0)
+
+foo (char * p, const char * q)
+{
+  char * e;
+
+  <bb 2>:
+  e_3 = strchr (p_2(D), 0);
+  __builtin_strcpy (e_3, q_4(D));
+  return e_3;
+
+}
+
+
+
+;; Function bar (bar, funcdef_no=1, decl_uid=1494, cgraph_uid=1, symbol_order=1)
+
+bar (char * p)
+{
+  char * _4;
+
+  <bb 2>:
+  memcpy (p_2(D), "abcd", 5);
+  _4 = p_2(D) + 4;
+  return _4;
+
+}
+
+
+
+;; Function baz (baz, funcdef_no=2, decl_uid=1497, cgraph_uid=2, symbol_order=2)
+
+baz (char * p)
+{
+  char * e;
+  unsigned int _4;
+  char * _5;
+
+  <bb 2>:
+  e_3 = strchr (p_2(D), 0);
+  _4 = 0;
+  _5 = e_3;
+  __builtin_memcpy (_5, "abcd", 5);
+  return;
+
+}
+
+
+
+;; Function main (main, funcdef_no=3, decl_uid=1501, cgraph_uid=3, symbol_order=4) (executed once)
+
+main ()
+{
+  const char * volatile q;
+  char * volatile p;
+  char * p.0_5;
+  const char * q.1_6;
+  char * _8;
+  int _9;
+  char * p.2_11;
+  char * _13;
+  int _14;
+  char * p.3_17;
+  int _19;
+
+  <bb 2>:
+  p ={v} &buf;
+  q ={v} "ij";
+  memset (&buf, 118, 3);
+  p.0_5 ={v} p;
+  q.1_6 ={v} q;
+  _8 = foo (p.0_5, q.1_6);
+  if (_8 != &MEM[(void *)&buf + 3B])
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  goto <bb 5>;
+
+  <bb 4>:
+  _9 = memcmp (&buf, "vvvij", 10);
+  if (_9 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 6>;
+
+  <bb 5>:
+  abort ();
+
+  <bb 6>:
+  memset (&buf, 0, 64);
+  p.2_11 ={v} p;
+  _13 = bar (p.2_11);
+  if (_13 != &MEM[(void *)&buf + 4B])
+    goto <bb 3>;
+  else
+    goto <bb 7>;
+
+  <bb 7>:
+  _14 = memcmp (&buf, "abcd", 10);
+  if (_14 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 8>;
+
+  <bb 8>:
+  memset (&buf, 118, 2);
+  memset (&MEM[(void *)&buf + 2B], 0, 62);
+  p.3_17 ={v} p;
+  baz (p.3_17);
+  _19 = memcmp (&buf, "vvabcd", 10);
+  if (_19 != 0)
+    goto <bb 5>;
+  else
+    goto <bb 9>;
+
+  <bb 9>:
+  return 0;
+
+}
+
+

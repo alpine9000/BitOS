@@ -1,0 +1,387 @@
+
+;; Function fn1 (fn1, funcdef_no=0, decl_uid=1455, cgraph_uid=0, symbol_order=0)
+
+fn1 (int x, unsigned int y)
+{
+  unsigned int _6;
+  int _7;
+  unsigned int _9;
+
+  <bb 2>:
+  _9 = (unsigned int) x_1(D);
+  _6 = _9 - y_2(D);
+  _7 = (int) _6;
+  # DEBUG res => _7
+  # DEBUG ovf => D#2 & 1
+  # DEBUG res2 => _7
+  # DEBUG res3 => _7 + -2
+  # DEBUG D#1 => {CLOBBER}
+  # DEBUG res => D#1
+  return _7;
+
+}
+
+
+
+;; Function fn2 (fn2, funcdef_no=1, decl_uid=1463, cgraph_uid=1, symbol_order=1)
+
+fn2 (signed char x, long int y)
+{
+  int res2;
+  unsigned short _7;
+  unsigned short _8;
+  short int _9;
+  unsigned short _12;
+
+  <bb 2>:
+  _12 = (unsigned short) x_1(D);
+  _7 = (unsigned short) y_3(D);
+  _8 = _7 * _12;
+  _9 = (short int) _8;
+  # DEBUG res => _9
+  # DEBUG D#4 => (_Bool) D#5
+  # DEBUG ovf => (int) D#4
+  res2_10 = (int) _9;
+  # DEBUG res2 => res2_10
+  # DEBUG res3 => res2_10 + -2
+  # DEBUG D#3 => {CLOBBER}
+  # DEBUG res => D#3
+  return res2_10;
+
+}
+
+
+
+;; Function fn3 (fn3, funcdef_no=2, decl_uid=1473, cgraph_uid=2, symbol_order=2)
+
+fn3 (signed char x, short unsigned int y, int * ovf)
+{
+  int _2;
+  int _4;
+  int _12;
+
+  <bb 2>:
+  _2 = (int) x_1(D);
+  _4 = (int) y_3(D);
+  _12 = _2 + _4;
+  # DEBUG res => _12
+  *ovf_10(D) = 0;
+  # DEBUG D#6 => {CLOBBER}
+  # DEBUG res => D#6
+  return _12;
+
+}
+
+
+
+;; Function fn4 (fn4, funcdef_no=3, decl_uid=1479, cgraph_uid=3, symbol_order=3)
+
+fn4 (long int x, long int y, int * ovf)
+{
+  long int _4;
+  long int _13;
+
+  <bb 2>:
+  x_2 = x_1(D) & 65535;
+  # DEBUG x => x_2
+  _4 = y_3(D) & 65535;
+  y_5 = _4 + -32768;
+  # DEBUG y => y_5
+  _13 = x_2 * y_5;
+  # DEBUG res => _13
+  *ovf_11(D) = 0;
+  # DEBUG D#7 => {CLOBBER}
+  # DEBUG res => D#7
+  return _13;
+
+}
+
+
+
+;; Function fn5 (fn5, funcdef_no=4, decl_uid=1486, cgraph_uid=4, symbol_order=4)
+
+fn5 (long int x, long int y, int * ovf)
+{
+  long int _2;
+  long int _5;
+  unsigned char _15;
+  unsigned char _16;
+  unsigned char _17;
+  signed char _18;
+
+  <bb 2>:
+  _2 = x_1(D) & 63;
+  x_3 = _2 + 31;
+  # DEBUG x => x_3
+  _5 = y_4(D) & 3;
+  y_6 = _5 + 5;
+  # DEBUG y => y_6
+  _15 = (unsigned char) x_3;
+  _16 = (unsigned char) y_6;
+  _17 = _15 * _16;
+  _18 = (signed char) _17;
+  # DEBUG res => _18
+  *ovf_13(D) = 1;
+  # DEBUG D#8 => {CLOBBER}
+  # DEBUG res => D#8
+  return _18;
+
+}
+
+
+
+;; Function fn6 (fn6, funcdef_no=5, decl_uid=1493, cgraph_uid=5, symbol_order=5)
+
+fn6 (unsigned char x, unsigned char y, int * ovf)
+{
+  unsigned char _2;
+  unsigned char _18;
+
+  <bb 2>:
+  _2 = x_1(D) & 63;
+  x_3 = _2 + 189;
+  # DEBUG x => x_3
+  y_5 = y_4(D) & 3;
+  # DEBUG y => y_5
+  _18 = x_3 + y_5;
+  # DEBUG res => _18
+  *ovf_14(D) = 0;
+  # DEBUG D#9 => {CLOBBER}
+  # DEBUG res => D#9
+  return _18;
+
+}
+
+
+
+;; Function fn7 (fn7, funcdef_no=6, decl_uid=1500, cgraph_uid=6, symbol_order=6)
+
+fn7 (unsigned char x, unsigned char y, int * ovf)
+{
+  unsigned char _2;
+  unsigned char _5;
+  unsigned char _19;
+
+  <bb 2>:
+  _2 = x_1(D) & 15;
+  x_3 = _2 + 240;
+  # DEBUG x => x_3
+  _5 = y_4(D) & 3;
+  y_6 = _5 + 16;
+  # DEBUG y => y_6
+  _19 = x_3 + y_6;
+  # DEBUG res => _19
+  *ovf_15(D) = 1;
+  # DEBUG D#10 => {CLOBBER}
+  # DEBUG res => D#10
+  return _19;
+
+}
+
+
+
+;; Function main (main, funcdef_no=7, decl_uid=1503, cgraph_uid=7, symbol_order=7) (executed once)
+
+Removing basic block 25
+Removing basic block 26
+Removing basic block 27
+Removing basic block 28
+Removing basic block 29
+Removing basic block 30
+Removing basic block 31
+Removing basic block 32
+Removing basic block 33
+Removing basic block 34
+Removing basic block 35
+Removing basic block 36
+Removing basic block 37
+Removing basic block 38
+Removing basic block 39
+Removing basic block 40
+Removing basic block 41
+Removing basic block 42
+Removing basic block 43
+Removing basic block 44
+Removing basic block 45
+main ()
+{
+  int ovf;
+  int _6;
+  int _7;
+  int _8;
+  int _10;
+  int ovf.8_11;
+  int _13;
+  int ovf.8_14;
+  long int _16;
+  int ovf.8_17;
+  signed char _19;
+  int ovf.8_20;
+  signed char _22;
+  int ovf.8_23;
+  unsigned char _25;
+  int ovf.8_26;
+  unsigned char _28;
+  int ovf.8_29;
+  unsigned char _31;
+  int ovf.8_32;
+  unsigned char _34;
+  int ovf.8_35;
+
+  <bb 2>:
+  _6 = fn1 (-10, 2147483647);
+  if (_6 != 2147483639)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  __builtin_abort ();
+
+  <bb 4>:
+  _7 = fn2 (0, 0);
+  if (_7 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 5>;
+
+  <bb 5>:
+  _8 = fn2 (32, 16383);
+  if (_8 != -32)
+    goto <bb 3>;
+  else
+    goto <bb 6>;
+
+  <bb 6>:
+  _10 = fn3 (127, 65535, &ovf);
+  if (_10 != 65662)
+    goto <bb 3>;
+  else
+    goto <bb 7>;
+
+  <bb 7>:
+  ovf.8_11 = ovf;
+  if (ovf.8_11 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 8>;
+
+  <bb 8>:
+  _13 = fn3 (-128, 0, &ovf);
+  if (_13 != -128)
+    goto <bb 3>;
+  else
+    goto <bb 9>;
+
+  <bb 9>:
+  ovf.8_14 = ovf;
+  if (ovf.8_14 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 10>;
+
+  <bb 10>:
+  _16 = fn4 (65535, 0, &ovf);
+  if (_16 != -2147450880)
+    goto <bb 3>;
+  else
+    goto <bb 11>;
+
+  <bb 11>:
+  ovf.8_17 = ovf;
+  if (ovf.8_17 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 12>;
+
+  <bb 12>:
+  _19 = fn5 (0, 0, &ovf);
+  if (_19 != -101)
+    goto <bb 3>;
+  else
+    goto <bb 13>;
+
+  <bb 13>:
+  ovf.8_20 = ovf;
+  if (ovf.8_20 == 0)
+    goto <bb 3>;
+  else
+    goto <bb 14>;
+
+  <bb 14>:
+  _22 = fn5 (63, 3, &ovf);
+  if (_22 != -16)
+    goto <bb 3>;
+  else
+    goto <bb 15>;
+
+  <bb 15>:
+  ovf.8_23 = ovf;
+  if (ovf.8_23 == 0)
+    goto <bb 3>;
+  else
+    goto <bb 16>;
+
+  <bb 16>:
+  _25 = fn6 (0, 0, &ovf);
+  if (_25 != 189)
+    goto <bb 3>;
+  else
+    goto <bb 17>;
+
+  <bb 17>:
+  ovf.8_26 = ovf;
+  if (ovf.8_26 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 18>;
+
+  <bb 18>:
+  _28 = fn6 (63, 3, &ovf);
+  if (_28 != 255)
+    goto <bb 3>;
+  else
+    goto <bb 19>;
+
+  <bb 19>:
+  ovf.8_29 = ovf;
+  if (ovf.8_29 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 20>;
+
+  <bb 20>:
+  _31 = fn7 (0, 0, &ovf);
+  if (_31 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 21>;
+
+  <bb 21>:
+  ovf.8_32 = ovf;
+  if (ovf.8_32 == 0)
+    goto <bb 3>;
+  else
+    goto <bb 22>;
+
+  <bb 22>:
+  _34 = fn7 (63, 3, &ovf);
+  if (_34 != 18)
+    goto <bb 3>;
+  else
+    goto <bb 23>;
+
+  <bb 23>:
+  ovf.8_35 = ovf;
+  if (ovf.8_35 == 0)
+    goto <bb 3>;
+  else
+    goto <bb 24>;
+
+  <bb 24>:
+  ovf ={v} {CLOBBER};
+  return 0;
+
+}
+
+

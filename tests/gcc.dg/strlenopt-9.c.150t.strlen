@@ -1,0 +1,386 @@
+
+;; Function fn1 (fn1, funcdef_no=0, decl_uid=1489, cgraph_uid=0, symbol_order=0)
+
+fn1 (int r)
+{
+  char * p;
+  char * _4;
+
+  <bb 2>:
+  if (r_2(D) != 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+
+  <bb 4>:
+  # p_1 = PHI <"a"(3), "bc"(2)>
+  _4 = strchr (p_1, 0);
+  return _4;
+
+}
+
+
+
+;; Function fn2 (fn2, funcdef_no=1, decl_uid=1493, cgraph_uid=1, symbol_order=1)
+
+fn2 (int r)
+{
+  char q[10];
+  char * p;
+  unsigned int _7;
+  size_t pretmp_8;
+  size_t prephitmp_9;
+
+  <bb 2>:
+  __builtin_memcpy (&q, "abc", 4);
+  if (r_4(D) == 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  _7 = 3;
+  pretmp_8 = _7;
+
+  <bb 4>:
+  # p_1 = PHI <&q(3), "a"(2)>
+  # prephitmp_9 = PHI <_7(3), 1(2)>
+  q ={v} {CLOBBER};
+  return prephitmp_9;
+
+}
+
+
+
+;; Function fn3 (fn3, funcdef_no=2, decl_uid=1499, cgraph_uid=2, symbol_order=2)
+
+fn3 (char * p, int n)
+{
+  int i;
+  unsigned int _7;
+  char * _8;
+  int _11;
+  unsigned int _12;
+  char * _13;
+  size_t _16;
+
+  <bb 2>:
+  p_6 = strchr (p_5(D), 0);
+  _7 = 0;
+  _8 = p_6;
+  __builtin_memcpy (_8, "abcd", 5);
+  if (n_10(D) > 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  # i_19 = PHI <0(2)>
+  goto <bb 8>;
+
+  <bb 4>:
+  _16 = strlen (p_6);
+  return _16;
+
+  <bb 5>:
+  _11 = i_15 % 123;
+  if (_11 == 53)
+    goto <bb 6>;
+  else
+    goto <bb 7>;
+
+  <bb 6>:
+  _12 = __builtin_strlen (p_6);
+  _13 = p_6 + _12;
+  __builtin_memcpy (_13, "efg", 4);
+
+  <bb 7>:
+
+  <bb 8>:
+  # i_24 = PHI <0(3), i_15(7)>
+  i_15 = i_24 + 1;
+  if (i_15 != n_10(D))
+    goto <bb 5>;
+  else
+    goto <bb 9>;
+
+  <bb 9>:
+  goto <bb 4>;
+
+}
+
+
+
+;; Function fn4 (fn4, funcdef_no=3, decl_uid=1508, cgraph_uid=3, symbol_order=4)
+
+fn4 (char * x, int n)
+{
+  char * p;
+  char a[64];
+  size_t l;
+  int i;
+  unsigned int _1;
+  unsigned int _3;
+  unsigned int _8;
+  char * _9;
+  int _12;
+  unsigned int _13;
+  char[64] * _14;
+  unsigned int _20;
+  unsigned int _22;
+
+  <bb 2>:
+  p_6 = strchr (x_5(D), 0);
+  _20 = (unsigned int) p_6;
+  _22 = (unsigned int) x_5(D);
+  _1 = _20 - _22;
+  _3 = _1 + 1;
+  __builtin_memcpy (&a, x_5(D), _3);
+  _8 = 0;
+  _9 = p_6;
+  __builtin_memcpy (_9, "abcd", 5);
+  if (n_11(D) > 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  # i_21 = PHI <0(2)>
+  goto <bb 8>;
+
+  <bb 4>:
+  l_17 = 4;
+  strcpy (&buf, &a);
+  a ={v} {CLOBBER};
+  return l_17;
+
+  <bb 5>:
+  _12 = i_16 % 123;
+  if (_12 == 53)
+    goto <bb 6>;
+  else
+    goto <bb 7>;
+
+  <bb 6>:
+  _13 = __builtin_strlen (&a);
+  _14 = &a + _13;
+  __builtin_memcpy (_14, "efg", 4);
+
+  <bb 7>:
+
+  <bb 8>:
+  # i_27 = PHI <0(3), i_16(7)>
+  i_16 = i_27 + 1;
+  if (i_16 != n_11(D))
+    goto <bb 5>;
+  else
+    goto <bb 9>;
+
+  <bb 9>:
+  goto <bb 4>;
+
+}
+
+
+
+;; Function main (main, funcdef_no=4, decl_uid=1517, cgraph_uid=4, symbol_order=5) (executed once)
+
+main ()
+{
+  char b[64];
+  volatile int l;
+  int l.2_4;
+  char * _5;
+  const void * _6;
+  int _7;
+  int l.3_8;
+  _Bool _9;
+  int _10;
+  char * _11;
+  const void * _12;
+  int _13;
+  int l.4_14;
+  unsigned int _16;
+  int l.5_17;
+  _Bool _18;
+  int _19;
+  unsigned int _21;
+  unsigned int _25;
+  int _26;
+  unsigned int _28;
+  int _29;
+  unsigned int _31;
+  int _32;
+  unsigned int _34;
+  int _35;
+  int _36;
+  unsigned int _38;
+  int _39;
+  int _40;
+  unsigned int _42;
+  int _43;
+  int _44;
+
+  <bb 2>:
+  l ={v} 1;
+  l.2_4 ={v} l;
+  _5 = fn1 (l.2_4);
+  _6 = _5 + 4294967295;
+  _7 = memcmp (_6, "a", 2);
+  if (_7 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  l.3_8 ={v} l;
+  _9 = l.3_8 == 0;
+  _10 = (int) _9;
+  _11 = fn1 (_10);
+  _12 = _11 + 4294967294;
+  _13 = memcmp (_12, "bc", 3);
+  if (_13 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 5>;
+
+  <bb 5>:
+  l.4_14 ={v} l;
+  _16 = fn2 (l.4_14);
+  if (_16 != 1)
+    goto <bb 6>;
+  else
+    goto <bb 7>;
+
+  <bb 6>:
+  goto <bb 3>;
+
+  <bb 7>:
+  l.5_17 ={v} l;
+  _18 = l.5_17 == 0;
+  _19 = (int) _18;
+  _21 = fn2 (_19);
+  if (_21 != 3)
+    goto <bb 6>;
+  else
+    goto <bb 8>;
+
+  <bb 8>:
+  memset (&b, 0, 64);
+  memset (&b, 97, 3);
+  _25 = fn3 (&b, 10);
+  if (_25 != 4)
+    goto <bb 6>;
+  else
+    goto <bb 9>;
+
+  <bb 9>:
+  _26 = memcmp (&b, "aaaabcd", 8);
+  if (_26 != 0)
+    goto <bb 6>;
+  else
+    goto <bb 10>;
+
+  <bb 10>:
+  _28 = fn3 (&b, 128);
+  if (_28 != 7)
+    goto <bb 6>;
+  else
+    goto <bb 11>;
+
+  <bb 11>:
+  _29 = memcmp (&b, "aaaabcdabcdefg", 15);
+  if (_29 != 0)
+    goto <bb 6>;
+  else
+    goto <bb 12>;
+
+  <bb 12>:
+  _31 = fn3 (&b, 256);
+  if (_31 != 10)
+    goto <bb 6>;
+  else
+    goto <bb 13>;
+
+  <bb 13>:
+  _32 = memcmp (&b, "aaaabcdabcdefgabcdefgefg", 25);
+  if (_32 != 0)
+    goto <bb 6>;
+  else
+    goto <bb 14>;
+
+  <bb 14>:
+  _34 = fn4 (&b, 10);
+  if (_34 != 4)
+    goto <bb 6>;
+  else
+    goto <bb 15>;
+
+  <bb 15>:
+  _35 = memcmp (&b, "aaaabcdabcdefgabcdefgefgabcd", 29);
+  if (_35 != 0)
+    goto <bb 6>;
+  else
+    goto <bb 16>;
+
+  <bb 16>:
+  _36 = memcmp (&buf, "aaaabcdabcdefgabcdefgefg", 25);
+  if (_36 != 0)
+    goto <bb 6>;
+  else
+    goto <bb 17>;
+
+  <bb 17>:
+  _38 = fn4 (&b, 128);
+  if (_38 != 4)
+    goto <bb 6>;
+  else
+    goto <bb 18>;
+
+  <bb 18>:
+  _39 = memcmp (&b, "aaaabcdabcdefgabcdefgefgabcdabcd", 33);
+  if (_39 != 0)
+    goto <bb 6>;
+  else
+    goto <bb 19>;
+
+  <bb 19>:
+  _40 = memcmp (&buf, "aaaabcdabcdefgabcdefgefgabcdefg", 32);
+  if (_40 != 0)
+    goto <bb 6>;
+  else
+    goto <bb 20>;
+
+  <bb 20>:
+  _42 = fn4 (&b, 256);
+  if (_42 != 4)
+    goto <bb 6>;
+  else
+    goto <bb 21>;
+
+  <bb 21>:
+  _43 = memcmp (&b, "aaaabcdabcdefgabcdefgefgabcdabcdabcd", 37);
+  if (_43 != 0)
+    goto <bb 6>;
+  else
+    goto <bb 22>;
+
+  <bb 22>:
+  _44 = memcmp (&buf, "aaaabcdabcdefgabcdefgefgabcdabcdefgefg", 39);
+  if (_44 != 0)
+    goto <bb 6>;
+  else
+    goto <bb 23>;
+
+  <bb 23>:
+  b ={v} {CLOBBER};
+  return 0;
+
+}
+
+

@@ -1,0 +1,150 @@
+
+;; Function ox (ox, funcdef_no=0, decl_uid=1462, cgraph_uid=0, symbol_order=0)
+
+Candidate (1461): cow
+Evaluating PARAM group sizes for cow (UID: 1461): 
+access { base = (1461)'cow', offset = 32, size = 32, expr = MEM[(struct bovid *)&cow + 4B], type = int, grp_read = 0, grp_write = 0, grp_assignment_read = 1, grp_assignment_write = 0, grp_scalar_read = 0, grp_scalar_write = 0, grp_total_scalarization = 0, grp_hint = 0, grp_covered = 0, grp_unscalarizable_region = 0, grp_unscalarized_data = 0, grp_partial_lhs = 0, grp_to_be_replaced = 0, grp_to_be_debug_replaced = 0, grp_maybe_modified = 0, grp_not_necessarilly_dereferenced = 0
+access { base = (1461)'cow', offset = 64, size = 32, expr = MEM[(struct bovid *)&cow + 8B], type = void *, grp_read = 0, grp_write = 0, grp_assignment_read = 1, grp_assignment_write = 0, grp_scalar_read = 0, grp_scalar_write = 0, grp_total_scalarization = 0, grp_hint = 0, grp_covered = 0, grp_unscalarizable_region = 0, grp_unscalarized_data = 0, grp_partial_lhs = 0, grp_to_be_replaced = 0, grp_to_be_debug_replaced = 0, grp_maybe_modified = 0, grp_not_necessarilly_dereferenced = 0
+    ....will be split into 2 components
+IPA param adjustments: 0. base_index: 0 - cow, base: cow, offset 32, type:  <integer_type 0x142605690 int>
+                 1. base_index: 0 - cow, base: cow, offset 64, type:  <pointer_type 0x1426182a0>
+;; 1 loops found
+;;
+;; Loop 0
+;;  header 0, latch 1
+;;  depth 0, outer -1
+;;  nodes: 0 1
+
+Updating SSA:
+Registering new PHI nodes in block #0
+Registering new PHI nodes in block #5
+Registering new PHI nodes in block #2
+Updating SSA information for statement cow$green_1 = MEM[(struct bovid *)&cow + 4B];
+Updating SSA information for statement cow$blue_2 = MEM[(struct bovid *)&cow + 8B];
+Registering new PHI nodes in block #4
+Updating SSA information for statement printf ("green: %f\nblue: %p\nblue again: %p\n", cow$green_1, cow$blue_2, cow$blue_2);
+Updating SSA information for statement return 0;
+Registering new PHI nodes in block #3
+Updating SSA information for statement abort ();
+
+Symbols to be put in SSA form
+{ D.1485 }
+Incremental SSA update started at block: 0
+Number of blocks in CFG: 6
+Number of blocks to update: 5 ( 83%)
+Affected blocks: 0 2 3 4 5
+
+
+About to replace expr MEM[(struct bovid *)&cow + 4B] with ISRA.3
+About to replace expr MEM[(struct bovid *)&cow + 8B] with ISRA.4
+Adjusting call main/1 -> ox.isra.0/4
+replacing stmt:ox.isra.0 (cow);
+with stmt:ox.isra.0 (_8, _9);
+
+
+Analyzing function body size: main
+		Accounting size:2.00, time:0.00 on new predicate:(not inlined)
+
+ BB 2 predicate:(true)
+  cow.red = 7.400000095367431640625e+0;
+		freq:1.00 size:  1 time:  1
+		Accounting size:1.00, time:1.00 on predicate:(true)
+  cow.green = 6;
+		freq:1.00 size:  1 time:  1
+		Accounting size:1.00, time:1.00 on predicate:(true)
+  cow.blue = &cow;
+		freq:1.00 size:  1 time:  1
+		Accounting size:1.00, time:1.00 on predicate:(true)
+  _8 = MEM[(struct bovid *)&cow + 4B];
+		freq:1.00 size:  1 time:  1
+		Accounting size:1.00, time:1.00 on predicate:(true)
+  _9 = MEM[(struct bovid *)&cow + 8B];
+		freq:1.00 size:  1 time:  1
+		Accounting size:1.00, time:1.00 on predicate:(true)
+  ox.isra.0 (_8, _9);
+		freq:1.00 size:  3 time: 12
+  _6 = 0;
+		freq:1.00 size:  0 time:  0
+  cow ={v} {CLOBBER};
+		freq:1.00 size:  0 time:  0
+  return _6;
+		freq:1.00 size:  1 time:  2
+		Will be eliminated by inlining
+		Accounting size:1.00, time:2.00 on predicate:(not inlined)
+
+Inline summary for main/1 inlinable
+  self time:       19
+  global time:     0
+  self size:       11
+  global size:     0
+  min size:       0
+  self stack:      12
+  global stack:    12
+    size:5.000000, time:5.000000, predicate:(true)
+    size:3.000000, time:2.000000, predicate:(not inlined)
+  calls:
+    ox.isra.0/4 function not considered for inlining
+      loop depth: 0 freq:1000 size: 3 time: 12 callee size: 4 stack: 0
+
+
+Updating SSA:
+Registering new PHI nodes in block #0
+Registering new PHI nodes in block #5
+Registering new PHI nodes in block #2
+Updating SSA information for statement cow$green_1 = ISRA.3;
+Updating SSA information for statement cow$blue_2 = ISRA.4;
+Registering new PHI nodes in block #4
+Registering new PHI nodes in block #3
+
+Symbols to be put in SSA form
+{ D.1490 D.1491 }
+Incremental SSA update started at block: 0
+Number of blocks in CFG: 6
+Number of blocks to update: 5 ( 83%)
+Affected blocks: 0 2 3 4 5
+
+
+ox.isra.0 (int ISRA.3, void * ISRA.4)
+{
+  int cow$green;
+  void * cow$blue;
+
+  <bb 5>:
+
+  <bb 2>:
+  cow$green_1 = ISRA.3_6(D);
+  cow$blue_2 = ISRA.4_7(D);
+  if (cow$green_1 != 6)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  printf ("green: %f\nblue: %p\nblue again: %p\n", cow$green_1, cow$blue_2, cow$blue_2);
+  return 0;
+
+}
+
+
+
+;; Function main (main, funcdef_no=1, decl_uid=1466, cgraph_uid=1, symbol_order=1)
+
+Function not local to this compilation unit.
+main (int argc, char * * argv)
+{
+  struct bovid cow;
+
+  <bb 2>:
+  cow.red = 7.400000095367431640625e+0;
+  cow.green = 6;
+  cow.blue = &cow;
+  ox.isra.0 (6, &cow);
+  cow ={v} {CLOBBER};
+  return 0;
+
+}
+
+

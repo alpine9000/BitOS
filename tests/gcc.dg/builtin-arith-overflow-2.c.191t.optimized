@@ -1,0 +1,437 @@
+
+;; Function fn1 (fn1, funcdef_no=0, decl_uid=1456, cgraph_uid=0, symbol_order=0)
+
+fn1 (long int x, long int y, int * ovf)
+{
+  long int _4;
+  complex long int _6;
+  long int res.0_7;
+  long int _9;
+
+  <bb 2>:
+  x_2 = x_1(D) & 65535;
+  _4 = y_3(D) & 65535;
+  y_5 = _4 + -65536;
+  _6 = MUL_OVERFLOW (x_2, y_5);
+  res.0_7 = REALPART_EXPR <_6>;
+  _9 = IMAGPART_EXPR <_6>;
+  *ovf_11(D) = _9;
+  return res.0_7;
+
+}
+
+
+
+;; Function fn2 (fn2, funcdef_no=1, decl_uid=1463, cgraph_uid=1, symbol_order=1)
+
+fn2 (long int x, long int y, int * ovf)
+{
+  long int _2;
+  long int _5;
+  complex signed char _7;
+  signed char res.1_8;
+  signed char _10;
+  int _12;
+
+  <bb 2>:
+  _2 = x_1(D) & 63;
+  x_3 = _2 + 31;
+  _5 = y_4(D) & 3;
+  y_6 = _5 + 4;
+  _7 = MUL_OVERFLOW (x_3, y_6);
+  res.1_8 = REALPART_EXPR <_7>;
+  _10 = IMAGPART_EXPR <_7>;
+  _12 = (int) _10;
+  *ovf_13(D) = _12;
+  return res.1_8;
+
+}
+
+
+
+;; Function fn3 (fn3, funcdef_no=2, decl_uid=1470, cgraph_uid=2, symbol_order=2)
+
+fn3 (unsigned char x, unsigned char y, int * ovf)
+{
+  unsigned char _2;
+  int _6;
+  int _7;
+  complex unsigned char _8;
+  unsigned char res.2_9;
+  unsigned char _11;
+  int _13;
+
+  <bb 2>:
+  _2 = x_1(D) & 63;
+  x_3 = _2 + 190;
+  y_5 = y_4(D) & 3;
+  _6 = (int) x_3;
+  _7 = (int) y_5;
+  _8 = ADD_OVERFLOW (_6, _7);
+  res.2_9 = REALPART_EXPR <_8>;
+  _11 = IMAGPART_EXPR <_8>;
+  _13 = (int) _11;
+  *ovf_14(D) = _13;
+  return res.2_9;
+
+}
+
+
+
+;; Function fn4 (fn4, funcdef_no=3, decl_uid=1477, cgraph_uid=3, symbol_order=3)
+
+fn4 (unsigned char x, unsigned char y, int * ovf)
+{
+  unsigned char _2;
+  unsigned char _5;
+  int _7;
+  int _8;
+  complex unsigned char _9;
+  unsigned char res.3_10;
+  unsigned char _12;
+  int _14;
+
+  <bb 2>:
+  _2 = x_1(D) & 15;
+  x_3 = _2 + 239;
+  _5 = y_4(D) & 3;
+  y_6 = _5 + 16;
+  _7 = (int) x_3;
+  _8 = (int) y_6;
+  _9 = ADD_OVERFLOW (_7, _8);
+  res.3_10 = REALPART_EXPR <_9>;
+  _12 = IMAGPART_EXPR <_9>;
+  _14 = (int) _12;
+  *ovf_15(D) = _14;
+  return res.3_10;
+
+}
+
+
+
+;; Function fn5 (fn5, funcdef_no=4, decl_uid=1483, cgraph_uid=4, symbol_order=4)
+
+fn5 (long int x, long unsigned int y, int * ovf)
+{
+  long unsigned int _2;
+  complex long int _5;
+  long int res.4_6;
+  long int _8;
+
+  <bb 2>:
+  _2 = y_1(D) & 65535;
+  y_3 = _2 + 4294901760;
+  _5 = MUL_OVERFLOW (x_4(D), y_3);
+  res.4_6 = REALPART_EXPR <_5>;
+  _8 = IMAGPART_EXPR <_5>;
+  *ovf_10(D) = _8;
+  return res.4_6;
+
+}
+
+
+
+;; Function main (main, funcdef_no=5, decl_uid=1486, cgraph_uid=5, symbol_order=5) (executed once)
+
+Removing basic block 36
+Removing basic block 37
+Removing basic block 38
+Removing basic block 39
+Removing basic block 40
+Removing basic block 41
+Removing basic block 42
+Removing basic block 43
+Removing basic block 44
+Removing basic block 45
+Removing basic block 46
+Removing basic block 47
+Removing basic block 48
+Removing basic block 49
+Removing basic block 50
+Removing basic block 51
+Removing basic block 52
+Removing basic block 53
+Removing basic block 54
+Removing basic block 55
+Removing basic block 56
+Removing basic block 57
+Removing basic block 58
+Removing basic block 59
+Removing basic block 60
+Removing basic block 61
+Removing basic block 62
+Removing basic block 63
+Removing basic block 64
+Removing basic block 65
+Removing basic block 66
+Removing basic block 67
+main ()
+{
+  int ovf;
+  long int _8;
+  int ovf.5_9;
+  long int _11;
+  int ovf.5_12;
+  signed char _14;
+  int ovf.5_15;
+  signed char _17;
+  int ovf.5_18;
+  unsigned char _20;
+  int ovf.5_21;
+  unsigned char _23;
+  int ovf.5_24;
+  unsigned char _26;
+  int ovf.5_27;
+  unsigned char _29;
+  int ovf.5_30;
+  unsigned char _32;
+  int ovf.5_33;
+  unsigned char _35;
+  int ovf.5_36;
+  unsigned char _38;
+  int ovf.5_39;
+  unsigned char _41;
+  int ovf.5_42;
+  long int _44;
+  int ovf.5_45;
+  long int _47;
+  int ovf.5_48;
+  long int _50;
+  int ovf.5_51;
+  long int _53;
+  int ovf.5_54;
+
+  <bb 2>:
+  _8 = fn1 (0, 0, &ovf);
+  if (_8 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  __builtin_abort ();
+
+  <bb 4>:
+  ovf.5_9 = ovf;
+  if (ovf.5_9 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 5>;
+
+  <bb 5>:
+  _11 = fn1 (65535, 0, &ovf);
+  if (_11 != 65536)
+    goto <bb 3>;
+  else
+    goto <bb 6>;
+
+  <bb 6>:
+  ovf.5_12 = ovf;
+  if (ovf.5_12 == 0)
+    goto <bb 3>;
+  else
+    goto <bb 7>;
+
+  <bb 7>:
+  _14 = fn2 (0, 0, &ovf);
+  if (_14 != 124)
+    goto <bb 3>;
+  else
+    goto <bb 8>;
+
+  <bb 8>:
+  ovf.5_15 = ovf;
+  if (ovf.5_15 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 9>;
+
+  <bb 9>:
+  _17 = fn2 (0, 1, &ovf);
+  if (_17 != -101)
+    goto <bb 3>;
+  else
+    goto <bb 10>;
+
+  <bb 10>:
+  ovf.5_18 = ovf;
+  if (ovf.5_18 == 0)
+    goto <bb 3>;
+  else
+    goto <bb 11>;
+
+  <bb 11>:
+  _20 = fn3 (0, 0, &ovf);
+  if (_20 != 190)
+    goto <bb 3>;
+  else
+    goto <bb 12>;
+
+  <bb 12>:
+  ovf.5_21 = ovf;
+  if (ovf.5_21 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 13>;
+
+  <bb 13>:
+  _23 = fn3 (63, 2, &ovf);
+  if (_23 != 255)
+    goto <bb 3>;
+  else
+    goto <bb 14>;
+
+  <bb 14>:
+  ovf.5_24 = ovf;
+  if (ovf.5_24 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 15>;
+
+  <bb 15>:
+  _26 = fn3 (62, 3, &ovf);
+  if (_26 != 255)
+    goto <bb 3>;
+  else
+    goto <bb 16>;
+
+  <bb 16>:
+  ovf.5_27 = ovf;
+  if (ovf.5_27 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 17>;
+
+  <bb 17>:
+  _29 = fn3 (63, 3, &ovf);
+  if (_29 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 18>;
+
+  <bb 18>:
+  ovf.5_30 = ovf;
+  if (ovf.5_30 == 0)
+    goto <bb 3>;
+  else
+    goto <bb 19>;
+
+  <bb 19>:
+  _32 = fn4 (0, 0, &ovf);
+  if (_32 != 255)
+    goto <bb 3>;
+  else
+    goto <bb 20>;
+
+  <bb 20>:
+  ovf.5_33 = ovf;
+  if (ovf.5_33 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 21>;
+
+  <bb 21>:
+  _35 = fn4 (1, 0, &ovf);
+  if (_35 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 22>;
+
+  <bb 22>:
+  ovf.5_36 = ovf;
+  if (ovf.5_36 == 0)
+    goto <bb 3>;
+  else
+    goto <bb 23>;
+
+  <bb 23>:
+  _38 = fn4 (0, 1, &ovf);
+  if (_38 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 24>;
+
+  <bb 24>:
+  ovf.5_39 = ovf;
+  if (ovf.5_39 == 0)
+    goto <bb 3>;
+  else
+    goto <bb 25>;
+
+  <bb 25>:
+  _41 = fn4 (63, 3, &ovf);
+  if (_41 != 17)
+    goto <bb 3>;
+  else
+    goto <bb 26>;
+
+  <bb 26>:
+  ovf.5_42 = ovf;
+  if (ovf.5_42 == 0)
+    goto <bb 3>;
+  else
+    goto <bb 27>;
+
+  <bb 27>:
+  _44 = fn5 (0, 0, &ovf);
+  if (_44 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 28>;
+
+  <bb 28>:
+  ovf.5_45 = ovf;
+  if (ovf.5_45 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 29>;
+
+  <bb 29>:
+  _47 = fn5 (1, 0, &ovf);
+  if (_47 != -65536)
+    goto <bb 3>;
+  else
+    goto <bb 30>;
+
+  <bb 30>:
+  ovf.5_48 = ovf;
+  if (ovf.5_48 == 0)
+    goto <bb 3>;
+  else
+    goto <bb 31>;
+
+  <bb 31>:
+  _50 = fn5 (2, 32768, &ovf);
+  if (_50 != -65536)
+    goto <bb 3>;
+  else
+    goto <bb 32>;
+
+  <bb 32>:
+  ovf.5_51 = ovf;
+  if (ovf.5_51 == 0)
+    goto <bb 3>;
+  else
+    goto <bb 33>;
+
+  <bb 33>:
+  _53 = fn5 (4, 57344, &ovf);
+  if (_53 != -32768)
+    goto <bb 3>;
+  else
+    goto <bb 34>;
+
+  <bb 34>:
+  ovf.5_54 = ovf;
+  if (ovf.5_54 == 0)
+    goto <bb 3>;
+  else
+    goto <bb 35>;
+
+  <bb 35>:
+  ovf ={v} {CLOBBER};
+  return 0;
+
+}
+
+

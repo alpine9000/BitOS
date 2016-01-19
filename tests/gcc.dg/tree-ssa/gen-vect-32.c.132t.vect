@@ -1,0 +1,245 @@
+
+;; Function main (main, funcdef_no=0, decl_uid=2051, cgraph_uid=0, symbol_order=0) (executed once)
+
+
+Analyzing loop at gen-vect-32.c:24
+gen-vect-32.c:24:15: note: ===== analyze_loop_nest =====
+gen-vect-32.c:24:15: note: === vect_analyze_loop_form ===
+gen-vect-32.c:24:15: note: not vectorized: control flow in loop.
+gen-vect-32.c:24:15: note: bad loop form.
+
+Analyzing loop at gen-vect-32.c:16
+gen-vect-32.c:16:3: note: ===== analyze_loop_nest =====
+gen-vect-32.c:16:3: note: === vect_analyze_loop_form ===
+gen-vect-32.c:16:3: note: === get_loop_niters ===
+Analyzing # of iterations of loop 1
+  exit condition [15, + , 4294967295] != 0
+  bounds on difference of bases: -15 ... -15
+  result:
+    # of iterations 15, bounded by 15
+gen-vect-32.c:16:3: note: === vect_analyze_data_refs ===
+Creating dr for s.ca[i_15]
+analyze_innermost: Applying pattern match.pd:114, generic-match.c:6949
+Applying pattern match.pd:49, generic-match.c:3223
+Applying pattern match.pd:49, generic-match.c:3223
+success.
+	base_address: &s
+	offset from base address: 0
+	constant offset from base address: 0
+	step: 1
+	aligned to: 32
+	base_object: s
+	Access function 0: {0, +, 1}_1
+	Access function 1: 0
+gen-vect-32.c:16:3: note: got vectype for stmt: s.ca[i_15] = 5;
+vector(4) char
+gen-vect-32.c:16:3: note: === vect_analyze_scalar_cycles ===
+gen-vect-32.c:16:3: note: Analyze phi: i_15 = PHI <i_7(4), 0(2)>
+
+gen-vect-32.c:16:3: note: Access function of PHI: {0, +, 1}_1
+gen-vect-32.c:16:3: note: step: 1,  init: 0
+gen-vect-32.c:16:3: note: Detected induction.
+gen-vect-32.c:16:3: note: Analyze phi: .MEM_17 = PHI <.MEM_6(4), .MEM_5(D)(2)>
+
+gen-vect-32.c:16:3: note: Analyze phi: ivtmp_1 = PHI <ivtmp_12(4), 16(2)>
+
+gen-vect-32.c:16:3: note: Access function of PHI: {16, +, 4294967295}_1
+gen-vect-32.c:16:3: note: step: 4294967295,  init: 16
+gen-vect-32.c:16:3: note: Detected induction.
+gen-vect-32.c:16:3: note: === vect_pattern_recog ===
+gen-vect-32.c:16:3: note: === vect_analyze_data_ref_accesses ===
+gen-vect-32.c:16:3: note: === vect_mark_stmts_to_be_vectorized ===
+gen-vect-32.c:16:3: note: init: phi relevant? i_15 = PHI <i_7(4), 0(2)>
+gen-vect-32.c:16:3: note: init: phi relevant? .MEM_17 = PHI <.MEM_6(4), .MEM_5(D)(2)>
+gen-vect-32.c:16:3: note: init: phi relevant? ivtmp_1 = PHI <ivtmp_12(4), 16(2)>
+gen-vect-32.c:16:3: note: init: stmt relevant? s.ca[i_15] = 5;
+gen-vect-32.c:16:3: note: vec_stmt_relevant_p: stmt has vdefs.
+gen-vect-32.c:16:3: note: mark relevant 4, live 0.
+gen-vect-32.c:16:3: note: init: stmt relevant? i_7 = i_15 + 1;
+gen-vect-32.c:16:3: note: init: stmt relevant? ivtmp_12 = ivtmp_1 - 1;
+gen-vect-32.c:16:3: note: init: stmt relevant? if (ivtmp_12 != 0)
+gen-vect-32.c:16:3: note: worklist: examine stmt: s.ca[i_15] = 5;
+gen-vect-32.c:16:3: note: === vect_analyze_data_ref_dependences ===
+(compute_affine_dependence
+  stmt_a: s.ca[i_15] = 5;
+  stmt_b: s.ca[i_15] = 5;
+(analyze_overlapping_iterations 
+  (chrec_a = {0, +, 1}_1)
+  (chrec_b = {0, +, 1}_1)
+  (overlap_iterations_a = [0])
+  (overlap_iterations_b = [0]))
+(analyze_overlapping_iterations 
+  (chrec_a = 0)
+  (chrec_b = 0)
+  (overlap_iterations_a = [0])
+  (overlap_iterations_b = [0]))
+)
+gen-vect-32.c:16:3: note: === vect_determine_vectorization_factor ===
+gen-vect-32.c:16:3: note: ==> examining phi: i_15 = PHI <i_7(4), 0(2)>
+
+gen-vect-32.c:16:3: note: ==> examining phi: .MEM_17 = PHI <.MEM_6(4), .MEM_5(D)(2)>
+
+gen-vect-32.c:16:3: note: ==> examining phi: ivtmp_1 = PHI <ivtmp_12(4), 16(2)>
+
+gen-vect-32.c:16:3: note: ==> examining statement: s.ca[i_15] = 5;
+
+gen-vect-32.c:16:3: note: get vectype for scalar type:  char
+gen-vect-32.c:16:3: note: vectype: vector(4) char
+gen-vect-32.c:16:3: note: nunits = 4
+gen-vect-32.c:16:3: note: ==> examining statement: i_7 = i_15 + 1;
+
+gen-vect-32.c:16:3: note: skip.
+gen-vect-32.c:16:3: note: ==> examining statement: ivtmp_12 = ivtmp_1 - 1;
+
+gen-vect-32.c:16:3: note: skip.
+gen-vect-32.c:16:3: note: ==> examining statement: if (ivtmp_12 != 0)
+
+gen-vect-32.c:16:3: note: skip.
+gen-vect-32.c:16:3: note: vectorization factor = 4
+gen-vect-32.c:16:3: note: === vect_analyze_data_refs_alignment ===
+gen-vect-32.c:16:3: note: vect_compute_data_ref_alignment:
+gen-vect-32.c:16:3: note: force alignment of s.ca[i_15]
+gen-vect-32.c:16:3: note: misalign = 0 bytes of ref s.ca[i_15]
+gen-vect-32.c:16:3: note: === vect_prune_runtime_alias_test_list ===
+gen-vect-32.c:16:3: note: === vect_enhance_data_refs_alignment ===
+gen-vect-32.c:16:3: note: vect_can_advance_ivs_p:
+gen-vect-32.c:16:3: note: Analyze phi: i_15 = PHI <i_7(4), 0(2)>
+
+gen-vect-32.c:16:3: note: Analyze phi: .MEM_17 = PHI <.MEM_6(4), .MEM_5(D)(2)>
+
+gen-vect-32.c:16:3: note: virtual phi. skip.
+gen-vect-32.c:16:3: note: Analyze phi: ivtmp_1 = PHI <ivtmp_12(4), 16(2)>
+
+gen-vect-32.c:16:3: note: === vect_analyze_slp ===
+gen-vect-32.c:16:3: note: === vect_make_slp_decision ===
+gen-vect-32.c:16:3: note: === vect_detect_hybrid_slp ===
+gen-vect-32.c:16:3: note: === vect_analyze_loop_operations ===
+gen-vect-32.c:16:3: note: examining phi: i_15 = PHI <i_7(4), 0(2)>
+
+gen-vect-32.c:16:3: note: examining phi: .MEM_17 = PHI <.MEM_6(4), .MEM_5(D)(2)>
+
+gen-vect-32.c:16:3: note: examining phi: ivtmp_1 = PHI <ivtmp_12(4), 16(2)>
+
+gen-vect-32.c:16:3: note: ==> examining statement: s.ca[i_15] = 5;
+gen-vect-32.c:16:3: note: vect_is_simple_use: operand 5
+gen-vect-32.c:16:3: note: vect_model_store_cost: aligned.
+gen-vect-32.c:16:3: note: vect_model_store_cost: inside_cost = 1, prologue_cost = 1 .
+gen-vect-32.c:16:3: note: ==> examining statement: i_7 = i_15 + 1;
+gen-vect-32.c:16:3: note: irrelevant.
+gen-vect-32.c:16:3: note: ==> examining statement: ivtmp_12 = ivtmp_1 - 1;
+gen-vect-32.c:16:3: note: irrelevant.
+gen-vect-32.c:16:3: note: ==> examining statement: if (ivtmp_12 != 0)
+gen-vect-32.c:16:3: note: irrelevant.
+gen-vect-32.c:16:3: note: vectorization_factor = 4, niters = 16
+gen-vect-32.c:16:3: note: === vect_update_slp_costs_according_to_vf ===
+gen-vect-32.c:16:3: note: cost model disabled.
+gen-vect-32.c:16:3: note: loop vectorized
+gen-vect-32.c:16:3: note: === vec_transform_loop ===
+gen-vect-32.c:16:3: note: ------>vectorizing phi: i_15 = PHI <i_7(4), 0(11)>
+
+gen-vect-32.c:16:3: note: ------>vectorizing phi: .MEM_17 = PHI <.MEM_6(4), .MEM_5(D)(11)>
+
+gen-vect-32.c:16:3: note: ------>vectorizing phi: ivtmp_1 = PHI <ivtmp_12(4), 16(11)>
+
+gen-vect-32.c:16:3: note: ------>vectorizing statement: s.ca[i_15] = 5;
+
+gen-vect-32.c:16:3: note: transform statement.
+gen-vect-32.c:16:3: note: vect_is_simple_use: operand 5
+gen-vect-32.c:16:3: note: transform store. ncopies = 1
+gen-vect-32.c:16:3: note: vect_get_vec_def_for_operand: 5
+gen-vect-32.c:16:3: note: vect_is_simple_use: operand 5
+gen-vect-32.c:16:3: note: Create vector_cst. nunits = 4
+gen-vect-32.c:16:3: note: created new init_stmt: vect_cst_.3_14 = { 5, 5, 5, 5 };
+gen-vect-32.c:16:3: note: create vector_type-pointer variable to type: vector(4) char  vectorizing a record based array ref: s
+Applying pattern match.pd:49, generic-match.c:4015
+gen-vect-32.c:16:3: note: created vectp_s.5_4
+gen-vect-32.c:16:3: note: add new stmt: MEM[(char[16] *)vectp_s.4_3] = vect_cst_.3_14;
+gen-vect-32.c:16:3: note: ------>vectorizing statement: i_7 = i_15 + 1;
+
+gen-vect-32.c:16:3: note: ------>vectorizing statement: ivtmp_12 = ivtmp_1 - 1;
+
+gen-vect-32.c:16:3: note: ------>vectorizing statement: vectp_s.4_18 = vectp_s.4_3 + 4;
+
+gen-vect-32.c:16:3: note: ------>vectorizing statement: if (ivtmp_12 != 0)
+
+
+loop at gen-vect-32.c:18: if (ivtmp_20 < 4)
+
+;; Scaling loop 1 with scale 0.250000, bounding iterations to 4 from guessed 16
+;; guessed iterations are now 4
+gen-vect-32.c:16:3: note: LOOP VECTORIZED
+
+gen-vect-32.c:9:5: note: vectorized 1 loops in function.
+Merging blocks 2 and 11
+main ()
+{
+  vector(4) char * vectp_s.5;
+  vector(4) char * vectp_s.4;
+  vector(4) char vect_cst_.3;
+  int i;
+  struct 
+  {
+    char ca[16];
+  } s;
+  unsigned int ivtmp_1;
+  unsigned int ivtmp_2;
+  unsigned int ivtmp_6;
+  char _8;
+  unsigned int ivtmp_12;
+  unsigned int ivtmp_13;
+  unsigned int ivtmp_20;
+
+  <bb 2>:
+  vect_cst_.3_14 = { 5, 5, 5, 5 };
+  vectp_s.5_4 = &s;
+
+  <bb 3>:
+  # i_15 = PHI <i_7(4), 0(2)>
+  # ivtmp_1 = PHI <ivtmp_12(4), 16(2)>
+  # vectp_s.4_3 = PHI <vectp_s.4_18(4), vectp_s.5_4(2)>
+  # ivtmp_6 = PHI <ivtmp_20(4), 0(2)>
+  MEM[(char[16] *)vectp_s.4_3] = vect_cst_.3_14;
+  i_7 = i_15 + 1;
+  ivtmp_12 = ivtmp_1 - 1;
+  vectp_s.4_18 = vectp_s.4_3 + 4;
+  ivtmp_20 = ivtmp_6 + 1;
+  if (ivtmp_20 < 4)
+    goto <bb 4>;
+  else
+    goto <bb 5>;
+
+  <bb 4>:
+  goto <bb 3>;
+
+  <bb 5>:
+
+  <bb 6>:
+  # i_16 = PHI <0(5), i_9(9)>
+  # ivtmp_13 = PHI <16(5), ivtmp_2(9)>
+  _8 = s.ca[i_16];
+  if (_8 != 5)
+    goto <bb 7>;
+  else
+    goto <bb 8>;
+
+  <bb 7>:
+  abort ();
+
+  <bb 8>:
+  i_9 = i_16 + 1;
+  ivtmp_2 = ivtmp_13 - 1;
+  if (ivtmp_2 != 0)
+    goto <bb 9>;
+  else
+    goto <bb 10>;
+
+  <bb 9>:
+  goto <bb 6>;
+
+  <bb 10>:
+  s ={v} {CLOBBER};
+  return 0;
+
+}
+
+

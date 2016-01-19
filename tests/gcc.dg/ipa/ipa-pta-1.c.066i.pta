@@ -1,0 +1,367 @@
+Symbol table:
+
+abort/4 (abort) @0x142603960
+  Type: function
+  Visibility: external public
+  References: 
+  Referring: 
+  Availability: not_available
+  First run: 0
+  Function flags:
+  Called by: main/3 
+  Calls: 
+main/3 (main) @0x1426037d0
+  Type: function definition analyzed
+  Visibility: externally_visible public
+  References: 
+  Referring: 
+  Availability: available
+  First run: 0
+  Function flags: body only_called_at_startup executed_once only_called_at_startup
+  Called by: 
+  Calls: abort/4 foobar/2 (1.00 per call) 
+foobar/2 (foobar) @0x142603640
+  Type: function definition analyzed
+  Visibility: prevailing_def_ironly
+  References: foo/0 (addr)bar/1 (addr)
+  Referring: 
+  Availability: local
+  First run: 0
+  Function flags: body local executed_once
+  Called by: main/3 (1.00 per call) 
+  Calls: 
+   Indirect call(1.00 per call) 
+bar/1 (bar) @0x1426034b0
+  Type: function definition analyzed
+  Visibility: prevailing_def_ironly
+  Address is taken.
+  References: 
+  Referring: foobar/2 (addr)
+  Availability: available
+  First run: 0
+  Function flags: body nonfreeing_fn
+  Called by: 
+  Calls: 
+foo/0 (foo) @0x142603320
+  Type: function definition analyzed
+  Visibility: prevailing_def_ironly
+  Address is taken.
+  References: 
+  Referring: foobar/2 (addr)
+  Availability: available
+  First run: 0
+  Function flags: body nonfreeing_fn
+  Called by: 
+  Calls: 
+
+
+;; Function main (main, funcdef_no=3, decl_uid=1470, cgraph_uid=3, symbol_order=3) (executed once)
+
+main ()
+{
+  int _3;
+
+  <bb 2>:
+  _3 = foobar (1);
+  if (_3 != 1)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  return 0;
+
+}
+
+
+
+;; Function foobar (foobar, funcdef_no=2, decl_uid=1462, cgraph_uid=2, symbol_order=2) (executed once)
+
+foobar (int foo_p)
+{
+  int (*<T2de>) (int *, int *) fn;
+  int a;
+  int _5;
+
+  <bb 2>:
+  if (foo_p_2(D) != 0)
+    goto <bb 4>;
+  else
+    goto <bb 3>;
+
+  <bb 3>:
+
+  <bb 4>:
+  # fn_1 = PHI <foo(2), bar(3)>
+  _5 = fn_1 (&a, &a);
+  a ={v} {CLOBBER};
+  return _5;
+
+}
+
+
+
+;; Function bar (bar, funcdef_no=1, decl_uid=1459, cgraph_uid=1, symbol_order=1)
+
+bar (int * p, int * q)
+{
+  int _6;
+
+  <bb 2>:
+  *p_2(D) = -2;
+  *q_4(D) = -1;
+  _6 = *p_2(D);
+  return _6;
+
+}
+
+
+
+;; Function foo (foo, funcdef_no=0, decl_uid=1455, cgraph_uid=0, symbol_order=0)
+
+foo (int * p, int * q)
+{
+  int _6;
+
+  <bb 2>:
+  *p_2(D) = 2;
+  *q_4(D) = 1;
+  _6 = *p_2(D);
+  return _6;
+
+}
+
+
+Generating constraints for global initializers
+
+ANYTHING = &ANYTHING
+ESCAPED = *ESCAPED
+ESCAPED = ESCAPED + UNKNOWN
+*ESCAPED = NONLOCAL
+NONLOCAL = &NONLOCAL
+NONLOCAL = &ESCAPED
+INTEGER = &ANYTHING
+
+Generating constraints for main (main)
+
+foobar.arg0 = &NONLOCAL
+_3 = foobar.result
+main.clobber = foobar.clobber
+main.use = foobar.use
+main.clobber = ESCAPED
+main.use = ESCAPED
+main.result = &NULL
+
+Generating constraints for foobar (foobar)
+
+fn_1 = &foo
+fn_1 = &bar
+derefaddrtmp = &a
+*fn_1 + 5 = derefaddrtmp
+derefaddrtmp = &a
+*fn_1 + 6 = derefaddrtmp
+_5 = *fn_1 + 4
+foobar.use = &a
+foobar.use = &a
+foobar.clobber = *fn_1 + 1
+foobar.use = *fn_1 + 2
+foobar.result = _5
+
+Generating constraints for bar (bar)
+
+derefaddrtmp = &NONLOCAL
+*bar.arg0 = derefaddrtmp
+bar.clobber = bar.arg0
+derefaddrtmp = &NONLOCAL
+*bar.arg1 = derefaddrtmp
+bar.clobber = bar.arg1
+_6 = *bar.arg0
+bar.use = bar.arg0
+bar.result = _6
+
+Generating constraints for foo (foo)
+
+derefaddrtmp = &NONLOCAL
+*foo.arg0 = derefaddrtmp
+foo.clobber = foo.arg0
+derefaddrtmp = &NONLOCAL
+*foo.arg1 = derefaddrtmp
+foo.clobber = foo.arg1
+_6 = *foo.arg0
+foo.use = foo.arg0
+foo.result = _6
+
+
+Collapsing static cycles and doing variable substitution
+Building predecessor graph
+Detecting pointer and location equivalences
+Found location equivalence for node foo
+Equivalence classes for indirect node id 1 "NULL": pointer 1, location 1
+Equivalence classes for indirect node id 2 "ANYTHING": pointer 2, location 2
+Equivalence classes for indirect node id 3 "STRING": pointer 3, location 0
+Equivalence classes for indirect node id 4 "ESCAPED": pointer 6, location 3
+Equivalence classes for indirect node id 5 "NONLOCAL": pointer 4, location 4
+Equivalence classes for direct node id 6 "STOREDANYTHING": pointer 0, location 0
+Equivalence classes for indirect node id 7 "INTEGER": pointer 7, location 0
+Equivalence classes for direct node id 8 "main": pointer 0, location 0
+Equivalence classes for direct node id 9 "main.clobber": pointer 9, location 0
+Equivalence classes for direct node id 10 "main.use": pointer 11, location 0
+Equivalence classes for direct node id 11 "main.result": pointer 12, location 0
+Equivalence classes for direct node id 12 "main.varargs": pointer 0, location 0
+Equivalence classes for direct node id 13 "foobar": pointer 0, location 0
+Equivalence classes for indirect node id 14 "foobar.clobber": pointer 8, location 0
+Equivalence classes for indirect node id 15 "foobar.use": pointer 10, location 0
+Equivalence classes for direct node id 16 "foobar.result": pointer 13, location 0
+Equivalence classes for direct node id 17 "foobar.arg0": pointer 14, location 0
+Equivalence classes for indirect node id 18 "bar": pointer 15, location 5
+Equivalence classes for indirect node id 19 "bar.clobber": pointer 18, location 0
+Equivalence classes for indirect node id 20 "bar.use": pointer 19, location 0
+Equivalence classes for indirect node id 21 "bar.result": pointer 21, location 0
+Equivalence classes for indirect node id 22 "bar.arg0": pointer 16, location 0
+Equivalence classes for indirect node id 23 "bar.arg1": pointer 17, location 0
+Equivalence classes for indirect node id 24 "foo": pointer 22, location 5
+Equivalence classes for indirect node id 25 "foo.clobber": pointer 25, location 0
+Equivalence classes for indirect node id 26 "foo.use": pointer 26, location 0
+Equivalence classes for indirect node id 27 "foo.result": pointer 28, location 0
+Equivalence classes for indirect node id 28 "foo.arg0": pointer 23, location 0
+Equivalence classes for indirect node id 29 "foo.arg1": pointer 24, location 0
+Equivalence classes for direct node id 30 "_3": pointer 13, location 0
+Equivalence classes for direct node id 31 "abort": pointer 0, location 0
+Equivalence classes for direct node id 32 "fn_1": pointer 29, location 0
+Equivalence classes for indirect node id 33 "a": pointer 30, location 6
+Equivalence classes for direct node id 34 "derefaddrtmp": pointer 31, location 0
+Equivalence classes for direct node id 35 "derefaddrtmp": pointer 31, location 0
+Equivalence classes for indirect node id 36 "_5": pointer 13, location 0
+Equivalence classes for direct node id 37 "derefaddrtmp": pointer 14, location 0
+Equivalence classes for direct node id 38 "derefaddrtmp": pointer 14, location 0
+Equivalence classes for direct node id 39 "_6": pointer 20, location 0
+Equivalence classes for direct node id 40 "derefaddrtmp": pointer 14, location 0
+Equivalence classes for direct node id 41 "derefaddrtmp": pointer 14, location 0
+Equivalence classes for direct node id 42 "_6": pointer 27, location 0
+STOREDANYTHING is a non-pointer variable, eliminating edges.
+main is a non-pointer variable, eliminating edges.
+main.varargs is a non-pointer variable, eliminating edges.
+foobar is a non-pointer variable, eliminating edges.
+abort is a non-pointer variable, eliminating edges.
+Rewriting constraints and unifying variables
+Unifying foobar.result to _3
+Unifying derefaddrtmp to derefaddrtmp
+Unifying _5 to _3
+Unifying derefaddrtmp to foobar.arg0
+Unifying derefaddrtmp to foobar.arg0
+Unifying derefaddrtmp to foobar.arg0
+Unifying derefaddrtmp to foobar.arg0
+Uniting pointer but not location equivalent variables
+Finding indirect cycles
+Solving graph
+
+Points-to sets
+
+ANYTHING = { ANYTHING }
+ESCAPED = { }
+NONLOCAL = { ESCAPED NONLOCAL }
+STOREDANYTHING = { }
+INTEGER = { ANYTHING }
+main.clobber = { a }
+main.use = { a }
+main.result = { NULL }
+main.varargs = { }
+foobar.clobber = { a }
+foobar.use = { a }
+foobar.result = { NONLOCAL } same as _3
+foobar.arg0 = { NONLOCAL }
+bar.clobber = { a }
+bar.use = { a }
+bar.result = { NONLOCAL }
+bar.arg0 = { a }
+bar.arg1 = { a }
+foo.clobber = { a }
+foo.use = { a }
+foo.result = { NONLOCAL }
+foo.arg0 = { a }
+foo.arg1 = { a }
+_3 = { NONLOCAL }
+abort = { }
+fn_1 = { bar foo }
+a = { NONLOCAL }
+derefaddrtmp = { a }
+derefaddrtmp = { a } same as derefaddrtmp
+_5 = { NONLOCAL } same as _3
+derefaddrtmp = { NONLOCAL } same as foobar.arg0
+derefaddrtmp = { NONLOCAL } same as foobar.arg0
+_6 = { NONLOCAL }
+derefaddrtmp = { NONLOCAL } same as foobar.arg0
+derefaddrtmp = { NONLOCAL } same as foobar.arg0
+_6 = { NONLOCAL }
+main ()
+{
+  int _3;
+
+  <bb 2>:
+  _3 = foobar (1);
+  if (_3 != 1)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  return 0;
+
+}
+
+
+foobar (int foo_p)
+{
+  int (*<T2de>) (int *, int *) fn;
+  int a;
+  int _5;
+
+  <bb 2>:
+  if (foo_p_2(D) != 0)
+    goto <bb 4>;
+  else
+    goto <bb 3>;
+
+  <bb 3>:
+
+  <bb 4>:
+  # fn_1 = PHI <foo(2), bar(3)>
+  _5 = fn_1 (&a, &a);
+  a ={v} {CLOBBER};
+  return _5;
+
+}
+
+
+bar (int * p, int * q)
+{
+  int _6;
+
+  <bb 2>:
+  *p_2(D) = -2;
+  *q_4(D) = -1;
+  _6 = *p_2(D);
+  return _6;
+
+}
+
+
+foo (int * p, int * q)
+{
+  int _6;
+
+  <bb 2>:
+  *p_2(D) = 2;
+  *q_4(D) = 1;
+  _6 = *p_2(D);
+  return _6;
+
+}
+
+

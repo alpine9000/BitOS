@@ -1,0 +1,264 @@
+
+;; Function sum (sum, funcdef_no=0, decl_uid=1458, cgraph_uid=0, symbol_order=0)
+
+Removing basic block 5
+Removing basic block 6
+Removing basic block 7
+Removing basic block 8
+sum (int n)
+{
+  int add_acc_1;
+  int add_acc_9;
+  int add_acc_11;
+
+  <bb 2>:
+  if (n_4(D) == 0)
+    goto <bb 4>;
+  else
+    goto <bb 3>;
+
+  <bb 3>:
+  # n_8 = PHI <n_4(D)(2), n_6(3)>
+  # add_acc_11 = PHI <0(2), add_acc_9(3)>
+  n_6 = n_8 + -1;
+  add_acc_9 = n_8 + add_acc_11;
+  if (n_6 == 0)
+    goto <bb 4>;
+  else
+    goto <bb 3>;
+
+  <bb 4>:
+  # add_acc_1 = PHI <add_acc_9(3), 0(2)>
+  return add_acc_1;
+
+}
+
+
+
+;; Function fac (fac, funcdef_no=1, decl_uid=1461, cgraph_uid=1, symbol_order=1)
+
+Removing basic block 5
+Removing basic block 6
+Removing basic block 7
+Removing basic block 8
+fac (int n)
+{
+  int mult_acc_1;
+  int mult_acc_9;
+  int mult_acc_11;
+
+  <bb 2>:
+  if (n_4(D) == 0)
+    goto <bb 4>;
+  else
+    goto <bb 3>;
+
+  <bb 3>:
+  # n_8 = PHI <n_4(D)(2), n_6(3)>
+  # mult_acc_11 = PHI <1(2), mult_acc_9(3)>
+  n_6 = n_8 + -1;
+  mult_acc_9 = n_8 * mult_acc_11;
+  if (n_6 == 0)
+    goto <bb 4>;
+  else
+    goto <bb 3>;
+
+  <bb 4>:
+  # mult_acc_1 = PHI <mult_acc_9(3), 1(2)>
+  return mult_acc_1;
+
+}
+
+
+
+;; Function sq_sum (sq_sum, funcdef_no=2, decl_uid=1464, cgraph_uid=2, symbol_order=2)
+
+Removing basic block 5
+Removing basic block 6
+Removing basic block 7
+Removing basic block 8
+sq_sum (int n)
+{
+  int add_acc_1;
+  int _6;
+  int add_acc_10;
+  int add_acc_12;
+
+  <bb 2>:
+  if (n_4(D) == 0)
+    goto <bb 4>;
+  else
+    goto <bb 3>;
+
+  <bb 3>:
+  # n_9 = PHI <n_4(D)(2), n_7(3)>
+  # add_acc_12 = PHI <0(2), add_acc_10(3)>
+  _6 = n_9 * n_9;
+  n_7 = n_9 + -1;
+  add_acc_10 = _6 + add_acc_12;
+  if (n_7 == 0)
+    goto <bb 4>;
+  else
+    goto <bb 3>;
+
+  <bb 4>:
+  # add_acc_1 = PHI <add_acc_10(3), 0(2)>
+  return add_acc_1;
+
+}
+
+
+
+;; Function pow2m1 (pow2m1, funcdef_no=3, decl_uid=1467, cgraph_uid=3, symbol_order=3)
+
+Removing basic block 5
+Removing basic block 6
+Removing basic block 7
+Removing basic block 8
+pow2m1 (int n)
+{
+  int add_acc_1;
+  int mult_acc_8;
+  int add_acc_9;
+  int mult_acc_10;
+  int add_acc_15;
+
+  <bb 2>:
+  if (n_4(D) == 0)
+    goto <bb 4>;
+  else
+    goto <bb 3>;
+
+  <bb 3>:
+  # n_14 = PHI <n_4(D)(2), n_6(3)>
+  # add_acc_15 = PHI <0(2), add_acc_9(3)>
+  # mult_acc_8 = PHI <1(2), mult_acc_10(3)>
+  n_6 = n_14 + -1;
+  mult_acc_10 = mult_acc_8 * 2;
+  add_acc_9 = mult_acc_8 + add_acc_15;
+  if (n_6 == 0)
+    goto <bb 4>;
+  else
+    goto <bb 3>;
+
+  <bb 4>:
+  # add_acc_1 = PHI <add_acc_9(3), 0(2)>
+  return add_acc_1;
+
+}
+
+
+
+;; Function fib (fib, funcdef_no=4, decl_uid=1470, cgraph_uid=4, symbol_order=4)
+
+Removing basic block 6
+Removing basic block 7
+Removing basic block 8
+fib (int n)
+{
+  unsigned int ivtmp.32;
+  int _6;
+  int _7;
+  int _9;
+  int acc_tmp_10;
+  int add_acc_11;
+  int add_acc_17;
+  int add_acc_18;
+
+  <bb 2>:
+  if (n_4(D) <= 1)
+    goto <bb 5>;
+  else
+    goto <bb 3>;
+
+  <bb 3>:
+  _9 = n_4(D) + -2;
+  ivtmp.32_12 = (unsigned int) _9;
+
+  <bb 4>:
+  # add_acc_17 = PHI <0(3), add_acc_11(4)>
+  # ivtmp.32_1 = PHI <ivtmp.32_12(3), ivtmp.32_3(4)>
+  _6 = (int) ivtmp.32_1;
+  _7 = fib (_6);
+  add_acc_11 = _7 + add_acc_17;
+  ivtmp.32_3 = ivtmp.32_1 + 4294967295;
+  if (ivtmp.32_3 == 4294967295)
+    goto <bb 5>;
+  else
+    goto <bb 4>;
+
+  <bb 5>:
+  # add_acc_18 = PHI <add_acc_11(4), 0(2)>
+  acc_tmp_10 = add_acc_18 + 1;
+  return acc_tmp_10;
+
+}
+
+
+
+;; Function main (main, funcdef_no=5, decl_uid=1473, cgraph_uid=5, symbol_order=5) (executed once)
+
+main ()
+{
+  int _2;
+  int _3;
+  int _4;
+  int _5;
+  int _6;
+
+  <bb 2>:
+  _2 = sum (5);
+  if (_2 != 15)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  _3 = fac (5);
+  if (_3 != 120)
+    goto <bb 5>;
+  else
+    goto <bb 6>;
+
+  <bb 5>:
+  abort ();
+
+  <bb 6>:
+  _4 = sq_sum (5);
+  if (_4 != 55)
+    goto <bb 7>;
+  else
+    goto <bb 8>;
+
+  <bb 7>:
+  abort ();
+
+  <bb 8>:
+  _5 = pow2m1 (5);
+  if (_5 != 31)
+    goto <bb 9>;
+  else
+    goto <bb 10>;
+
+  <bb 9>:
+  abort ();
+
+  <bb 10>:
+  _6 = fib (5);
+  if (_6 != 8)
+    goto <bb 11>;
+  else
+    goto <bb 12>;
+
+  <bb 11>:
+  abort ();
+
+  <bb 12>:
+  exit (0);
+
+}
+
+

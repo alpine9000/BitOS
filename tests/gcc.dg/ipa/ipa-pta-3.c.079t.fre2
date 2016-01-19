@@ -1,0 +1,67 @@
+
+;; Function foo (foo, funcdef_no=0, decl_uid=1455, cgraph_uid=0, symbol_order=0) (executed once)
+
+Setting value number of .MEM_1(D) to .MEM_1(D) (changed)
+Value numbering .MEM_3 stmt = *p_2(D) = 1;
+RHS 1 simplified to 1
+No store match
+Value numbering store *p_2(D) to 1
+Setting value number of .MEM_3 to .MEM_3 (changed)
+Value numbering .MEM_5 stmt = *q_4(D) = 0;
+RHS 0 simplified to 0
+No store match
+Value numbering store *q_4(D) to 0
+Setting value number of .MEM_5 to .MEM_5 (changed)
+Value numbering _6 stmt = _6 = *p_2(D);
+Setting value number of _6 to 1 (changed)
+Value numbers:
+_6 = 1
+Replaced *p_2(D) with 1 in all uses of _6 = *p_2(D);
+Removing dead stmt _6 = *p_2(D);
+foo (int * p, int * q)
+{
+  <bb 2>:
+  *p_2(D) = 1;
+  *q_4(D) = 0;
+  return 1;
+
+}
+
+
+
+;; Function main (main, funcdef_no=1, decl_uid=1459, cgraph_uid=1, symbol_order=1) (executed once)
+
+Value-numbering operands of stmt ending BB 2: if (_3 != 1)
+Setting value number of .MEM_1(D) to .MEM_1(D) (changed)
+Value numbering _3 stmt = _3 = foo (&a, &b);
+Setting value number of .MEM_2 to .MEM_2 (changed)
+Setting value number of _3 to _3 (changed)
+Value numbering .MEM_4 stmt = a ={v} {CLOBBER};
+Setting value number of .MEM_4 to .MEM_4 (changed)
+Value numbering .MEM_5 stmt = b ={v} {CLOBBER};
+Setting value number of .MEM_5 to .MEM_5 (changed)
+Value numbers:
+main ()
+{
+  int b;
+  int a;
+  int _3;
+
+  <bb 2>:
+  _3 = foo (&a, &b);
+  if (_3 != 1)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  a ={v} {CLOBBER};
+  b ={v} {CLOBBER};
+  return 0;
+
+}
+
+

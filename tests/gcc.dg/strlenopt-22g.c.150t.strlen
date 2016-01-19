@@ -1,0 +1,81 @@
+
+;; Function bar (bar, funcdef_no=0, decl_uid=1497, cgraph_uid=0, symbol_order=0)
+
+bar (char * p, char * q)
+{
+  char * s;
+  char * r;
+  size_t l3;
+  size_t l2;
+  size_t l1;
+  unsigned int _11;
+  size_t _12;
+  unsigned int _13;
+  unsigned int _14;
+  char * _15;
+  unsigned int _16;
+  unsigned int _17;
+  unsigned int _18;
+  unsigned int _19;
+  unsigned int _20;
+  unsigned int _21;
+  unsigned int _22;
+
+  <bb 2>:
+  r_3 = strchr (p_2(D), 0);
+  __builtin_memcpy (r_3, "abcde", 5);
+  s_5 = r_3 + 5;
+  _15 = __builtin_stpcpy (s_5, q_6(D));
+  _14 = (unsigned int) _15;
+  _13 = (unsigned int) p_2(D);
+  _16 = _14 - _13;
+  l1_8 = _16;
+  _17 = (unsigned int) _15;
+  _18 = (unsigned int) r_3;
+  _19 = _17 - _18;
+  l2_9 = _19;
+  _20 = (unsigned int) _15;
+  _21 = (unsigned int) s_5;
+  _22 = _20 - _21;
+  l3_10 = _22;
+  _11 = l2_9 + l1_8;
+  _12 = _11 + l3_10;
+  return _12;
+
+}
+
+
+
+;; Function main (main, funcdef_no=1, decl_uid=1504, cgraph_uid=1, symbol_order=1) (executed once)
+
+main ()
+{
+  char buf[16];
+  unsigned int _4;
+  int _5;
+
+  <bb 2>:
+  buf = "01234";
+  _4 = bar (&buf, "56789");
+  if (_4 != 30)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  _5 = memcmp (&buf, "01234abcde56789", 16);
+  if (_5 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 5>;
+
+  <bb 5>:
+  buf ={v} {CLOBBER};
+  return 0;
+
+}
+
+

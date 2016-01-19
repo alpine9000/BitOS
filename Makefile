@@ -158,6 +158,7 @@ filesystem:
 	rm -f $(FS_BASE)/usr/local/src/BitOS/makefiles/base.mk
 	cp -r $(BITOS_PATH)/makefiles/simple.mk $(FS_BASE)/usr/local/src/BitOS/makefiles/base.mk
 	-rm -rf  $(FS_BASE)/usr/local/src/BitOS/newlib-2.0.0-r
+	-rm -rf  $(FS_BASE)/usr/local/src/BitOS/tests
 	cp $(BITOS_PATH)/libbitmachine/libc-bitos.a $(FS_BASE)/usr/local/sh-elf/sh-elf/lib/m2e/libc.a
 	mv $(FS_BASE)/usr/local/sh-elf/sh-elf/include/c++  $(FS_BASE)/usr/local/sh-elf/include
 

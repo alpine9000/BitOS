@@ -1,0 +1,101 @@
+
+;; Function foo (foo, funcdef_no=3, decl_uid=1503, cgraph_uid=3, symbol_order=3)
+
+foo (char * p, char * r)
+{
+  char buf[26];
+  char * _1;
+  unsigned int _5;
+  unsigned int _7;
+  unsigned int _8;
+  unsigned int _9;
+  char * _12;
+  char[26] * _18;
+  unsigned int _19;
+  unsigned int _20;
+  char[26] * _21;
+  unsigned int _22;
+  unsigned int _23;
+  char[26] * _24;
+  unsigned int _25;
+  unsigned int _26;
+  char[26] * _27;
+
+  <bb 2>:
+  _5 = strlen (p_4(D));
+  _7 = strlen (r_6(D));
+  _8 = _5 + _7;
+  _9 = _8 + 9;
+  if (_9 > 26)
+    goto <bb 4>;
+  else
+    goto <bb 3>;
+
+  <bb 3>:
+  _19 = _5 + 1;
+  __builtin___memcpy_chk (&buf, p_4(D), _5, 26);
+  _18 = &buf + _5;
+  __builtin___memcpy_chk (_18, "/", 1, 26);
+  _20 = _5 + 1;
+  _21 = &buf + _20;
+  __builtin___memcpy_chk (_21, "abcde", 5, 26);
+  _22 = _7 + 1;
+  _23 = _5 + 6;
+  _24 = &buf + _23;
+  __builtin___memcpy_chk (_24, r_6(D), _7, 26);
+  _25 = _5 + _7;
+  _26 = _25 + 6;
+  _27 = &buf + _26;
+  __builtin___memcpy_chk (_27, "fg", 3, 26);
+  _12 = strdup (&buf);
+
+  <bb 4>:
+  # _1 = PHI <0B(2), _12(3)>
+  buf ={v} {CLOBBER};
+  return _1;
+
+}
+
+
+
+;; Function main (main, funcdef_no=4, decl_uid=1506, cgraph_uid=4, symbol_order=4) (executed once)
+
+main ()
+{
+  char * q;
+  char * volatile r;
+  char * volatile p;
+  char * p.0_5;
+  char * r.1_6;
+  int _9;
+
+  <bb 2>:
+  p ={v} "string1";
+  r ={v} "string2";
+  p.0_5 ={v} p;
+  r.1_6 ={v} r;
+  q_8 = foo (p.0_5, r.1_6);
+  if (q_8 != 0B)
+    goto <bb 3>;
+  else
+    goto <bb 6>;
+
+  <bb 3>:
+  _9 = strcmp (q_8, "string1/abcdestring2fg");
+  if (_9 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 5>;
+
+  <bb 4>:
+  abort ();
+
+  <bb 5>:
+  free (q_8);
+
+  <bb 6>:
+  return 0;
+
+}
+
+

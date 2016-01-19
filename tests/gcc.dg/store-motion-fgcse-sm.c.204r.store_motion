@@ -1,0 +1,349 @@
+
+;; Function f (f, funcdef_no=0, decl_uid=2054, cgraph_uid=0, symbol_order=0)
+
+starting the processing of deferred insns
+ending the processing of deferred insns
+df_analyze called
+df_worklist_dataflow_doublequeue:n_basic_blocks 6 n_edges 7 count 7 (  1.2)
+df_worklist_dataflow_doublequeue:n_basic_blocks 6 n_edges 7 count 7 (  1.2)
+STORE_MOTION list of MEM exprs considered:
+  Pattern (  0): (mem:SI (reg/v/f:SI 195 [ sum ]) [1 *sum_5(D)+0 S4 A32])
+	 ANTIC stores : (insn_list:REG_DEP_TRUE 49 (nil))
+	 AVAIL stores : (insn_list:REG_DEP_TRUE 49 (nil))
+
+
+st_antloc
+ 0
+  0
+ 1
+  0
+ 2
+  0
+ 3
+  0
+ 4
+  0
+ 5
+  1
+ 6
+  0
+
+st_kill
+ 0
+  0
+ 1
+  0
+ 2
+  1
+ 3
+  0
+ 4
+  1
+ 5
+  0
+ 6
+  0
+
+st_transp
+ 0
+  0
+ 1
+  0
+ 2
+  0
+ 3
+  0
+ 4
+  0
+ 5
+  1
+ 6
+  1
+
+st_avloc
+ 0
+  0
+ 1
+  0
+ 2
+  0
+ 3
+  0
+ 4
+  0
+ 5
+  1
+ 6
+  0
+
+scanning new insn with uid = 70.
+STORE_MOTION  delete insn in BB 5:
+      (insn 49 48 70 5 (set (mem:SI (reg/v/f:SI 195 [ sum ]) [1 *sum_5(D)+0 S4 A32])
+                    (reg:SI 190 [ D.2095 ])) store-motion-fgcse-sm.c:15 255 {movsi_ie}
+                 (nil))
+STORE_MOTION  replaced with insn:
+      (insn 70 49 50 5 (set (reg:SI 199 [ *sum_5(D) ])
+                    (reg:SI 190 [ D.2095 ])) store-motion-fgcse-sm.c:15 -1
+                 (nil))
+deleting insn with uid = 49.
+STORE_MOTION  insert insn on edge (5, 6):
+(insn 71 0 0 (set (mem:SI (reg/v/f:SI 195 [ sum ]) [1 *sum_5(D)+0 S4 A32])
+                    (reg:SI 199 [ *sum_5(D) ])) -1
+                 (nil))
+changing bb of uid 72
+  unscanned insn
+Redirecting fallthru edge 5->6 to 7
+scanning new insn with uid = 71.
+STORE_MOTION of f, 7 basic blocks, 1 insns deleted, 1 insns created
+starting the processing of deferred insns
+ending the processing of deferred insns
+
+
+f
+
+Dataflow summary:
+;;  invalidated by call 	 0 [r0] 1 [r1] 2 [r2] 3 [r3] 4 [r4] 5 [r5] 6 [r6] 7 [r7] 16 [] 17 [] 18 [] 19 [] 20 [] 21 [] 22 [] 23 [] 24 [] 25 [] 26 [] 27 [] 36 [] 37 [] 38 [] 39 [] 40 [] 41 [] 42 [] 43 [] 60 [] 61 [] 62 [] 63 [] 64 [fr0] 65 [fr1] 66 [fr2] 67 [fr3] 68 [fr4] 69 [fr5] 70 [fr6] 71 [fr7] 72 [fr8] 73 [fr9] 74 [fr10] 75 [fr11] 80 [] 81 [] 82 [] 83 [] 84 [] 85 [] 86 [] 87 [] 88 [] 89 [] 90 [] 91 [] 92 [] 93 [] 94 [] 95 [] 96 [] 97 [] 98 [] 99 [] 128 [] 129 [] 130 [] 131 [] 132 [] 136 [] 137 [] 138 [] 139 [] 140 [] 141 [] 146 [pr] 147 [t] 148 [mach] 149 [macl] 150 [fpul] 151 [] 152 [rap]
+;;  hardware regs used 	 15 [r15] 145 [ap] 153 [sfp]
+;;  regular block artificial uses 	 14 [r14] 15 [r15] 145 [ap] 153 [sfp]
+;;  eh block artificial uses 	 14 [r14] 15 [r15] 145 [ap] 153 [sfp]
+;;  entry block defs 	 2 [r2] 3 [r3] 4 [r4] 5 [r5] 6 [r6] 7 [r7] 14 [r14] 15 [r15] 68 [fr4] 69 [fr5] 70 [fr6] 71 [fr7] 72 [fr8] 73 [fr9] 74 [fr10] 75 [fr11] 145 [ap] 146 [pr] 153 [sfp]
+;;  exit block uses 	 14 [r14] 15 [r15] 151 [] 153 [sfp]
+;;  regs ever live 	 4[r4] 5[r5] 6[r6] 147[t]
+;;  ref usage 	r2={1d} r3={1d} r4={1d,1u} r5={1d,1u} r6={1d,1u} r7={1d} r14={1d,6u} r15={1d,6u} r68={1d} r69={1d} r70={1d} r71={1d} r72={1d} r73={1d} r74={1d} r75={1d} r145={1d,5u} r146={1d} r147={2d,2u} r151={1u} r153={1d,6u} r190={2d,2u} r192={2d,3u} r193={1d,1u} r194={1d,2u} r195={1d,2u} r196={1d,2u} r197={1d,1u} r198={1d,1u} r199={1d,1u} 
+;;    total ref usage 76{32d,44u,0e} in 16{16 regular + 0 call} insns.
+(note 33 0 29 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn 29 33 30 2 (set (reg/v/f:SI 194 [ a ])
+        (reg:SI 4 r4 [ a ])) store-motion-fgcse-sm.c:12 255 {movsi_ie}
+     (expr_list:REG_DEAD (reg:SI 4 r4 [ a ])
+        (nil)))
+(insn 30 29 31 2 (set (reg/v/f:SI 195 [ sum ])
+        (reg:SI 5 r5 [ sum ])) store-motion-fgcse-sm.c:12 255 {movsi_ie}
+     (expr_list:REG_DEAD (reg:SI 5 r5 [ sum ])
+        (nil)))
+(insn 31 30 32 2 (set (reg/v:SI 196 [ n ])
+        (reg:SI 6 r6 [ n ])) store-motion-fgcse-sm.c:12 255 {movsi_ie}
+     (expr_list:REG_DEAD (reg:SI 6 r6 [ n ])
+        (nil)))
+(note 32 31 35 2 NOTE_INSN_FUNCTION_BEG)
+(insn 35 32 36 2 (set (reg:SI 147 t)
+        (eq:SI (reg/v:SI 196 [ n ])
+            (const_int 0 [0]))) store-motion-fgcse-sm.c:14 12 {cmpeqsi_t}
+     (nil))
+(jump_insn 36 35 40 2 (set (pc)
+        (if_then_else (eq (reg:SI 147 t)
+                (const_int 0 [0]))
+            (label_ref 40)
+            (pc))) store-motion-fgcse-sm.c:14 299 {*cbranch_t}
+     (expr_list:REG_DEAD (reg:SI 147 t)
+        (int_list:REG_BR_PROB 9100 (nil)))
+ -> 40)
+(code_label 40 36 41 4 2 "" [1 uses])
+(note 41 40 42 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+(insn 42 41 43 4 (set (reg:SI 190 [ D.2095 ])
+        (mem:SI (reg/v/f:SI 195 [ sum ]) [1 *sum_5(D)+0 S4 A32])) 255 {movsi_ie}
+     (nil))
+(insn 43 42 44 4 (set (reg:SI 192 [ ivtmp.7 ])
+        (reg/v/f:SI 194 [ a ])) 255 {movsi_ie}
+     (expr_list:REG_DEAD (reg/v/f:SI 194 [ a ])
+        (nil)))
+(insn 44 43 45 4 (set (reg:SI 197 [ D.2094 ])
+        (ashift:SI (reg/v:SI 196 [ n ])
+            (const_int 2 [0x2]))) 159 {ashlsi3_k}
+     (expr_list:REG_DEAD (reg/v:SI 196 [ n ])
+        (nil)))
+(insn 45 44 51 4 (parallel [
+            (set (reg:SI 193 [ D.2094 ])
+                (plus:SI (reg/v/f:SI 194 [ a ])
+                    (reg:SI 197 [ D.2094 ])))
+            (clobber (scratch:SI))
+        ]) 64 {addsi3_scr}
+     (expr_list:REG_DEAD (reg:SI 197 [ D.2094 ])
+        (nil)))
+(code_label 51 45 46 5 3 "" [1 uses])
+(note 46 51 47 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+(insn 47 46 48 5 (set (reg:SI 198 [ MEM[base: _14, offset: 0B] ])
+        (mem:SI (reg:SI 192 [ ivtmp.7 ]) [1 MEM[base: _14, offset: 0B]+0 S4 A32])) store-motion-fgcse-sm.c:15 255 {movsi_ie}
+     (nil))
+(insn 48 47 70 5 (set (reg:SI 190 [ D.2095 ])
+        (plus:SI (reg:SI 190 [ D.2095 ])
+            (reg:SI 198 [ MEM[base: _14, offset: 0B] ]))) store-motion-fgcse-sm.c:15 66 {*addsi3}
+     (expr_list:REG_DEAD (reg:SI 198 [ MEM[base: _14, offset: 0B] ])
+        (nil)))
+(insn 70 48 50 5 (set (reg:SI 199 [ *sum_5(D) ])
+        (reg:SI 190 [ D.2095 ])) store-motion-fgcse-sm.c:15 -1
+     (nil))
+(insn 50 70 52 5 (set (reg:SI 192 [ ivtmp.7 ])
+        (plus:SI (reg:SI 192 [ ivtmp.7 ])
+            (const_int 4 [0x4]))) 66 {*addsi3}
+     (nil))
+(insn 52 50 53 5 (set (reg:SI 147 t)
+        (eq:SI (reg:SI 192 [ ivtmp.7 ])
+            (reg:SI 193 [ D.2094 ]))) store-motion-fgcse-sm.c:14 12 {cmpeqsi_t}
+     (nil))
+(jump_insn 53 52 72 5 (set (pc)
+        (if_then_else (eq (reg:SI 147 t)
+                (const_int 0 [0]))
+            (label_ref 51)
+            (pc))) store-motion-fgcse-sm.c:14 299 {*cbranch_t}
+     (expr_list:REG_DEAD (reg:SI 147 t)
+        (int_list:REG_BR_PROB 9100 (nil)))
+ -> 51)
+(note 72 53 71 7 [bb 7] NOTE_INSN_BASIC_BLOCK)
+(insn 71 72 58 7 (set (mem:SI (reg/v/f:SI 195 [ sum ]) [1 *sum_5(D)+0 S4 A32])
+        (reg:SI 199 [ *sum_5(D) ])) -1
+     (nil))
+(code_label 58 71 59 6 1 "" [0 uses])
+(note 59 58 0 6 [bb 6] NOTE_INSN_BASIC_BLOCK)
+
+;; Function main (main, funcdef_no=1, decl_uid=2060, cgraph_uid=1, symbol_order=1) (executed once)
+
+starting the processing of deferred insns
+ending the processing of deferred insns
+df_analyze called
+STORE_MOTION list of MEM exprs considered:
+
+starting the processing of deferred insns
+ending the processing of deferred insns
+
+
+main
+
+Dataflow summary:
+;;  invalidated by call 	 0 [r0] 1 [r1] 2 [r2] 3 [r3] 4 [r4] 5 [r5] 6 [r6] 7 [r7] 16 [] 17 [] 18 [] 19 [] 20 [] 21 [] 22 [] 23 [] 24 [] 25 [] 26 [] 27 [] 36 [] 37 [] 38 [] 39 [] 40 [] 41 [] 42 [] 43 [] 60 [] 61 [] 62 [] 63 [] 64 [fr0] 65 [fr1] 66 [fr2] 67 [fr3] 68 [fr4] 69 [fr5] 70 [fr6] 71 [fr7] 72 [fr8] 73 [fr9] 74 [fr10] 75 [fr11] 80 [] 81 [] 82 [] 83 [] 84 [] 85 [] 86 [] 87 [] 88 [] 89 [] 90 [] 91 [] 92 [] 93 [] 94 [] 95 [] 96 [] 97 [] 98 [] 99 [] 128 [] 129 [] 130 [] 131 [] 132 [] 136 [] 137 [] 138 [] 139 [] 140 [] 141 [] 146 [pr] 147 [t] 148 [mach] 149 [macl] 150 [fpul] 151 [] 152 [rap]
+;;  hardware regs used 	 15 [r15] 145 [ap] 153 [sfp]
+;;  regular block artificial uses 	 14 [r14] 15 [r15] 145 [ap] 153 [sfp]
+;;  eh block artificial uses 	 14 [r14] 15 [r15] 145 [ap] 153 [sfp]
+;;  entry block defs 	 2 [r2] 3 [r3] 4 [r4] 5 [r5] 6 [r6] 7 [r7] 14 [r14] 15 [r15] 68 [fr4] 69 [fr5] 70 [fr6] 71 [fr7] 72 [fr8] 73 [fr9] 74 [fr10] 75 [fr11] 145 [ap] 146 [pr] 153 [sfp]
+;;  exit block uses 	 0 [r0] 14 [r14] 15 [r15] 151 [] 153 [sfp]
+;;  regs ever live 	 0[r0] 4[r4] 5[r5] 6[r6] 15[r15] 146[pr] 147[t] 154[fpscr0]
+;;  ref usage 	r0={3d,2u} r1={2d} r2={3d} r3={3d} r4={4d,1u} r5={4d,1u} r6={4d,1u} r7={3d} r14={1d,4u} r15={1d,6u} r16={2d} r17={2d} r18={2d} r19={2d} r20={2d} r21={2d} r22={2d} r23={2d} r24={2d} r25={2d} r26={2d} r27={2d} r36={2d} r37={2d} r38={2d} r39={2d} r40={2d} r41={2d} r42={2d} r43={2d} r60={2d} r61={2d} r62={2d} r63={2d} r64={2d} r65={2d} r66={2d} r67={2d} r68={3d} r69={3d} r70={3d} r71={3d} r72={3d} r73={3d} r74={3d} r75={3d} r80={2d} r81={2d} r82={2d} r83={2d} r84={2d} r85={2d} r86={2d} r87={2d} r88={2d} r89={2d} r90={2d} r91={2d} r92={2d} r93={2d} r94={2d} r95={2d} r96={2d} r97={2d} r98={2d} r99={2d} r128={2d} r129={2d} r130={2d} r131={2d} r132={2d} r136={2d} r137={2d} r138={2d} r139={2d} r140={2d} r141={2d} r145={1d,3u} r146={3d} r147={3d,1u} r148={2d} r149={2d} r150={2d} r151={2d,1u} r152={2d} r153={1d,7u,2e} r154={2u} r165={1d,4u} r166={1d,1u} r169={1d,1u} r172={1d,1u} r173={1d,2u} r174={1d,1u} r175={1d,1u} r177={1d,1u} r179={1d,1u} r180={1d,1u,1e} r181={1d,1u} 
+;;    total ref usage 246{199d,44u,3e} in 24{22 regular + 2 call} insns.
+(note 3 0 2 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(note 2 3 6 2 NOTE_INSN_FUNCTION_BEG)
+(insn 6 2 7 2 (set (reg/f:SI 165)
+        (plus:SI (reg/f:SI 153 sfp)
+            (const_int -12 [0xfffffffffffffff4]))) store-motion-fgcse-sm.c:21 66 {*addsi3}
+     (nil))
+(insn 7 6 8 2 (set (reg:SI 166)
+        (const_int 1 [0x1])) store-motion-fgcse-sm.c:21 255 {movsi_ie}
+     (nil))
+(insn 8 7 11 2 (set (mem/c:SI (reg/f:SI 165) [1 a+0 S4 A32])
+        (reg:SI 166)) store-motion-fgcse-sm.c:21 255 {movsi_ie}
+     (expr_list:REG_DEAD (reg:SI 166)
+        (nil)))
+(insn 11 8 12 2 (set (reg:SI 169)
+        (const_int 10 [0xa])) store-motion-fgcse-sm.c:21 255 {movsi_ie}
+     (nil))
+(insn 12 11 15 2 (set (mem/c:SI (plus:SI (reg/f:SI 165)
+                (const_int 4 [0x4])) [1 a+4 S4 A32])
+        (reg:SI 169)) store-motion-fgcse-sm.c:21 255 {movsi_ie}
+     (expr_list:REG_DEAD (reg:SI 169)
+        (nil)))
+(insn 15 12 16 2 (set (reg:SI 172)
+        (const_int 100 [0x64])) store-motion-fgcse-sm.c:21 255 {movsi_ie}
+     (nil))
+(insn 16 15 17 2 (set (mem/c:SI (plus:SI (reg/f:SI 165)
+                (const_int 8 [0x8])) [1 a+8 S4 A32])
+        (reg:SI 172)) store-motion-fgcse-sm.c:21 255 {movsi_ie}
+     (expr_list:REG_DEAD (reg:SI 172)
+        (nil)))
+(insn 17 16 18 2 (set (reg/f:SI 173)
+        (plus:SI (reg/f:SI 153 sfp)
+            (const_int -64 [0xffffffffffffffc0]))) store-motion-fgcse-sm.c:22 66 {*addsi3}
+     (nil))
+(insn 18 17 19 2 (set (reg:SI 174)
+        (const_int 1000 [0x3e8])) store-motion-fgcse-sm.c:22 255 {movsi_ie}
+     (nil))
+(insn 19 18 20 2 (set (mem/c:SI (plus:SI (reg/f:SI 173)
+                (const_int 48 [0x30])) [1 sum+0 S4 A32])
+        (reg:SI 174)) store-motion-fgcse-sm.c:22 255 {movsi_ie}
+     (expr_list:REG_DEAD (reg:SI 174)
+        (nil)))
+(insn 20 19 22 2 (set (reg/f:SI 175)
+        (plus:SI (reg/f:SI 153 sfp)
+            (const_int -16 [0xfffffffffffffff0]))) store-motion-fgcse-sm.c:24 66 {*addsi3}
+     (nil))
+(insn 22 20 23 2 (set (reg/f:SI 177)
+        (symbol_ref:SI ("f") [flags 0x3]  <function_decl 0x142749288 f>)) store-motion-fgcse-sm.c:24 255 {movsi_ie}
+     (nil))
+(insn 23 22 24 2 (set (reg:SI 6 r6)
+        (const_int 3 [0x3])) store-motion-fgcse-sm.c:24 255 {movsi_ie}
+     (nil))
+(insn 24 23 25 2 (set (reg:SI 5 r5)
+        (reg/f:SI 175)) store-motion-fgcse-sm.c:24 255 {movsi_ie}
+     (expr_list:REG_DEAD (reg/f:SI 175)
+        (expr_list:REG_EQUAL (plus:SI (reg/f:SI 153 sfp)
+                (const_int -16 [0xfffffffffffffff0]))
+            (nil))))
+(insn 25 24 26 2 (set (reg:SI 4 r4)
+        (reg/f:SI 165)) store-motion-fgcse-sm.c:24 255 {movsi_ie}
+     (expr_list:REG_DEAD (reg/f:SI 165)
+        (expr_list:REG_EQUAL (plus:SI (reg/f:SI 153 sfp)
+                (const_int -12 [0xfffffffffffffff4]))
+            (nil))))
+(call_insn 26 25 28 2 (parallel [
+            (call (mem:SI (reg/f:SI 177) [0 f S4 A32])
+                (const_int 0 [0]))
+            (use (reg:SI 154 fpscr0))
+            (clobber (reg:SI 146 pr))
+        ]) store-motion-fgcse-sm.c:24 314 {calli}
+     (expr_list:REG_DEAD (reg/f:SI 177)
+        (expr_list:REG_DEAD (reg:SI 154 fpscr0)
+            (expr_list:REG_DEAD (reg:SI 6 r6)
+                (expr_list:REG_DEAD (reg:SI 5 r5)
+                    (expr_list:REG_DEAD (reg:SI 4 r4)
+                        (expr_list:REG_CALL_DECL (symbol_ref:SI ("f") [flags 0x3]  <function_decl 0x142749288 f>)
+                            (expr_list:REG_EH_REGION (const_int 0 [0])
+                                (nil))))))))
+    (expr_list:SI (use (reg:SI 4 r4))
+        (expr_list:SI (use (reg:SI 5 r5))
+            (expr_list:SI (use (reg:SI 6 r6))
+                (nil)))))
+(insn 28 26 29 2 (set (reg:SI 179)
+        (const_int 1111 [0x457])) store-motion-fgcse-sm.c:25 255 {movsi_ie}
+     (nil))
+(insn 29 28 30 2 (set (reg:SI 180 [ sum ])
+        (mem/c:SI (plus:SI (reg/f:SI 173)
+                (const_int 48 [0x30])) [1 sum+0 S4 A32])) store-motion-fgcse-sm.c:25 255 {movsi_ie}
+     (expr_list:REG_DEAD (reg/f:SI 173)
+        (nil)))
+(insn 30 29 31 2 (set (reg:SI 147 t)
+        (eq:SI (reg:SI 180 [ sum ])
+            (reg:SI 179))) store-motion-fgcse-sm.c:25 12 {cmpeqsi_t}
+     (expr_list:REG_EQUAL (eq:SI (reg:SI 180 [ sum ])
+            (const_int 1111 [0x457]))
+        (expr_list:REG_DEAD (reg:SI 180 [ sum ])
+            (expr_list:REG_DEAD (reg:SI 179)
+                (nil)))))
+(jump_insn 31 30 32 2 (set (pc)
+        (if_then_else (ne (reg:SI 147 t)
+                (const_int 0 [0]))
+            (label_ref 36)
+            (pc))) store-motion-fgcse-sm.c:25 299 {*cbranch_t}
+     (expr_list:REG_DEAD (reg:SI 147 t)
+        (int_list:REG_BR_PROB 9996 (nil)))
+ -> 36)
+(note 32 31 33 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+(insn 33 32 34 3 (set (reg/f:SI 181)
+        (symbol_ref:SI ("abort") [flags 0x41]  <function_decl 0x14269c1b0 abort>)) store-motion-fgcse-sm.c:26 255 {movsi_ie}
+     (nil))
+(call_insn 34 33 36 3 (parallel [
+            (call (mem:SI (reg/f:SI 181) [0 __builtin_abort S4 A32])
+                (const_int 0 [0]))
+            (use (reg:SI 154 fpscr0))
+            (clobber (reg:SI 146 pr))
+        ]) store-motion-fgcse-sm.c:26 314 {calli}
+     (expr_list:REG_DEAD (reg/f:SI 181)
+        (expr_list:REG_DEAD (reg:SI 154 fpscr0)
+            (expr_list:REG_CALL_DECL (symbol_ref:SI ("abort") [flags 0x41]  <function_decl 0x14269c1b0 abort>)
+                (expr_list:REG_NORETURN (const_int 0 [0])
+                    (expr_list:REG_EH_REGION (const_int 0 [0])
+                        (nil))))))
+    (nil))
+(code_label 36 34 37 4 8 "" [1 uses])
+(note 37 36 42 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+(insn 42 37 43 4 (set (reg/i:SI 0 r0)
+        (const_int 0 [0])) store-motion-fgcse-sm.c:29 255 {movsi_ie}
+     (nil))
+(insn 43 42 0 4 (use (reg/i:SI 0 r0)) store-motion-fgcse-sm.c:29 -1
+     (nil))

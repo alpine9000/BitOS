@@ -1,0 +1,162 @@
+
+;; Function fn1 (fn1, funcdef_no=0, decl_uid=1492, cgraph_uid=0, symbol_order=0)
+
+fn1 (char * p, const char * y, const char * z, size_t * lp)
+{
+  size_t l[8];
+  char buf2[64];
+  char buf1[64];
+  char * r;
+  char * q;
+  unsigned int _3;
+  unsigned int _6;
+  unsigned int _16;
+  unsigned int _18;
+  unsigned int _20;
+  unsigned int _23;
+  unsigned int _25;
+  unsigned int _27;
+  unsigned int _35;
+  unsigned int _36;
+  unsigned int _37;
+  unsigned int _38;
+
+  <bb 2>:
+  _3 = strlen (y_2(D));
+  l[0] = _3;
+  _6 = strlen (z_5(D));
+  l[1] = _6;
+  _38 = _3 + 1;
+  __builtin_memcpy (&buf1, y_2(D), _38);
+  _37 = _6 + 1;
+  __builtin_memcpy (&buf2, z_5(D), _37);
+  __builtin_memcpy (p_10(D), "abcde", 5);
+  q_12 = p_10(D) + 5;
+  __builtin_memcpy (q_12, "efghi", 5);
+  r_14 = q_12 + 5;
+  _36 = _3 + 1;
+  __builtin_memcpy (r_14, &buf1, _36);
+  _16 = _3 + 10;
+  l[2] = _16;
+  _18 = _3 + 5;
+  l[3] = _18;
+  _20 = _3;
+  l[4] = _20;
+  _35 = _6 + 1;
+  __builtin_memcpy (r_14, &buf2, _35);
+  _23 = strlen (p_10(D));
+  l[5] = _23;
+  _25 = strlen (q_12);
+  l[6] = _25;
+  _27 = _6;
+  l[7] = _27;
+  memcpy (lp_29(D), &l, 32);
+  buf1 ={v} {CLOBBER};
+  buf2 ={v} {CLOBBER};
+  l ={v} {CLOBBER};
+  return;
+
+}
+
+
+
+;; Function main (main, funcdef_no=1, decl_uid=1500, cgraph_uid=1, symbol_order=1) (executed once)
+
+main ()
+{
+  const char * volatile z;
+  const char * volatile y;
+  size_t l[8];
+  char buf[64];
+  const char * y.0_5;
+  const char * z.1_6;
+  int _8;
+  unsigned int _9;
+  unsigned int _10;
+  unsigned int _11;
+  unsigned int _12;
+  unsigned int _13;
+  unsigned int _14;
+  unsigned int _15;
+  unsigned int _16;
+
+  <bb 2>:
+  y ={v} "ABCDEFG";
+  z ={v} "HIJK";
+  memset (&buf, 0, 64);
+  y.0_5 ={v} y;
+  z.1_6 ={v} z;
+  fn1 (&buf, y.0_5, z.1_6, &l);
+  _8 = memcmp (&buf, "abcdeefghiHIJK", 15);
+  if (_8 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  _9 = l[0];
+  if (_9 != 7)
+    goto <bb 3>;
+  else
+    goto <bb 5>;
+
+  <bb 5>:
+  _10 = l[1];
+  if (_10 != 4)
+    goto <bb 3>;
+  else
+    goto <bb 6>;
+
+  <bb 6>:
+  _11 = l[2];
+  if (_11 != 17)
+    goto <bb 3>;
+  else
+    goto <bb 7>;
+
+  <bb 7>:
+  _12 = l[3];
+  if (_12 != 12)
+    goto <bb 3>;
+  else
+    goto <bb 8>;
+
+  <bb 8>:
+  _13 = l[4];
+  if (_13 != 7)
+    goto <bb 3>;
+  else
+    goto <bb 9>;
+
+  <bb 9>:
+  _14 = l[5];
+  if (_14 != 14)
+    goto <bb 3>;
+  else
+    goto <bb 10>;
+
+  <bb 10>:
+  _15 = l[6];
+  if (_15 != 9)
+    goto <bb 3>;
+  else
+    goto <bb 11>;
+
+  <bb 11>:
+  _16 = l[7];
+  if (_16 != 4)
+    goto <bb 3>;
+  else
+    goto <bb 12>;
+
+  <bb 12>:
+  buf ={v} {CLOBBER};
+  l ={v} {CLOBBER};
+  return 0;
+
+}
+
+

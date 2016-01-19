@@ -1,0 +1,173 @@
+
+;; Function foo.isra.0.constprop (foo.isra.0.constprop.1, funcdef_no=3, decl_uid=1491, cgraph_uid=0, symbol_order=5) (executed once)
+
+Modification phase of node foo.isra.0.constprop/5
+     Aggregate replacements: 0[32]=&i
+foo.isra.0.constprop (struct Y ISRA.1)
+{
+  struct Y y;
+  int * _1;
+  int _2;
+
+  <bb 4>:
+
+  <bb 2>:
+
+  <bb 3>:
+  y = ISRA.1;
+  _1 = y.p;
+  *_1 = 0;
+  i = 1;
+  _2 = *_1;
+  y ={v} {CLOBBER};
+  return _2;
+
+}
+
+
+
+;; Function main (main, funcdef_no=1, decl_uid=1466, cgraph_uid=1, symbol_order=2) (executed once)
+
+Modification phase of node main/2
+main ()
+{
+  struct X x;
+  int _4;
+
+  <bb 2>:
+  x.y.p = &i;
+  _4 = foo.isra.0 (MEM[(struct Y *)&x + 4B]);
+  if (_4 != 1)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  x ={v} {CLOBBER};
+  return 0;
+
+}
+
+
+Generating constraints for global initializers
+
+ANYTHING = &ANYTHING
+ESCAPED = *ESCAPED
+ESCAPED = ESCAPED + UNKNOWN
+*ESCAPED = NONLOCAL
+NONLOCAL = &NONLOCAL
+NONLOCAL = &ESCAPED
+INTEGER = &ANYTHING
+i = NONLOCAL
+
+Generating constraints for foo.isra.0.constprop (foo.isra.0.constprop.1)
+
+y.0+32 = foo.isra.0.constprop.1.arg0
+y.32+32 = foo.isra.0.constprop.1.arg0
+_1 = y.32+32
+derefaddrtmp = &NULL
+*_1 = derefaddrtmp
+foo.isra.0.constprop.1.clobber = _1
+i = &NONLOCAL
+ESCAPED = &NONLOCAL
+foo.isra.0.constprop.1.clobber = &i
+_2 = *_1
+foo.isra.0.constprop.1.use = _1
+foo.isra.0.constprop.1.result = _2
+
+Generating constraints for main (main)
+
+x.64+32 = &i
+foo.isra.0.constprop.1.arg0 = x.64+32
+foo.isra.0.constprop.1.arg0 = x.0+64
+_4 = foo.isra.0.constprop.1.result
+main.use = &x.0+64
+main.use = &x.64+32
+main.clobber = foo.isra.0.constprop.1.clobber
+main.use = foo.isra.0.constprop.1.use
+main.clobber = ESCAPED
+main.use = ESCAPED
+main.result = &NULL
+
+
+Collapsing static cycles and doing variable substitution
+Building predecessor graph
+Detecting pointer and location equivalences
+Rewriting constraints and unifying variables
+Uniting pointer but not location equivalent variables
+Finding indirect cycles
+Solving graph
+
+Points-to sets
+
+ANYTHING = { ANYTHING }
+ESCAPED = { NULL ESCAPED NONLOCAL }
+NONLOCAL = { ESCAPED NONLOCAL }
+STOREDANYTHING = { }
+INTEGER = { ANYTHING }
+foo.isra.0.constprop.1.clobber = { i } same as y.0+32
+foo.isra.0.constprop.1.use = { i } same as y.0+32
+foo.isra.0.constprop.1.result = { NULL ESCAPED NONLOCAL } same as _2
+foo.isra.0.constprop.1.arg0 = { i } same as y.0+32
+main.clobber = { ESCAPED i }
+main.use = { ESCAPED i x.0+64 x.64+32 }
+main.result = { NULL } same as derefaddrtmp
+main.varargs = { }
+i = { NULL ESCAPED NONLOCAL }
+y.0+32 = { i }
+y.32+32 = { i } same as y.0+32
+_1 = { i } same as y.0+32
+derefaddrtmp = { NULL }
+_2 = { NULL ESCAPED NONLOCAL }
+x.0+64 = { }
+x.64+32 = { i }
+_4 = { NULL ESCAPED NONLOCAL } same as _2
+abort = { }
+foo.isra.0.constprop (struct Y ISRA.1)
+{
+  struct Y y;
+  int * _1;
+  int _2;
+
+  <bb 4>:
+
+  <bb 2>:
+
+  <bb 3>:
+  y = ISRA.1;
+  _1 = y.p;
+  *_1 = 0;
+  i = 1;
+  _2 = *_1;
+  y ={v} {CLOBBER};
+  return _2;
+
+}
+
+
+main ()
+{
+  struct X x;
+  int _4;
+
+  <bb 2>:
+  x.y.p = &i;
+  _4 = foo.isra.0.constprop (MEM[(struct Y *)&x + 4B]);
+  if (_4 != 1)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  x ={v} {CLOBBER};
+  return 0;
+
+}
+
+

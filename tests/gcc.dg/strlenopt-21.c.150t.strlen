@@ -1,0 +1,196 @@
+
+;; Function foo (foo, funcdef_no=0, decl_uid=1493, cgraph_uid=0, symbol_order=0)
+
+foo (char * x, int n)
+{
+  char * p;
+  char a[64];
+  int i;
+  struct S D.1516;
+  unsigned int _1;
+  unsigned int _3;
+  unsigned int _8;
+  char * _9;
+  int _12;
+  unsigned int _13;
+  char[64] * _14;
+  char * _18;
+  unsigned int _20;
+  unsigned int _23;
+  unsigned int _25;
+
+  <bb 2>:
+  p_6 = strchr (x_5(D), 0);
+  _23 = (unsigned int) p_6;
+  _25 = (unsigned int) x_5(D);
+  _1 = _23 - _25;
+  _3 = _1 + 1;
+  __builtin_memcpy (&a, x_5(D), _3);
+  _8 = 0;
+  _9 = p_6;
+  __builtin_memcpy (_9, "abcd", 5);
+  if (n_11(D) > 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  # i_24 = PHI <0(2)>
+  goto <bb 8>;
+
+  <bb 4>:
+  _18 = strdup (&a);
+  _20 = 4;
+  MEM[(struct S *)&D.1516] = _18;
+  MEM[(struct S *)&D.1516 + 4B] = _20;
+  a ={v} {CLOBBER};
+  return D.1516;
+
+  <bb 5>:
+  _12 = i_16 % 123;
+  if (_12 == 53)
+    goto <bb 6>;
+  else
+    goto <bb 7>;
+
+  <bb 6>:
+  _13 = __builtin_strlen (&a);
+  _14 = &a + _13;
+  __builtin_memcpy (_14, "efg", 4);
+
+  <bb 7>:
+
+  <bb 8>:
+  # i_30 = PHI <0(3), i_16(7)>
+  i_16 = i_30 + 1;
+  if (i_16 != n_11(D))
+    goto <bb 5>;
+  else
+    goto <bb 9>;
+
+  <bb 9>:
+  goto <bb 4>;
+
+}
+
+
+
+;; Function main (main, funcdef_no=1, decl_uid=1502, cgraph_uid=1, symbol_order=1) (executed once)
+
+main ()
+{
+  unsigned int s$4;
+  char * s;
+  unsigned int s$l;
+  char * s$p;
+  struct S s;
+  char buf[32];
+  int _7;
+  int _9;
+  int _11;
+  int _13;
+  int _15;
+  int _17;
+
+  <bb 2>:
+  buf[0] = 122;
+  buf[1] = 0;
+  s = foo (&buf, 0);
+  s$p_30 = MEM[(struct S *)&s];
+  s$l_29 = MEM[(struct S *)&s + 4B];
+  if (s$l_29 != 4)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  goto <bb 5>;
+
+  <bb 4>:
+  _7 = memcmp (&buf, "zabcd", 6);
+  if (_7 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 6>;
+
+  <bb 5>:
+  abort ();
+
+  <bb 6>:
+  if (s$p_30 == 0B)
+    goto <bb 16>;
+  else
+    goto <bb 7>;
+
+  <bb 7>:
+  _9 = memcmp (s$p_30, "z", 2);
+  if (_9 != 0)
+    goto <bb 5>;
+  else
+    goto <bb 8>;
+
+  <bb 8>:
+  s = foo (&buf, 60);
+  s$p_31 = MEM[(struct S *)&s];
+  s$l_32 = MEM[(struct S *)&s + 4B];
+  if (s$l_32 != 4)
+    goto <bb 3>;
+  else
+    goto <bb 9>;
+
+  <bb 9>:
+  _11 = memcmp (&buf, "zabcdabcd", 10);
+  if (_11 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 10>;
+
+  <bb 10>:
+  if (s$p_31 == 0B)
+    goto <bb 16>;
+  else
+    goto <bb 11>;
+
+  <bb 11>:
+  _13 = memcmp (s$p_31, "zabcdefg", 9);
+  if (_13 != 0)
+    goto <bb 5>;
+  else
+    goto <bb 12>;
+
+  <bb 12>:
+  s = foo (&buf, 240);
+  s$p_33 = MEM[(struct S *)&s];
+  s$l_34 = MEM[(struct S *)&s + 4B];
+  if (s$l_34 != 4)
+    goto <bb 3>;
+  else
+    goto <bb 13>;
+
+  <bb 13>:
+  _15 = memcmp (&buf, "zabcdabcdabcd", 14);
+  if (_15 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 14>;
+
+  <bb 14>:
+  if (s$p_33 == 0B)
+    goto <bb 16>;
+  else
+    goto <bb 15>;
+
+  <bb 15>:
+  _17 = memcmp (s$p_33, "zabcdabcdefgefg", 16);
+  if (_17 != 0)
+    goto <bb 5>;
+  else
+    goto <bb 16>;
+
+  <bb 16>:
+  buf ={v} {CLOBBER};
+  return 0;
+
+}
+
+

@@ -1,0 +1,26 @@
+
+;; Function main (main, funcdef_no=0, decl_uid=1488, cgraph_uid=0, symbol_order=0) (executed once)
+
+main ()
+{
+  int len2;
+  int len;
+  char p[7];
+  unsigned int _3;
+  unsigned int _6;
+  int _8;
+
+  <bb 2>:
+  p = "foobar";
+  _3 = 6;
+  len_4 = (int) _3;
+  p[0] = 79;
+  _6 = 6;
+  len2_7 = (int) _6;
+  _8 = len_4 - len2_7;
+  p ={v} {CLOBBER};
+  return _8;
+
+}
+
+

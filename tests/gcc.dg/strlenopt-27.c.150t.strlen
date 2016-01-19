@@ -1,0 +1,43 @@
+
+;; Function fn1 (fn1, funcdef_no=0, decl_uid=1489, cgraph_uid=0, symbol_order=0)
+
+fn1 (char * p)
+{
+  const char * _4;
+  size_t _5;
+
+  <bb 2>:
+  __builtin_memcpy (p_2(D), "foobar", 7);
+  _4 = p_2(D) + 2;
+  _5 = 4;
+  return _5;
+
+}
+
+
+
+;; Function main (main, funcdef_no=1, decl_uid=1492, cgraph_uid=1, symbol_order=1) (executed once)
+
+main ()
+{
+  char p[7];
+  unsigned int _4;
+
+  <bb 2>:
+  p = "barfoo";
+  _4 = fn1 (&p);
+  if (_4 != 4)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  p ={v} {CLOBBER};
+  return 0;
+
+}
+
+

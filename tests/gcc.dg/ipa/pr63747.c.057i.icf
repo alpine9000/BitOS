@@ -1,0 +1,95 @@
+Parsed function:main
+Parsed function:bar
+Parsed function:foo
+Dump after hash based groups
+Congruence classes: 2 (unique hash values: 2), with total: 3 items
+Class size histogram [num of members]: number of classe number of classess
+[1]: 1 classes
+[2]: 1 classes
+
+
+Dump after WPA based types groups
+Congruence classes: 2 (unique hash values: 2), with total: 3 items
+Class size histogram [num of members]: number of classe number of classess
+[1]: 1 classes
+[2]: 1 classes
+
+
+Worklist has been filled with: 1
+Address reference subdivision created: 0 new classes.
+Dump after callgraph-based congruence reduction
+Congruence classes: 2 (unique hash values: 2), with total: 3 items
+Class size histogram [num of members]: number of classe number of classess
+[1]: 1 classes
+[2]: 1 classes
+
+
+Init called for 2 items (66.67%).
+Dump after full equality comparison of groups
+Congruence classes: 3 (unique hash values: 2), with total: 3 items
+Class size histogram [num of members]: number of classe number of classess
+[1]: 3 classes
+
+
+Worklist has been filled with: 2
+Address reference subdivision created: 0 new classes.
+Congruence classes: 3 (unique hash values: 2), with total: 3 items
+Class size histogram [num of members]: number of classe number of classess
+[1]: 3 classes
+
+
+
+Item count: 3
+Congruent classes before: 3, after: 3
+Average class size before: 1.00, after: 1.00
+Average non-singular class size: 0.00, count: 0
+Equal symbols: 0
+Fraction of visited symbols: 0.00%
+
+main ()
+{
+  int _2;
+  int _3;
+  int _4;
+
+  <bb 2>:
+  _2 = foo (0);
+  _3 = bar (4);
+  _4 = _2 + _3;
+  return _4;
+
+}
+
+
+bar (int i)
+{
+  int _1;
+
+  <bb 2>:
+  switch (i_2(D)) <default: <L4>, case 4 ... 7: <L6>>
+
+<L4>:
+
+  # _1 = PHI <0(2), 1(3)>
+<L6>:
+  return _1;
+
+}
+
+
+foo (int i)
+{
+  int _1;
+
+  <bb 2>:
+  switch (i_2(D)) <default: <L4>, case 0 ... 3: <L6>>
+
+<L4>:
+
+  # _1 = PHI <0(2), 1(3)>
+<L6>:
+  return _1;
+
+}
+
+

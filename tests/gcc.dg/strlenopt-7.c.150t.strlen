@@ -1,0 +1,89 @@
+
+;; Function foo (foo, funcdef_no=0, decl_uid=1490, cgraph_uid=0, symbol_order=1)
+
+foo ()
+{
+  char * p;
+  unsigned int _5;
+  char * _6;
+  size_t _8;
+
+  <bb 2>:
+  p_3 = memcpy (&buf, "abcdefgh", 9);
+  _5 = 0;
+  _6 = p_3;
+  __builtin_memcpy (_6, "ijk", 4);
+  _8 = 3;
+  return _8;
+
+}
+
+
+
+;; Function bar (bar, funcdef_no=1, decl_uid=1494, cgraph_uid=1, symbol_order=2)
+
+bar (char * p)
+{
+  char * r;
+  size_t _5;
+
+  <bb 2>:
+  r_3 = strchr (p_2(D), 0);
+  *r_3 = 0;
+  _5 = 0;
+  return _5;
+
+}
+
+
+
+;; Function main (main, funcdef_no=2, decl_uid=1497, cgraph_uid=2, symbol_order=3) (executed once)
+
+main ()
+{
+  char * volatile p;
+  unsigned int _4;
+  int _5;
+  char * p.0_6;
+  unsigned int _8;
+  int _9;
+
+  <bb 2>:
+  p ={v} &buf;
+  _4 = foo ();
+  if (_4 != 3)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  _5 = memcmp (&buf, "ijk", 10);
+  if (_5 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 5>;
+
+  <bb 5>:
+  p.0_6 ={v} p;
+  _8 = bar (p.0_6);
+  if (_8 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 6>;
+
+  <bb 6>:
+  _9 = memcmp (&buf, "ijk", 10);
+  if (_9 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 7>;
+
+  <bb 7>:
+  return 0;
+
+}
+
+

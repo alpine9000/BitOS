@@ -1,0 +1,114 @@
+
+;; Function f1 (null)
+;; enabled by -tree-original
+
+
+{
+  return b;
+}
+
+
+;; Function f2 (null)
+;; enabled by -tree-original
+
+
+{
+  return b;
+}
+
+
+;; Function f3 (null)
+;; enabled by -tree-original
+
+
+{
+  return b;
+}
+
+
+;; Function f4 (null)
+;; enabled by -tree-original
+
+
+{
+  return b;
+}
+
+
+;; Function g1 (null)
+;; enabled by -tree-original
+
+
+{
+  return a;
+}
+
+
+;; Function g2 (null)
+;; enabled by -tree-original
+
+
+{
+  return a;
+}
+
+
+;; Function g3 (null)
+;; enabled by -tree-original
+
+
+{
+  return a;
+}
+
+
+;; Function g4 (null)
+;; enabled by -tree-original
+
+
+{
+  return a;
+}
+
+
+;; Function main (null)
+;; enabled by -tree-original
+
+
+{
+  if (f1 (1, 2) != 2)
+    {
+      abort ();
+    }
+  if (f2 (1, 2) != 2)
+    {
+      abort ();
+    }
+  if (f3 (1, 2) != 2)
+    {
+      abort ();
+    }
+  if (f4 (1, 2) != 2)
+    {
+      abort ();
+    }
+  if (g1 (1, 2) != 1)
+    {
+      abort ();
+    }
+  if (g2 (1, 2) != 1)
+    {
+      abort ();
+    }
+  if (g3 (1, 2) != 1)
+    {
+      abort ();
+    }
+  if (g4 (1, 2) != 1)
+    {
+      abort ();
+    }
+  return 0;
+}
+return 0;
+

@@ -1,0 +1,245 @@
+
+;; Function fn1 (fn1, funcdef_no=0, decl_uid=1498, cgraph_uid=0, symbol_order=0)
+
+fn1 (int x, int y, int z)
+{
+  const char * p;
+  static char buf[40];
+  unsigned int _4;
+  char * _6;
+  unsigned int _11;
+  char[40] * _12;
+  unsigned int _14;
+  char[40] * _15;
+  const char * _17;
+  unsigned int _19;
+  char[40] * _20;
+  unsigned int _22;
+  char[40] * _23;
+  unsigned int _25;
+  unsigned int _26;
+  unsigned int _27;
+  unsigned int _28;
+  unsigned int _29;
+  unsigned int _30;
+  char * _31;
+  unsigned int _32;
+  unsigned int _33;
+  unsigned int _34;
+  unsigned int _35;
+  unsigned int _36;
+  unsigned int _37;
+
+  <bb 2>:
+  _4 = (unsigned int) x_3(D);
+  if (_4 <= 2)
+    goto <bb 3> (<L17>);
+  else
+    goto <bb 4> (<L18>);
+
+<L17>:
+  p_5 = CSWTCH.2[_4];
+
+  # p_1 = PHI <p_5(3), "mnopq"(2)>
+<L18>:
+<L15>:
+  if (y_7(D) != 0)
+    goto <bb 5>;
+  else
+    goto <bb 8>;
+
+  <bb 5>:
+  _6 = __builtin_stpcpy (&buf, p_1);
+  if (z_10(D) != 0)
+    goto <bb 6>;
+  else
+    goto <bb 7>;
+
+  <bb 6>:
+  _28 = (unsigned int) _6;
+  _29 = (unsigned int) &buf;
+  _30 = _28 - _29;
+  _14 = _30;
+  _15 = _6;
+  __builtin_memcpy (_15, "ABCDEFG", 8);
+  goto <bb 11>;
+
+  <bb 7>:
+  _25 = (unsigned int) _6;
+  _26 = (unsigned int) &buf;
+  _27 = _25 - _26;
+  _11 = _27;
+  _12 = _6;
+  __builtin_memcpy (_12, "HIJKLMN", 8);
+  goto <bb 11>;
+
+  <bb 8>:
+  _17 = p_1 + 1;
+  _31 = __builtin_stpcpy (&buf, _17);
+  if (z_10(D) != 0)
+    goto <bb 9>;
+  else
+    goto <bb 10>;
+
+  <bb 9>:
+  _32 = (unsigned int) _31;
+  _33 = (unsigned int) &buf;
+  _34 = _32 - _33;
+  _19 = _34;
+  _20 = _31;
+  __builtin_memcpy (_20, "OPQ", 4);
+  goto <bb 11>;
+
+  <bb 10>:
+  _35 = (unsigned int) _31;
+  _36 = (unsigned int) &buf;
+  _37 = _35 - _36;
+  _22 = _37;
+  _23 = _31;
+  __builtin_memcpy (_23, "RST", 4);
+
+  <bb 11>:
+  return &buf;
+
+}
+
+
+
+;; Function main (main, funcdef_no=1, decl_uid=1507, cgraph_uid=1, symbol_order=1) (executed once)
+
+main ()
+{
+  int j;
+  const char * q;
+  const char * p;
+  int i;
+  int _4;
+  int _5;
+  sizetype _6;
+  _Bool _8;
+  _Bool _10;
+  int _11;
+  const void * _15;
+  int _16;
+  unsigned int _17;
+  int _18;
+  sizetype j.0_19;
+  sizetype _20;
+  const char * _21;
+  int _22;
+  int _26;
+  unsigned int _27;
+  int _28;
+  sizetype _29;
+  const char * _30;
+  int _31;
+  int _35;
+  const char * _36;
+  int _37;
+  int _41;
+  const char * _42;
+  int _43;
+
+  <bb 2>:
+
+  <bb 3>:
+  # i_50 = PHI <i_44(12), 0(2)>
+  _4 = MIN_EXPR <i_50, 3>;
+  _5 = _4 * 4;
+  _6 = (sizetype) _5;
+  p_7 = "abcdefghijklmnopq" + _6;
+  _8 = i_50 > 2;
+  j_9 = (int) _8;
+  _10 = i_50 == 0;
+  _11 = (int) _10;
+  fn1 (_11, 1, 1);
+  q_14 = fn1 (i_50, 0, 0);
+  _15 = p_7 + 1;
+  _16 = j_9 + 3;
+  _17 = (unsigned int) _16;
+  _18 = memcmp (q_14, _15, _17);
+  if (_18 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 5>;
+
+  <bb 4>:
+  abort ();
+
+  <bb 5>:
+  j.0_19 = (sizetype) _8;
+  _20 = j.0_19 + 3;
+  _21 = q_14 + _20;
+  _22 = memcmp (_21, "RST", 4);
+  if (_22 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 6>;
+
+  <bb 6>:
+  fn1 (_11, 0, 1);
+  q_25 = fn1 (i_50, 1, 0);
+  _26 = j_9 + 4;
+  _27 = (unsigned int) _26;
+  _28 = memcmp (q_25, p_7, _27);
+  if (_28 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 7>;
+
+  <bb 7>:
+  _29 = j.0_19 + 4;
+  _30 = q_25 + _29;
+  _31 = memcmp (_30, "HIJKLMN", 8);
+  if (_31 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 8>;
+
+  <bb 8>:
+  fn1 (_11, 1, 0);
+  q_34 = fn1 (i_50, 0, 1);
+  _35 = memcmp (q_34, _15, _17);
+  if (_35 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 9>;
+
+  <bb 9>:
+  _36 = q_34 + _20;
+  _37 = memcmp (_36, "OPQ", 4);
+  if (_37 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 10>;
+
+  <bb 10>:
+  fn1 (_11, 0, 0);
+  q_40 = fn1 (i_50, 1, 1);
+  _41 = memcmp (q_40, p_7, _27);
+  if (_41 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 11>;
+
+  <bb 11>:
+  _42 = q_40 + _29;
+  _43 = memcmp (_42, "ABCDEFG", 8);
+  if (_43 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 12>;
+
+  <bb 12>:
+  i_44 = i_50 + 1;
+  if (i_44 != 5)
+    goto <bb 3>;
+  else
+    goto <bb 13>;
+
+  <bb 13>:
+  return 0;
+
+}
+
+

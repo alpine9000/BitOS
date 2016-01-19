@@ -1,0 +1,126 @@
+
+;; Function foo (foo, funcdef_no=0, decl_uid=1489, cgraph_uid=0, symbol_order=0)
+
+foo (int r)
+{
+  char buf[10];
+  char[2] * iftmp.0_1;
+  unsigned int _5;
+  char[10] * _6;
+  unsigned int _8;
+  char[10] * _9;
+  char * _12;
+
+  <bb 2>:
+  buf = "";
+  if (r_4(D) != 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+
+  <bb 4>:
+  # iftmp.0_1 = PHI <"r"(3), "w"(2)>
+  _5 = 0;
+  _6 = &buf + _5;
+  __builtin_memcpy (_6, iftmp.0_1, 1);
+  _8 = 1;
+  _9 = &buf + _8;
+  __builtin_memcpy (_9, "b", 2);
+  _12 = strdup (&buf);
+  buf ={v} {CLOBBER};
+  return _12;
+
+}
+
+
+
+;; Function bar (bar, funcdef_no=1, decl_uid=1493, cgraph_uid=1, symbol_order=1)
+
+bar (int r)
+{
+  char buf[10];
+  char[2] * iftmp.1_1;
+  unsigned int _5;
+  char[10] * _6;
+  unsigned int _8;
+  char[10] * _9;
+  char * _12;
+
+  <bb 2>:
+  buf = {};
+  if (r_4(D) != 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+
+  <bb 4>:
+  # iftmp.1_1 = PHI <"r"(3), "w"(2)>
+  _5 = 0;
+  _6 = &buf + _5;
+  __builtin_memcpy (_6, iftmp.1_1, 1);
+  _8 = 1;
+  _9 = &buf + _8;
+  __builtin_memcpy (_9, "b", 2);
+  _12 = strdup (&buf);
+  buf ={v} {CLOBBER};
+  return _12;
+
+}
+
+
+
+;; Function main (main, funcdef_no=2, decl_uid=1496, cgraph_uid=2, symbol_order=2) (executed once)
+
+main ()
+{
+  char * q;
+  int _6;
+  int _11;
+
+  <bb 2>:
+  q_5 = foo (1);
+  if (q_5 != 0B)
+    goto <bb 3>;
+  else
+    goto <bb 6>;
+
+  <bb 3>:
+  _6 = strcmp (q_5, "rb");
+  if (_6 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 5>;
+
+  <bb 4>:
+  abort ();
+
+  <bb 5>:
+  free (q_5);
+
+  <bb 6>:
+  q_10 = bar (0);
+  if (q_10 != 0B)
+    goto <bb 7>;
+  else
+    goto <bb 9>;
+
+  <bb 7>:
+  _11 = strcmp (q_10, "wb");
+  if (_11 != 0)
+    goto <bb 4>;
+  else
+    goto <bb 8>;
+
+  <bb 8>:
+  free (q_10);
+
+  <bb 9>:
+  return 0;
+
+}
+
+

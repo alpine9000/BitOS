@@ -1,0 +1,41 @@
+
+;; Function fn1 (fn1, funcdef_no=0, decl_uid=1490, cgraph_uid=0, symbol_order=0)
+
+fn1 (char * p, const char * r)
+{
+  char * q;
+  size_t len1;
+  unsigned int _7;
+  size_t _8;
+
+  <bb 2>:
+  len1_3 = strlen (r_2(D));
+  q_5 = strchr (p_4(D), 0);
+  *q_5 = 0;
+  _7 = len1_3;
+  _8 = len1_3 - _7;
+  return _8;
+
+}
+
+
+
+;; Function main (main, funcdef_no=1, decl_uid=1495, cgraph_uid=1, symbol_order=1) (executed once)
+
+main ()
+{
+  const char * volatile q;
+  char p[7];
+  const char * q.0_4;
+
+  <bb 2>:
+  p = "foobar";
+  q ={v} "xyzzy";
+  q.0_4 ={v} q;
+  fn1 (&p, q.0_4);
+  p ={v} {CLOBBER};
+  return 0;
+
+}
+
+

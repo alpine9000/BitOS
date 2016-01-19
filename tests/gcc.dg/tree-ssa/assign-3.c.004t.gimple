@@ -1,0 +1,38 @@
+incr ()
+{
+  int count.0;
+  int count.1;
+
+  count.0 = count;
+  count.1 = count.0 + 1;
+  count = count.1;
+}
+
+
+main ()
+{
+  int count.2;
+  int count.3;
+  int count.4;
+  int count.5;
+  int D.1472;
+
+  {
+    count.2 = count;
+    count.3 = count.2;
+    count.4 = count.3 + 1;
+    count = count.4;
+    arr[count.3] = incr ();
+    count.5 = count;
+    if (count.5 != 2) goto <D.1470>; else goto <D.1471>;
+    <D.1470>:
+    abort ();
+    <D.1471>:
+    D.1472 = 0;
+    return D.1472;
+  }
+  D.1472 = 0;
+  return D.1472;
+}
+
+

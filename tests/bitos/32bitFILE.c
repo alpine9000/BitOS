@@ -27,6 +27,19 @@ void test(char* filename)
   }
 }
 
+void prime(char* filename)
+{
+  FILE *fp = fopen(filename, "w");
+  
+  if (fp == 0) {
+    abort();
+  }
+
+  if (fclose(fp) != 0) {
+    abort();
+  }
+}
+
 int main(int argc, char** argv)
 {
   char tmpFile[PATH_MAX];
@@ -45,8 +58,10 @@ int main(int argc, char** argv)
   fclose(fp);
 
   for (int i = 0; i < 35000; i++) {
-    test(tmpFile);
+    prime("32bitFILE.nothing");
   }
+
+  test(tmpFile);
 
   return 0;
 }

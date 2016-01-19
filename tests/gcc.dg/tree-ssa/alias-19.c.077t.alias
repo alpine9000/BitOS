@@ -1,0 +1,156 @@
+
+;; Function foo (foo, funcdef_no=0, decl_uid=1455, cgraph_uid=0, symbol_order=1)
+
+Points-to analysis
+
+Constraints:
+
+ANYTHING = &ANYTHING
+ESCAPED = *ESCAPED
+ESCAPED = ESCAPED + UNKNOWN
+*ESCAPED = NONLOCAL
+NONLOCAL = &NONLOCAL
+NONLOCAL = &ESCAPED
+INTEGER = &ANYTHING
+i = &NONLOCAL
+a = NONLOCAL
+q_1 = &a
+q_1 = &b
+b = &NONLOCAL
+_5 = *q_1
+ESCAPED = _5
+
+Collapsing static cycles and doing variable substitution
+Building predecessor graph
+Detecting pointer and location equivalences
+Rewriting constraints and unifying variables
+Uniting pointer but not location equivalent variables
+Finding indirect cycles
+Solving graph
+
+Points-to sets
+
+ANYTHING = { ANYTHING }
+ESCAPED = { ESCAPED NONLOCAL }
+NONLOCAL = { ESCAPED NONLOCAL }
+STOREDANYTHING = { }
+INTEGER = { ANYTHING }
+i = { NONLOCAL }
+q_1 = { a b }
+a = { ESCAPED NONLOCAL }
+b = { NONLOCAL }
+_5 = { ESCAPED NONLOCAL }
+
+
+Alias information for foo
+
+Aliased symbols
+
+b, UID D.1458, int, is addressable
+
+Call clobber information
+
+ESCAPED, points-to non-local, points-to vars: { }
+
+Flow-insensitive points-to information
+
+q_1, points-to vars: { D.1453 D.1458 } (nonlocal)
+
+foo (int i)
+{
+  int b;
+  const int * q;
+  int _5;
+
+  <bb 2>:
+  if (i_2(D) != 0)
+    goto <bb 4>;
+  else
+    goto <bb 3>;
+
+  <bb 3>:
+
+  <bb 4>:
+  # q_1 = PHI <&a(2), &b(3)>
+  b = 1;
+  _5 = *q_1;
+  b ={v} {CLOBBER};
+  return _5;
+
+}
+
+
+
+;; Function main (main, funcdef_no=1, decl_uid=1461, cgraph_uid=1, symbol_order=2) (executed once)
+
+Points-to analysis
+
+Constraints:
+
+ANYTHING = &ANYTHING
+ESCAPED = *ESCAPED
+ESCAPED = ESCAPED + UNKNOWN
+*ESCAPED = NONLOCAL
+NONLOCAL = &NONLOCAL
+NONLOCAL = &ESCAPED
+INTEGER = &ANYTHING
+CALLUSED = *CALLUSED + UNKNOWN
+CALLUSED = &NONLOCAL
+_2 = CALLUSED
+_2 = NONLOCAL
+ESCAPED = &NULL
+
+Collapsing static cycles and doing variable substitution
+Building predecessor graph
+Detecting pointer and location equivalences
+Rewriting constraints and unifying variables
+Uniting pointer but not location equivalent variables
+Finding indirect cycles
+Solving graph
+
+Points-to sets
+
+ANYTHING = { ANYTHING }
+ESCAPED = { NULL }
+NONLOCAL = { ESCAPED NONLOCAL }
+STOREDANYTHING = { }
+INTEGER = { ANYTHING }
+foo = { }
+CALLUSED = { ESCAPED NONLOCAL }
+CALLCLOBBERED = { }
+_2 = { ESCAPED NONLOCAL }
+abort = { }
+
+
+Alias information for main
+
+Aliased symbols
+
+
+Call clobber information
+
+ESCAPED, points-to NULL, points-to vars: { }
+
+Flow-insensitive points-to information
+
+
+main ()
+{
+  int _2;
+
+  <bb 2>:
+  _2 = foo (1);
+  if (_2 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  return 0;
+
+}
+
+

@@ -1,0 +1,258 @@
+
+;; Function test (test, funcdef_no=0, decl_uid=1459, cgraph_uid=0, symbol_order=2)
+
+
+Pass statistics:
+----------------
+
+Points-to analysis
+
+Constraints:
+
+ANYTHING = &ANYTHING
+ESCAPED = *ESCAPED
+ESCAPED = ESCAPED + UNKNOWN
+*ESCAPED = NONLOCAL
+NONLOCAL = &NONLOCAL
+NONLOCAL = &ESCAPED
+INTEGER = &ANYTHING
+b = NONLOCAL
+_3 = b
+i = NONLOCAL
+i.0_4 = i
+b = b
+ESCAPED = b
+b = _3
+ESCAPED = _3
+_7 = b
+_8 = b
+
+Collapsing static cycles and doing variable substitution
+Building predecessor graph
+Detecting pointer and location equivalences
+Rewriting constraints and unifying variables
+Uniting pointer but not location equivalent variables
+Finding indirect cycles
+Solving graph
+
+Points-to sets
+
+Stats:
+Total vars:               14
+Non-pointer vars:          2
+Statically unified vars:  6
+Dynamically unified vars: 0
+Iterations:               1
+Number of edges:          3
+Number of implicit edges: 13
+ANYTHING = { ANYTHING }
+ESCAPED = { ESCAPED NONLOCAL }
+NONLOCAL = { ESCAPED NONLOCAL } same as b
+STOREDANYTHING = { }
+INTEGER = { ANYTHING }
+_3 = { ESCAPED NONLOCAL } same as b
+b = { ESCAPED NONLOCAL }
+i.0_4 = { ESCAPED NONLOCAL } same as b
+i = { ESCAPED NONLOCAL } same as b
+_7 = { ESCAPED NONLOCAL } same as b
+abort = { }
+_8 = { ESCAPED NONLOCAL } same as b
+
+
+Alias information for test
+
+Aliased symbols
+
+
+Call clobber information
+
+ESCAPED, points-to non-local, points-to vars: { }
+
+Flow-insensitive points-to information
+
+
+Points to sets created:1
+;; 1 loops found
+;;
+;; Loop 0
+;;  header 0, latch 1
+;;  depth 0, outer -1
+;;  nodes: 0 1 2 3 4 5 9 6 7 8
+;; 2 succs { 3 4 }
+;; 3 succs { 6 }
+;; 4 succs { 5 9 }
+;; 5 succs { }
+;; 9 succs { 6 }
+;; 6 succs { 7 8 }
+;; 7 succs { }
+;; 8 succs { 1 }
+find_duplicates: <bb 5> duplicate of <bb 7>
+Removing basic block 7
+
+DFA Statistics for test
+
+---------------------------------------------------------
+                                Number of        Memory
+                                instances         used 
+---------------------------------------------------------
+USE operands                              6         48b
+DEF operands                              4         32b
+VUSE operands                             8         64b
+VDEF operands                             3         24b
+PHI nodes                                 3        312b
+PHI arguments                             6        288b
+---------------------------------------------------------
+Total memory used by DFA/SSA data                  768b
+---------------------------------------------------------
+
+Average number of arguments per PHI node: 2.0 (max: 2)
+
+
+Hash table statistics:
+    var_infos:   size 61, 1 elements, 0.000000 collision/search ratio
+
+
+Symbols to be put in SSA form
+{ D.1476 }
+Incremental SSA update started at block: 0
+Number of blocks in CFG: 10
+Number of blocks to update: 8 ( 80%)
+
+
+
+Pass statistics:
+----------------
+compute_antic iterations == 2: 1
+Insertions: 1
+New PHIs: 1
+SCC iterations == 2: 1
+insert iterations == 2: 1
+Eliminated: 1
+
+Removing basic block 9
+test ()
+{
+  int _3;
+  int i.0_4;
+  int _7;
+  int pretmp_11;
+  int prephitmp_12;
+
+  <bb 2>:
+  _3 = b.a[0].i;
+  i.0_4 = i;
+  if (_3 != i.0_4)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  b.a[0] = b.a[1];
+  b.a[1].i = _3;
+  pretmp_11 = b.a[0].i;
+  goto <bb 6>;
+
+  <bb 4>:
+  _7 = b.a[1].i;
+  if (i.0_4 == _7)
+    goto <bb 5>;
+  else
+    goto <bb 6>;
+
+  <bb 5>:
+  __builtin_abort ();
+
+  <bb 6>:
+  # prephitmp_12 = PHI <_3(4), pretmp_11(3)>
+  if (prephitmp_12 == 0)
+    goto <bb 5>;
+  else
+    goto <bb 7>;
+
+  <bb 7>:
+  return;
+
+}
+
+
+
+;; Function main (main, funcdef_no=1, decl_uid=1462, cgraph_uid=1, symbol_order=3) (executed once)
+
+
+Pass statistics:
+----------------
+
+Points-to analysis
+
+Constraints:
+
+ANYTHING = &ANYTHING
+ESCAPED = *ESCAPED
+ESCAPED = ESCAPED + UNKNOWN
+*ESCAPED = NONLOCAL
+NONLOCAL = &NONLOCAL
+NONLOCAL = &ESCAPED
+INTEGER = &ANYTHING
+ESCAPED = &NULL
+
+Collapsing static cycles and doing variable substitution
+Building predecessor graph
+Detecting pointer and location equivalences
+Rewriting constraints and unifying variables
+Uniting pointer but not location equivalent variables
+Finding indirect cycles
+Solving graph
+
+Points-to sets
+
+Stats:
+Total vars:               8
+Non-pointer vars:          2
+Statically unified vars:  0
+Dynamically unified vars: 0
+Iterations:               1
+Number of edges:          1
+Number of implicit edges: 5
+ANYTHING = { ANYTHING }
+ESCAPED = { NULL }
+NONLOCAL = { ESCAPED NONLOCAL }
+STOREDANYTHING = { }
+INTEGER = { ANYTHING }
+test = { }
+
+
+Alias information for main
+
+Aliased symbols
+
+
+Call clobber information
+
+ESCAPED, points-to NULL, points-to vars: { }
+
+Flow-insensitive points-to information
+
+
+Points to sets created:1
+;; 1 loops found
+;;
+;; Loop 0
+;;  header 0, latch 1
+;;  depth 0, outer -1
+;;  nodes: 0 1 2
+;; 2 succs { 1 }
+
+Pass statistics:
+----------------
+compute_antic iterations == 1: 1
+insert iterations == 1: 1
+
+main ()
+{
+  <bb 2>:
+  test ();
+  return 0;
+
+}
+
+

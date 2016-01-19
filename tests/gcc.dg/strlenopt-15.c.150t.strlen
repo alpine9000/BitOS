@@ -1,0 +1,173 @@
+
+;; Function fn1 (fn1, funcdef_no=0, decl_uid=1490, cgraph_uid=0, symbol_order=0)
+
+fn1 (char * p, size_t l)
+{
+  size_t _5;
+
+  <bb 2>:
+  memcpy (p_2(D), "abcdef", l_3(D));
+  _5 = strlen (p_2(D));
+  return _5;
+
+}
+
+
+
+;; Function fn2 (fn2, funcdef_no=1, decl_uid=1495, cgraph_uid=1, symbol_order=1)
+
+fn2 (char * p, const char * q, size_t * lp)
+{
+  size_t l2;
+  size_t l;
+
+  <bb 2>:
+  l_3 = strlen (q_2(D));
+  memcpy (p_4(D), q_2(D), 7);
+  l2_6 = strlen (p_4(D));
+  *lp_7(D) = l_3;
+  return l2_6;
+
+}
+
+
+
+;; Function fn3 (fn3, funcdef_no=2, decl_uid=1500, cgraph_uid=2, symbol_order=2)
+
+fn3 (char * p)
+{
+  char * _4;
+
+  <bb 2>:
+  *p_2(D) = 0;
+  _4 = p_2(D) + 1;
+  return _4;
+
+}
+
+
+
+;; Function main (main, funcdef_no=3, decl_uid=1502, cgraph_uid=3, symbol_order=3) (executed once)
+
+main ()
+{
+  size_t l;
+  const char * volatile q2;
+  const char * volatile q;
+  char buf[64];
+  unsigned int _7;
+  int _8;
+  unsigned int _10;
+  int _11;
+  const char * q.0_12;
+  unsigned int _14;
+  unsigned int l.1_15;
+  int _16;
+  const char * q2.2_17;
+  unsigned int _19;
+  unsigned int l.1_20;
+  int _21;
+  char * _23;
+  int _24;
+
+  <bb 2>:
+  q ={v} "ABCDEFGH";
+  q2 ={v} "IJ";
+  memset (&buf, 0, 64);
+  memset (&MEM[(void *)&buf + 2B], 97, 7);
+  _7 = fn1 (&buf, 3);
+  if (_7 != 9)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  _8 = memcmp (&buf, "abcaaaaaa", 10);
+  if (_8 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 5>;
+
+  <bb 5>:
+  _10 = fn1 (&buf, 7);
+  if (_10 != 6)
+    goto <bb 3>;
+  else
+    goto <bb 6>;
+
+  <bb 6>:
+  _11 = memcmp (&buf, "abcdef", 10);
+  if (_11 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 7>;
+
+  <bb 7>:
+  q.0_12 ={v} q;
+  _14 = fn2 (&buf, q.0_12, &l);
+  if (_14 != 9)
+    goto <bb 3>;
+  else
+    goto <bb 8>;
+
+  <bb 8>:
+  l.1_15 = l;
+  if (l.1_15 != 8)
+    goto <bb 3>;
+  else
+    goto <bb 9>;
+
+  <bb 9>:
+  _16 = memcmp (&buf, "ABCDEFGaa", 10);
+  if (_16 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 10>;
+
+  <bb 10>:
+  q2.2_17 ={v} q2;
+  _19 = fn2 (&buf, q2.2_17, &l);
+  if (_19 != 2)
+    goto <bb 3>;
+  else
+    goto <bb 11>;
+
+  <bb 11>:
+  l.1_20 = l;
+  if (l.1_20 != 2)
+    goto <bb 3>;
+  else
+    goto <bb 12>;
+
+  <bb 12>:
+  _21 = memcmp (&buf, "IJ", 10);
+  if (_21 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 13>;
+
+  <bb 13>:
+  _23 = fn3 (&buf);
+  if (&MEM[(void *)&buf + 1B] != _23)
+    goto <bb 3>;
+  else
+    goto <bb 14>;
+
+  <bb 14>:
+  _24 = memcmp (&buf, "", 10);
+  if (_24 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 15>;
+
+  <bb 15>:
+  buf ={v} {CLOBBER};
+  l ={v} {CLOBBER};
+  return 0;
+
+}
+
+

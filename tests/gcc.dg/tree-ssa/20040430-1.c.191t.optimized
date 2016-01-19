@@ -1,0 +1,11 @@
+
+;; Function main (main, funcdef_no=0, decl_uid=1455, cgraph_uid=0, symbol_order=0) (executed once)
+
+main ()
+{
+  <bb 2>:
+  return 0;
+
+}
+
+

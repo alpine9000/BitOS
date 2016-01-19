@@ -1,0 +1,27 @@
+main ()
+{
+  double D.1464;
+  int D.1469;
+
+  {
+    double x;
+
+    x = -1.0e+0;
+    D.1464 = ABS_EXPR <x>;
+    if (D.1464 != 1.0e+0) goto <D.1465>; else goto <D.1466>;
+    <D.1465>:
+    abort ();
+    <D.1466>:
+    D.1464 = ABS_EXPR <x>;
+    if (D.1464 != 1.0e+0) goto <D.1467>; else goto <D.1468>;
+    <D.1467>:
+    abort ();
+    <D.1468>:
+    D.1469 = 0;
+    return D.1469;
+  }
+  D.1469 = 0;
+  return D.1469;
+}
+
+

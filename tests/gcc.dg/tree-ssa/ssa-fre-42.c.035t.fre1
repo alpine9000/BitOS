@@ -1,0 +1,40 @@
+
+;; Function foo (foo, funcdef_no=0, decl_uid=1460, cgraph_uid=0, symbol_order=3)
+
+foo ()
+{
+  int * p;
+  struct X b;
+
+  <bb 2>:
+  b = A;
+  q = &b;
+  b ={v} {CLOBBER};
+  return 2;
+
+}
+
+
+
+;; Function main (main, funcdef_no=1, decl_uid=1464, cgraph_uid=1, symbol_order=4)
+
+main ()
+{
+  int _3;
+
+  <bb 2>:
+  _3 = foo ();
+  if (_3 != 2)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  abort ();
+
+  <bb 4>:
+  return 0;
+
+}
+
+

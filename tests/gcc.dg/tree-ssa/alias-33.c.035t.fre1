@@ -1,0 +1,74 @@
+
+;; Function main (main, funcdef_no=0, decl_uid=1454, cgraph_uid=0, symbol_order=1)
+
+Value-numbering operands of stmt ending BB 2: if (i.0_11 != 0)
+Setting value number of .MEM_1(D) to .MEM_1(D) (changed)
+Value numbering .MEM_2 stmt = i = 1;
+RHS 1 simplified to 1
+No store match
+Value numbering store i to 1
+Setting value number of .MEM_2 to .MEM_2 (changed)
+Value numbering .MEM_3 stmt = j = 0;
+RHS 0 simplified to 0
+No store match
+Value numbering store j to 0
+Setting value number of .MEM_3 to .MEM_3 (changed)
+Value numbering .MEM_4 stmt = p_5 = __builtin_malloc (4);
+Setting value number of .MEM_4 to .MEM_4 (changed)
+Setting value number of p_5 to p_5 (changed)
+Value numbering .MEM_6 stmt = *p_5 = &i;
+RHS &i simplified to &i
+No store match
+Value numbering store *p_5 to &i
+Setting value number of .MEM_6 to .MEM_6 (changed)
+Value numbering .MEM_7 stmt = p_8 = __builtin_realloc (p_5, 8);
+Setting value number of .MEM_7 to .MEM_7 (changed)
+Setting value number of p_8 to p_8 (changed)
+Value numbering _9 stmt = _9 = *p_8;
+Setting value number of _9 to _9 (changed)
+Value numbering .MEM_10 stmt = *_9 = 0;
+RHS 0 simplified to 0
+No store match
+Value numbering store *_9 to 0
+Setting value number of .MEM_10 to .MEM_10 (changed)
+Value numbering i.0_11 stmt = i.0_11 = i;
+Setting value number of i.0_11 to i.0_11 (changed)
+Value numbering _12 stmt = _12 = j;
+Setting value number of _12 to 0 (changed)
+Value numbering .MEM_13 stmt = i ={v} {CLOBBER};
+Setting value number of .MEM_13 to .MEM_13 (changed)
+Value numbers:
+_12 = 0
+Replaced j with 0 in all uses of _12 = j;
+Removing dead stmt _12 = j;
+main ()
+{
+  int * * p;
+  int i;
+  int * _9;
+  int i.0_11;
+
+  <bb 2>:
+  i = 1;
+  j = 0;
+  p_5 = __builtin_malloc (4);
+  *p_5 = &i;
+  p_8 = __builtin_realloc (p_5, 8);
+  _9 = *p_8;
+  *_9 = 0;
+  i.0_11 = i;
+  if (i.0_11 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+  <bb 3>:
+  __builtin_abort ();
+
+  <bb 4>:
+  i ={v} {CLOBBER};
+  return 0;
+
+}
+
+
