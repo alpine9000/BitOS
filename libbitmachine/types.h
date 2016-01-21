@@ -25,7 +25,6 @@ typedef struct {
   int _stderr;
 } fds_t;
 
-
 typedef enum { WAITING_FOR_CONTROL = 0, WAITING_FOR_TYPE = 1, WAITING_FOR_ARG = 2} console_console_state_t;
 
 typedef enum {
@@ -53,7 +52,7 @@ typedef struct {
   unsigned behaviour;
 } console_control_t;
 
-
+typedef void (*kernel_signal_handler_t) (int);
 
 #define STDIN_FILENO    0       /* standard input file descriptor */
 #define STDOUT_FILENO   1       /* standard output file descriptor */

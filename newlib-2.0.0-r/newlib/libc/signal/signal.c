@@ -99,6 +99,8 @@ int _dummy_simulated_signal;
 #include <reent.h>
 #include <_syslist.h>
 
+#ifndef __BITOS__
+
 int
 _DEFUN (_init_signal_r, (ptr),
 	struct _reent *ptr)
@@ -117,6 +119,8 @@ _DEFUN (_init_signal_r, (ptr),
 
   return 0;
 }
+
+
 
 _sig_func_ptr
 _DEFUN (_signal_r, (ptr, sig, func),
@@ -205,6 +209,7 @@ _DEFUN (__sigtramp_r, (ptr, sig),
       return 0;
     }
 }
+#endif
 
 #ifndef _REENT_ONLY
 

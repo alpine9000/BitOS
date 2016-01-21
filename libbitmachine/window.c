@@ -37,6 +37,7 @@ typedef struct {
   window_state_t state;
   window_h handle;
   console_control_t consoleControl;
+  thread_h owner;
 } window_t;
 
 typedef struct {
@@ -48,6 +49,9 @@ typedef struct {
 
 unsigned window_fullRefresh = 1;
 static window_table_t windowTable;
+
+static void
+_window_close(window_h window);
 
 static inline int 
 _window_index(window_h window)
@@ -285,6 +289,20 @@ window_charAvailable(window_h window)
   }
 }
 
+void
+window_cleanup(thread_h owner)
+{
+  kernel_spinLock(&windowTable.lock);
+
+  for (unsigned i = 0; i < WINDOWS_MAX; i++) {
+    if (windowTable.windows[i].state != WINDOW_DEAD &&  windowTable.windows[i].owner == owner) {
+      _window_close(windowTable.windows[i].handle);
+    }
+  }
+
+  kernel_unlock(&windowTable.lock);
+}
+
 window_h 
 window_create(char* title, unsigned x, unsigned y, unsigned w, unsigned h)
 {
@@ -303,6 +321,7 @@ window_create(char* title, unsigned x, unsigned y, unsigned w, unsigned h)
       windowTable.windows[i].cursorOn = 1;
       windowTable.windows[i].handle = (window_h)window_nextHandle++;
       windowTable.windows[i].consoleControl.behaviour = CONSOLE_BEHAVIOUR_AUTO_WRAP | CONSOLE_BEHAVIOUR_AUTO_SCROLL;
+      windowTable.windows[i].owner = kernel_threadGetId();
       _window_add_to_z(i);
       window_toTop(_window_handle(i));
       kernel_unlock(&windowTable.lock);
@@ -313,7 +332,16 @@ window_create(char* title, unsigned x, unsigned y, unsigned w, unsigned h)
   kernel_unlock(&windowTable.lock);
   return 0;
 }
-
+ 
+static void
+_window_close(window_h window)
+{
+  window_t* entry = &windowTable.windows[_window_index(window)];
+  gfx_releaseFrameBuffer(entry->frameBuffer);
+  entry->state = WINDOW_DEAD;
+  _window_remove_from_z(window);
+  window_fullRefresh = 1;
+}
 
 void 
 window_close(window_h window)

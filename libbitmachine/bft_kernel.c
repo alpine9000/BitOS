@@ -108,7 +108,10 @@ _bft_t __bft  = {
 
   &wolf,
 
-  &kernel_threadGetExitStatus
+  &kernel_threadGetExitStatus,
+
+  &signal_registerHandler,
+  &signal_fire
 };
 
 _bft_t* _bft = &__bft;

@@ -80,6 +80,9 @@ window_getBackgroundColor(window_h window);
 void 
 window_enableCursor(window_h window, unsigned enabled);
 
+void
+window_cleanup(thread_h owner);
+
 #define window_getCharacterPixelWidth(w) (gfx_fontWidth)
 #define window_getCharacterPixelHeight(w) (gfx_fontHeight)
 

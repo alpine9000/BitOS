@@ -7,6 +7,7 @@ extern void _illegalSlot(void);
 extern void _kernel_tick_asm(void);
 extern void _kernel_blocked_asm(void);
 extern void _kernel_kill_asm(void);
+extern void _kernel_kill_thread_asm(void);
 
 typedef struct vt {
   unsigned long reset;
@@ -80,11 +81,11 @@ volatile  const vt_t v __attribute__ ((section (".vector"))) = {
   {0}, // reserved
   (unsigned long)0,// INT_TRAPA32
   (unsigned long)0,// INT_TRAPA33
-  (unsigned long)_syscall,            // INT_TRAPA34
-  (unsigned long)_panic,              // INT_TRAPA35
-  (unsigned long)_kernel_blocked_asm, // INT_TRAPA36
-  (unsigned long)_kernel_kill_asm,    // INT_TRAPA37
-  (unsigned long)0,// INT_TRAPA38
+  (unsigned long)_syscall,                // INT_TRAPA34
+  (unsigned long)_panic,                  // INT_TRAPA35
+  (unsigned long)_kernel_blocked_asm,     // INT_TRAPA36
+  (unsigned long)_kernel_kill_asm,        // INT_TRAPA37
+  (unsigned long)_kernel_kill_thread_asm, // INT_TRAPA38
   (unsigned long)0,// INT_TRAPA39
   (unsigned long)0,// INT_TRAPA40
   (unsigned long)0,// INT_TRAPA41

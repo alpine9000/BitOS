@@ -67,6 +67,12 @@ kernel_threadGetIdForStdout(unsigned fd);
 unsigned 
 kernel_threadGetIsActiveImage(void* ptr);
 
+void
+kernel_threadKill(thread_h tid);
+
+void
+kernel_threadQueueSignalHandler(thread_h tid, kernel_signal_handler_t handler, int sig);
+
 void 
 kernel_assertKernelMode(unsigned pr);
 
@@ -107,6 +113,16 @@ _kernel_newlib_lock_try_acquire(unsigned* lock);
 void 
 _kernel_newlib_lock_release(unsigned* lock);
 
+
+kernel_signal_handler_t*
+kernel_threadGetSignalHandler(thread_h tid);
+
+int
+signal_registerHandler(kernel_signal_handler_t *handler,  int sig, kernel_signal_handler_t func);
+
+int 
+signal_fire(thread_h tid, int sig);
+
 const char*
 kernel_version();
 
@@ -142,6 +158,8 @@ kernel_version();
 
 #define KERNEL_MODE() unsigned __kernelMode = kernel_enterKernelMode();
 #define USER_MODE() kernel_exitKernelMode(__kernelMode);
+
+extern int kernel_signalMax;
 
 unsigned 
 kernel_enterKernelMode();

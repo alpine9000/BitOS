@@ -47,14 +47,11 @@ int main(int argc, char**argv)
   if (argc > 0) {
     char *base = basename(argv[0]);
     if (strcmp(base, "bsh") != 0) {
-      char* argvSave = argv[0];
-      argv[0] = base;
+      strcpy(argv[0], base);
       int retval = execBuiltin(argc, argv);
-      argv[0] = argvSave;
       return retval;
     }
   }
-
 
 
 #define OPEN_WINDOW
@@ -80,7 +77,7 @@ int main(int argc, char**argv)
   chdir("~/");
   
   rl_terminal_name = "vt100";
-
+  rl_catch_signals = 0;
 
   setbuf(stdout, NULL);
 

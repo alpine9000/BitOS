@@ -221,7 +221,7 @@ file_write ( int file, char *ptr, int len)
   }
 }
 
-static void 
+void 
 __file_close(int file)
 {
   _file_lock();

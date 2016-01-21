@@ -11,6 +11,7 @@
 #include <malloc.h>
 #include <errno.h>
 #include <libgen.h>
+#include <signal.h>
 #include "bft.h"
 #include "kernel.h"
 #include "simulator.h"
@@ -88,6 +89,9 @@ shell_execBuiltin(int argc, char** argv);
 static int 
 shell_time(int argc, char** argv);
 
+static int
+shell_kill(int argc, char** argv);
+
 typedef void(*arg_function)(int,char**);
 
 typedef struct {
@@ -122,7 +126,8 @@ static builtin_t builtins[] = {
   {"version", 0, version},
   {"kernel", 0, kernel},
   {"touch", 0, touch},
-  {"time", 0,shell_time}
+  {"time", 0,shell_time},
+  {"kill", 0, shell_kill}
 };
 
 static unsigned numBuiltins = sizeof(builtins)/sizeof(builtin_t);
@@ -454,6 +459,7 @@ shell_time(int argc, char** argv)
   
 
   char** newArgv = shell_argvDup(argc, argv, 1);
+
   char* command = argv_reconstruct(newArgv);
 
   struct timeval start, end, diff;
@@ -624,6 +630,22 @@ diff(int argc, char** argv)
     printf("Files %s and %s differ\n", argv[1], argv[2]);
   }
   
+  return 0;
+}
+
+static int
+shell_kill(int argc, char** argv)
+{
+  if (argc == 2) {
+    unsigned pid = atoi(argv[1]);
+    printf("Sending %d to %d\n", SIGINT, pid);
+    if (kill(pid, SIGINT) != 0) {
+      printf("%s: failed\n", argv[0]);
+    }
+  } else {
+    fprintf(stderr, "usage: %s tid\n", argv[0]);
+  }
+
   return 0;
 }
 

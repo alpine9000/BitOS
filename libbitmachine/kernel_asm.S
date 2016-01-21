@@ -1,6 +1,7 @@
 .global __kernel_tick_asm
 .global __kernel_blocked_asm
 .global __kernel_kill_asm
+.global __kernel_kill_thread_asm
 .global __kernel_resume_asm
 .global _stack
 	
@@ -95,7 +96,7 @@ __kernel_tick_asm:
 kernel_tick:
    .long __from_asm_kernel_tick
 
-	.align 4
+.align 4
 __kernel_blocked_asm:
     sts.l pr,@-r15	
     sts.l mach,@-r15
@@ -146,6 +147,57 @@ __kernel_blocked_asm:
     rte
     nop
 
+.align 4
+__kernel_kill_thread_asm:
+    sts.l pr,@-r15	
+    sts.l mach,@-r15
+    sts.l macl,@-r15
+    mov.l r0,@-r15
+    mov   #0xF,r0		! Disable interrupts when we don't disable them with the trap instruction - SR is already saved by TRAPA
+    shll2 r0			
+    shll2 r0			
+    ldc r0,sr
+    mov.l r1,@-r15
+    mov.l r2,@-r15
+    mov.l r3,@-r15
+    mov.l r4,@-r15
+    mov.l r5,@-r15
+    mov.l r6,@-r15
+    mov.l r7,@-r15
+    mov.l r8,@-r15
+    mov.l r9,@-r15
+    mov.l r10,@-r15
+    mov.l r11,@-r15
+    mov.l r12,@-r15
+    mov.l r13,@-r15
+    mov.l r14,@-r15
+    sts.l fpscr,@-r15
+    sts.l fpul,@-r15
+    fmov.s fr0,@-r15
+    fmov.s fr1,@-r15
+    fmov.s fr2,@-r15
+    fmov.s fr3,@-r15
+    fmov.s fr4,@-r15
+    fmov.s fr5,@-r15
+    fmov.s fr6,@-r15
+    fmov.s fr7,@-r15
+    fmov.s fr8,@-r15
+    fmov.s fr9,@-r15
+    fmov.s fr10,@-r15
+    fmov.s fr11,@-r15
+    fmov.s fr12,@-r15
+    fmov.s fr13,@-r15
+    fmov.s fr14,@-r15
+    fmov.s fr15,@-r15
+    mov r15, r4
+    mov.l kernel_stack,r0
+    mov.l @r0,r15
+    mov.l kernel_kill_thread,r0
+    jmp @r0
+    nop
+    rte
+    nop
+
 kernel_blocked:
    .long __from_asm_kernel_blocked
 
@@ -167,3 +219,10 @@ __kernel_kill_asm:
 .align 4
 kernel_kill:
    .long __from_asm_kernel_kill
+
+
+	.align 4
+kernel_kill_thread:
+   .long __from_asm_kernel_kill_thread
+
+

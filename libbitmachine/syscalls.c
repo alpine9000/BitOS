@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include <signal.h>
 #include <sys/syslimits.h>
 #include <sys/syscall.h>
 #include <sys/stat.h>
@@ -151,13 +151,13 @@ _isatty_r (struct _reent *re, int fd)
 }
 
 int 
-_kill_r (int n, int m)
+_kill_r (struct _reent *re, int pid, int sig)
 {
-  return __trap34 (SYS_exit, 0xdead, 0, 0);
+  return _bft->signal_fire((thread_h)pid, sig);
 }
 
 int 
-_getpid_r (int n)
+_getpid_r (struct _reent *re)
 {
   return __trap34 (SYS_getpid);
 }
@@ -469,3 +469,29 @@ basename(char *path)
   return p + 1;
 }
 
+
+int 
+_init_signal_r (struct _reent *ptr)
+{
+  return -1;
+}
+
+_sig_func_ptr _signal_r(struct _reent *ptr, int sig,_sig_func_ptr func)
+{
+  _sig_func_ptr oldHandler = 0;;
+  if (_bft->signal_registerHandler(&oldHandler, sig, func) != 0) {
+    ptr->_errno = EINVAL;
+  }
+  return oldHandler;
+}
+
+int _raise_r (struct _reent *ptr,   int sig)
+{
+  return _bft->signal_fire(kernel_threadGetId(), sig);
+}
+
+int
+__sigtramp_r(struct _reent *ptr, int sig)
+{
+  return -1;
+}

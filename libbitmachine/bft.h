@@ -95,6 +95,10 @@ typedef struct {
 
   int (*kernel_threadGetExitStatus)(thread_h);
 
+  int (*signal_registerHandler)(kernel_signal_handler_t *handler,  int sig, kernel_signal_handler_t func);
+  int (*signal_fire)(thread_h tid, int sig);
+
+
 } _bft_t;
 
 extern _bft_t* _bft;

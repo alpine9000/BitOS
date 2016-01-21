@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/times.h>
+#include <unistd.h>
 #include "kernel.h"
 #include "peripheral.h"
 #include "panic.h"
@@ -9,6 +10,8 @@
 #include "simulator.h"
 #include "memory.h"
 #include "console.h"
+#include "window.h"
+#include "threadcontext.h"
 
 extern void* 
 malloc(unsigned);
@@ -25,6 +28,7 @@ _kernel_atomic_lock_asm(void* ptr);
 
 #define _thread_max 16
 #define _thread_historyMax 32
+#define _signal_max 32
 
 #define _thread_stack_size_bytes  (0x100000)
 //#define _thread_stack_size_bytes  (0x10000)
@@ -66,13 +70,20 @@ typedef struct {
   unsigned _stdout;
 } _thread_history_t;
 
+typedef struct {
+  kernel_signal_handler_t handlers[_signal_max];
+} _signal_handler;
+
+
 int errno;
 static unsigned nextTid = 1;
 static _thread_entry_t threadTable[_thread_max];
 static _thread_history_t threadHistory[_thread_historyMax];
+static _signal_handler _signalHandlers[_thread_max];
 static unsigned int currentThread;
 static unsigned int currentThreadSave;
 static volatile unsigned kernel_threadMax = _thread_max;
+int kernel_signalMax = _signal_max;
 
 static inline unsigned _kernel_disableInts();
 static inline void _kernel_enableInts(unsigned);
@@ -404,6 +415,7 @@ _from_asm_kernel_kill(int status, int context)
   entry->state = _THREAD_DEAD;
   entry->tid = 0;
   memset(&entry->fd, 0, sizeof(entry->fd));
+  memset(&_signalHandlers[_currentThreadSave].handlers, 0, sizeof(_signalHandlers[_currentThreadSave].handlers));
 
   currentThread = _currentThreadSave;
 
@@ -411,9 +423,60 @@ _from_asm_kernel_kill(int status, int context)
 
   currentThread = _kernel_schedule();
 
-
   _kernel_resume_asm(threadTable[currentThread].sp);
 }
+
+
+/* called from kernel_asm.S via INT_TRAPA38 - ints disabled before this is called */
+void
+_from_asm_kernel_kill_thread(unsigned* sp, thread_h tid)
+{
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
+
+  threadTable[currentThread].sp = sp;
+  threadTable[currentThread].state = _THREAD_BLOCKED;
+
+  unsigned i;
+  for (i = 0; i < _thread_max; i++) {
+    if (threadTable[i].tid == tid) {
+      currentThread = i;
+      break;
+    }
+  }
+
+  kernel_memoryBarrier();
+
+  if (i == _thread_max) {
+    currentThread = _kernel_schedule();
+    _kernel_resume_asm(threadTable[currentThread].sp);
+  }
+
+  //simulator_printf("kill thread %d [%d]", tid, currentThread);
+
+  fds_t* fds = &threadTable[currentThread].fd;
+
+  extern void __file_close(int file);
+
+  if (fds->_stdin != STDIN_FILENO) {
+    //simulator_printf("_from_asm_kernel_kill_thread: closing stdin %d\n", fds->_stdin);
+    __file_close(fds->_stdin);
+  }
+  if (fds->_stdout != STDOUT_FILENO) {
+    //simulator_printf("_from_asm_kernel_kill_thread: closing stdout %d\n", fds->_stdout);
+    __file_close(fds->_stdout);
+  }
+  if (fds->_stderr != STDERR_FILENO) {
+    //simulator_printf("_from_asm_kernel_kill_thread: closing stderr %d\n", fds->_stderr);
+    __file_close(fds->_stderr);
+  }
+
+  window_cleanup(tid);
+
+  //simulator_printf("about to call _from_asm_kernel_kill %d [%d] %x", tid, currentThread, threadTable[currentThread].argv);
+  
+  _from_asm_kernel_kill(1, 0);
+}
+
 
 const char* 
 kernel_version()
@@ -867,4 +930,112 @@ kernel_threadWait(thread_h tid)
   KERNEL_ASSERT_INTERRUPTS_ENABLED();
 
   return kernel_threadGetExitStatus(tid);
+}
+
+kernel_signal_handler_t*
+kernel_threadGetSignalHandler(thread_h tid)
+{
+  _threadTable_lock();
+  
+  for (int i = 0; i < _thread_max; i++) {
+    _thread_entry_t *entry = &threadTable[i];
+    if (entry->tid == tid) {
+      _threadTable_unlock();
+      return _signalHandlers[i].handlers;
+    }
+  }
+
+  _threadTable_unlock();
+  return NULL;
+}
+
+void
+kernel_threadKill(thread_h tid)
+{
+  __asm__ volatile ("mov.l %0,r5" 
+		    :
+		    :"m"(tid)
+		    :"r5");
+  __asm__ volatile("trapa #38":::"memory");
+}
+
+
+ void
+ _kernel_threadExecSignalHandler(kernel_signal_handler_t handler, int sig, unsigned* sp)
+{
+  //simulator_printf("_kernel_threadExecSignalHandler: %x %d %x %x\n", handler, sig, sp);
+  handler(sig);
+  _kernel_resume_asm(sp);  
+  
+}
+
+void
+kernel_threadQueueSignalHandler(thread_h tid, kernel_signal_handler_t handler, int sig)
+{
+  _threadTable_lock();
+
+  unsigned threadIndex;
+
+  unsigned i;
+  for (i = 0; i < _thread_max; i++) {
+    if (threadTable[i].tid == tid) {
+      threadIndex = i;
+      break;
+    }
+  }
+
+  if (i == _thread_max) {
+    kernel_memoryBarrier();
+    //simulator_printf("kernel_threadQueueSignalHandler: tid %d not found\n", tid);
+    _threadTable_unlock();
+    return;
+  }
+
+  unsigned *sp = threadTable[threadIndex].sp;
+  void (*fp)(kernel_signal_handler_t, int, unsigned*) = _kernel_threadExecSignalHandler; 
+  unsigned *stack = sp;
+  
+  *(--stack) = sp[STACK_OFFSET_SR]; 
+  *(--stack) = (unsigned)fp; 
+  *(--stack) = sp[STACK_OFFSET_PC]; 
+  *(--stack) = sp[STACK_OFFSET_MH]; 
+  *(--stack) = sp[STACK_OFFSET_ML]; 
+  *(--stack) = sp[STACK_OFFSET_R0]; 
+  *(--stack) = sp[STACK_OFFSET_R1]; 
+  *(--stack) = sp[STACK_OFFSET_R2]; 
+  *(--stack) = sp[STACK_OFFSET_R3]; 
+  *(--stack) = (unsigned)handler;
+  *(--stack) = sig;
+  *(--stack) = (unsigned)sp;
+  *(--stack) = sp[STACK_OFFSET_R7]; 
+  *(--stack) = sp[STACK_OFFSET_R8]; 
+  *(--stack) = sp[STACK_OFFSET_R9]; 
+  *(--stack) = sp[STACK_OFFSET_R10]; 
+  *(--stack) = sp[STACK_OFFSET_R11]; 
+  *(--stack) = sp[STACK_OFFSET_R12]; 
+  *(--stack) = sp[STACK_OFFSET_R13]; 
+  *(--stack) = sp[STACK_OFFSET_R14]; 
+  *(--stack) = sp[STACK_OFFSET_FPSCR]; 
+  *(--stack) = sp[STACK_OFFSET_FPUL]; 
+  *(--stack) = sp[STACK_OFFSET_FR0]; 
+  *(--stack) = sp[STACK_OFFSET_FR1]; 
+  *(--stack) = sp[STACK_OFFSET_FR2]; 
+  *(--stack) = sp[STACK_OFFSET_FR3]; 
+  *(--stack) = sp[STACK_OFFSET_FR4]; 
+  *(--stack) = sp[STACK_OFFSET_FR5]; 
+  *(--stack) = sp[STACK_OFFSET_FR6]; 
+  *(--stack) = sp[STACK_OFFSET_FR7]; 
+  *(--stack) = sp[STACK_OFFSET_FR8]; 
+  *(--stack) = sp[STACK_OFFSET_FR9]; 
+  *(--stack) = sp[STACK_OFFSET_FR10]; 
+  *(--stack) = sp[STACK_OFFSET_FR11]; 
+  *(--stack) = sp[STACK_OFFSET_FR12]; 
+  *(--stack) = sp[STACK_OFFSET_FR13]; 
+  *(--stack) = sp[STACK_OFFSET_FR14]; 
+  *(--stack) = sp[STACK_OFFSET_FR15]; 
+
+  threadTable[threadIndex].sp = stack;
+
+  _threadTable_unlock();
+
 }
