@@ -38,6 +38,9 @@ gdrive: all
 	make  -C $(BEMACS) gdrive
 	make  -C $(SI) gdrive
 
+local: all
+	cp $(ELF_FILE) ../BitMachine/BitFS/
+
 install:
 	cp apps/bsh/bsh /usr/local/bin
 	cp apps/bemacs/bemacs /usr/local/bin
@@ -192,7 +195,7 @@ filesystem:
 
 
 localfs: fs
-	cp $(TOOLS_BASE)/filesystem.zip ~/Projects/BitMachine/BitFS
+	cp $(TOOLS_BASE)/filesystem.zip ..//BitMachine/BitFS
 
 gdrivefs: fs
 	cp $(TOOLS_BASE)/filesystem.zip ~/Google\ Drive/BitFS

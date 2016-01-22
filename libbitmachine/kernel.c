@@ -92,6 +92,15 @@ static inline unsigned _kernel_getSR();
 #define _threadTable_lock() unsigned ___ints_disabled = _kernel_disableInts()
 #define _threadTable_unlock() _kernel_enableInts(___ints_disabled)
 
+#define JMP_kernel_resume_asm(sp)   __asm__ volatile(\
+		   "mov.l %0,r4\n"	\
+		   "mov.l kernel_resume_asm%=,r0\n"\
+		   "jmp @r0\n"\
+		   "nop\n"\
+		   ".align 4\n"\
+		   "kernel_resume_asm%=:\n"\
+		   ".long __kernel_resume_asm"\
+		   ::"m"(sp):"r0","r4");	      
 
 unsigned 
 kernel_enterKernelMode()
@@ -99,6 +108,7 @@ kernel_enterKernelMode()
   unsigned modeFlag = _kernel_disableInts() << 1 | (currentThread != 0);
   currentThreadSave = currentThread;
   currentThread = 0;
+  kernel_memoryBarrier();
   return modeFlag;
 }
 
@@ -110,6 +120,7 @@ kernel_exitKernelMode(unsigned modeFlag)
   unsigned intsDisabled = modeFlag & 2;
   if (exitMode) {
     currentThread = currentThreadSave;
+    kernel_memoryBarrier();
   }
   _kernel_enableInts(intsDisabled);  
 }
@@ -349,9 +360,9 @@ _from_asm_kernel_tick(unsigned int *sp)
   _kernel_checkStack();
  
   currentThread = _kernel_schedule();
+  kernel_memoryBarrier();
 
-
-  _kernel_resume_asm(threadTable[currentThread].sp);
+  JMP_kernel_resume_asm(threadTable[currentThread].sp);
 }
 
 
@@ -368,20 +379,20 @@ _from_asm_kernel_blocked(unsigned int *sp)
   _kernel_checkStack();
 
   currentThread = _kernel_scheduleFromBlocked();
+  kernel_memoryBarrier();
 
-  _kernel_resume_asm(threadTable[currentThread].sp);
+  JMP_kernel_resume_asm(threadTable[currentThread].sp);
 }
 
-
-/* called from kernel_asm.S via INT_TRAPA37 - ints disabled before this is called */
-void 
-_from_asm_kernel_kill(int status, int context)
+static void 
+_kernel_threadKill(int status)
 {
   KERNEL_ASSERT_INTERRUPTS_DISABLED();
 
   _thread_entry_t *entry = &threadTable[currentThread];
   unsigned long _currentThreadSave = currentThread;
   currentThread = 0;
+  kernel_memoryBarrier();
 
   unsigned i;
   for (i = 0; i < _thread_historyMax; i++) {
@@ -418,14 +429,35 @@ _from_asm_kernel_kill(int status, int context)
   memset(&_signalHandlers[_currentThreadSave].handlers, 0, sizeof(_signalHandlers[_currentThreadSave].handlers));
 
   currentThread = _currentThreadSave;
+  kernel_memoryBarrier();
 
   _kernel_checkStack();
-
-  currentThread = _kernel_schedule();
-
-  _kernel_resume_asm(threadTable[currentThread].sp);
 }
 
+/* called from kernel_asm.S via INT_TRAPA37 - ints disabled before this is called */
+void 
+_from_asm_kernel_kill(int status, int context)
+{
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
+
+  _kernel_threadKill(status);
+  currentThread = _kernel_schedule();
+  kernel_memoryBarrier();
+  JMP_kernel_resume_asm(threadTable[currentThread].sp);
+}
+
+static inline int _kernel_threadGetIndex(thread_h tid)
+{
+  KERNEL_ASSERT_INTERRUPTS_DISABLED();
+
+  for (unsigned i = 0; i < _thread_max; i++) {
+    if (threadTable[i].tid == tid) {
+      return i;
+    }
+  }
+
+  return -1;
+}
 
 /* called from kernel_asm.S via INT_TRAPA38 - ints disabled before this is called */
 void
@@ -436,45 +468,36 @@ _from_asm_kernel_kill_thread(unsigned* sp, thread_h tid)
   threadTable[currentThread].sp = sp;
   threadTable[currentThread].state = _THREAD_BLOCKED;
 
-  unsigned i;
-  for (i = 0; i < _thread_max; i++) {
-    if (threadTable[i].tid == tid) {
-      currentThread = i;
-      break;
-    }
+  int threadIndex = _kernel_threadGetIndex(tid);
+
+  if (threadIndex == -1) {
+    panic("_from_asm_kernel_kill_thread: thread not found");
+  } else {
+    currentThread = threadIndex;
+    kernel_memoryBarrier();
   }
-
-  kernel_memoryBarrier();
-
-  if (i == _thread_max) {
-    currentThread = _kernel_schedule();
-    _kernel_resume_asm(threadTable[currentThread].sp);
-  }
-
-  //simulator_printf("kill thread %d [%d]", tid, currentThread);
 
   fds_t* fds = &threadTable[currentThread].fd;
 
   extern void __file_close(int file);
 
   if (fds->_stdin != STDIN_FILENO) {
-    //simulator_printf("_from_asm_kernel_kill_thread: closing stdin %d\n", fds->_stdin);
     __file_close(fds->_stdin);
   }
   if (fds->_stdout != STDOUT_FILENO) {
-    //simulator_printf("_from_asm_kernel_kill_thread: closing stdout %d\n", fds->_stdout);
     __file_close(fds->_stdout);
   }
   if (fds->_stderr != STDERR_FILENO) {
-    //simulator_printf("_from_asm_kernel_kill_thread: closing stderr %d\n", fds->_stderr);
     __file_close(fds->_stderr);
   }
 
   window_cleanup(tid);
 
-  //simulator_printf("about to call _from_asm_kernel_kill %d [%d] %x", tid, currentThread, threadTable[currentThread].argv);
-  
-  _from_asm_kernel_kill(1, 0);
+  _kernel_threadKill(1);
+
+  currentThread = _kernel_schedule();
+  kernel_memoryBarrier();
+  JMP_kernel_resume_asm(threadTable[currentThread].sp);
 }
 
 
@@ -500,7 +523,8 @@ kernel_init(int (*ptr)(int argc, char** argv), const char* version)
   
 
   _kernel_threadCreate(currentThread, 0, 0, ptr, argv, 0);
-  _kernel_resume_asm(threadTable[currentThread].sp);
+  JMP_kernel_resume_asm(threadTable[currentThread].sp);
+
 }
 
 
@@ -827,6 +851,7 @@ unsigned
 _kernel_newlib_lock_acquire_recursive(_LOCK_RECURSIVE_T* lock)
 {
   thread_h tid = kernel_threadGetId();
+
   for (;;) {
     kernel_spinLock(&lock->lock);
     if (lock->thread == 0) {
@@ -860,9 +885,9 @@ _kernel_newlib_lock_release_recursive(_LOCK_RECURSIVE_T* lock)
   kernel_spinLock(&lock->lock);
 
 #ifdef _KERNEL_ASSERTS
+  
   if (lock->thread != (unsigned)tid) {
-    if (lock->count == 0) { //? Never locked maybe ?
-      panic("_kernel_newlib_lock_release_recursive: lock->thread != tid (count = 0)");
+    if (lock->count == 0 && lock->thread == 0) {
       kernel_unlock(&lock->lock);
       return;
     }
@@ -965,7 +990,7 @@ kernel_threadKill(thread_h tid)
 {
   //simulator_printf("_kernel_threadExecSignalHandler: %x %d %x %x\n", handler, sig, sp);
   handler(sig);
-  _kernel_resume_asm(sp);  
+  JMP_kernel_resume_asm(sp);  
   
 }
 
@@ -974,19 +999,9 @@ kernel_threadQueueSignalHandler(thread_h tid, kernel_signal_handler_t handler, i
 {
   _threadTable_lock();
 
-  unsigned threadIndex;
+  int threadIndex = _kernel_threadGetIndex(tid);
 
-  unsigned i;
-  for (i = 0; i < _thread_max; i++) {
-    if (threadTable[i].tid == tid) {
-      threadIndex = i;
-      break;
-    }
-  }
-
-  if (i == _thread_max) {
-    kernel_memoryBarrier();
-    //simulator_printf("kernel_threadQueueSignalHandler: tid %d not found\n", tid);
+  if (threadIndex == -1) {
     _threadTable_unlock();
     return;
   }
