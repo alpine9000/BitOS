@@ -52,6 +52,19 @@ typedef struct {
   unsigned behaviour;
 } console_control_t;
 
+typedef enum {
+    _THREAD_DEAD = 0,
+    _THREAD_RUNNING = 1,
+    _THREAD_WAIT = 2,
+    _THREAD_BLOCKED = 3
+} thread_state_t;
+
+typedef struct {
+  thread_h tid;
+  thread_state_t state;
+  char* name;
+} thread_status_t;
+  
 typedef void (*kernel_signal_handler_t) (int);
 
 #define STDIN_FILENO    0       /* standard input file descriptor */

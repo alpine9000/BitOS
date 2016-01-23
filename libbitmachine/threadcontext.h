@@ -36,3 +36,4 @@
 #define STACK_OFFSET_PR    35
 #define STACK_OFFSET_PC    36
 #define STACK_OFFSET_SR    37
+#define STACK_OFFSET_BASE  38

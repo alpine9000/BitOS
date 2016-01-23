@@ -1,6 +1,5 @@
 #pragma once
 
-#include <sys/lock.h>
 #include "types.h"
 
 struct tms;
@@ -19,8 +18,11 @@ kernel_times (struct tms *tp);
 char* 
 kernel_getcwd(char *buf, unsigned size);
 
-void 
-kernel_stats();
+thread_status_t**
+kernel_threadGetStats();
+
+void
+kernel_threadFreeStats(thread_status_t** stats);
 
 void     
 kernel_enableInts(unsigned enable);
@@ -82,37 +84,6 @@ kernel_spinLock(void* ptr);
 void     
 kernel_unlock(void* ptr);
 
-void 
-_kernel_newlib_lock_init_recursive(_LOCK_RECURSIVE_T* lock);
-
-void 
-_kernel_newlib_lock_close_recursive(_LOCK_RECURSIVE_T* lock);
-
-unsigned 
-_kernel_newlib_lock_acquire_recursive(_LOCK_RECURSIVE_T* lock);
-
-unsigned 
-_kernel_newlib_lock_try_acquire_recursive(_LOCK_RECURSIVE_T* lock);
-
-void 
-_kernel_newlib_lock_release_recursive(_LOCK_RECURSIVE_T* lock);
-
-
-void 
-_kernel_newlib_lock_init(unsigned* lock);
-
-void 
-_kernel_newlib_lock_close(unsigned* lock);
-
-unsigned 
-_kernel_newlib_lock_acquire(unsigned* lock);
-
-unsigned 
-_kernel_newlib_lock_try_acquire(unsigned* lock);
-
-void 
-_kernel_newlib_lock_release(unsigned* lock);
-
 
 kernel_signal_handler_t*
 kernel_threadGetSignalHandler(thread_h tid);
@@ -144,7 +115,8 @@ kernel_version();
 
 #else //_KERNEL_BUILD
 
-#define kernel_stats() _bft->kernel_stats()
+#define kernel_threadGetStats() _bft->kernel_threadGetStatus()
+#define kernel_threadFreeStats(x) _bft->kernel_threadFreeStats(x)
 #define malloc_stats() _bft->malloc_stats()
 #define kernel_threadBlocked() _bft->kernel_threadBlocked()
 #define kernel_threadSetWindow(i) _bft->kernel_threadSetInfo(KERNEL_THREAD_WINDOW, (unsigned)i)

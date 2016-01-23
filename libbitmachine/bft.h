@@ -19,7 +19,7 @@ typedef struct {
   void (*kernel_threadDie)(int status)__attribute__ ((noreturn));
   window_h (*kernel_threadGetWindow)(void);
   thread_h (*kernel_threadSpawn)(int (*entry)(int argc, char**argv),  char**argv, fds_t* fds);
-  void (*kernel_stats)();
+  thread_status_t** (*kernel_threadGetStatus)();
   fds_t* (*kernel_threadGetFds)(void);
   void (*malloc_stats)();
 
@@ -98,6 +98,7 @@ typedef struct {
   int (*signal_registerHandler)(kernel_signal_handler_t *handler,  int sig, kernel_signal_handler_t func);
   int (*signal_fire)(thread_h tid, int sig);
 
+  void (*kernel_threadFreeStats)(thread_status_t** stats);
 
 } _bft_t;
 

@@ -218,11 +218,10 @@ shell_argvDup(int argc, char** argv, int skip)
   return 0;
 }
 
-static int
-sh(int argc, char** argv)
+int
+shell_execBuiltinFromArgv(int argc, char** argv, int argvSkip)
 {
-  if (!(argc > 2)) { // /bin/sh -c rm blah blah2
-    printf("%s: usage: %s -c command\n", argv[0], argv[0]);
+  if (!(argc > argvSkip)) { 
     return 1;
   }
 
@@ -231,10 +230,33 @@ sh(int argc, char** argv)
   char* cmd = argv_reconstruct(argv);
   shell_globArgv(cmd, &argc2, &argv2);
   free(cmd);
+  char** argv3 = shell_argvDup(argc2, argv2, argvSkip);
+  shell_execBuiltin(argc2-argvSkip, argv3);
+  argv_free(argv2);
+  argv_free(argv3);
+  return 0;
+
+}
+
+static int
+sh(int argc, char** argv)
+{
+  if (!(argc > 2)) { // /bin/sh -c rm blah blah2
+    printf("%s: usage: %s -c command\n", argv[0], argv[0]);
+    return 1;
+  }
+
+  /*  int argc2;
+  char** argv2;
+  char* cmd = argv_reconstruct(argv);
+  shell_globArgv(cmd, &argc2, &argv2);
+  free(cmd);
   char** argv3 = shell_argvDup(argc2, argv2, 2);
   shell_execBuiltin(argc2-2, argv3);
   argv_free(argv2);
-  argv_free(argv3);
+  argv_free(argv3);*/
+
+  shell_execBuiltinFromArgv(argc, argv, 2); // sh -c
   return 0;
 }
 
@@ -779,9 +801,47 @@ kernel(int argc, char** argv)
 
 static int
 shell_kernel_stats(int argc, char** argv)
-{
-  kernel_stats();
+{  
+  char buffer[PATH_MAX];
+  thread_status_t** stats = kernel_threadGetStats();
+
+  char* lookup[] = {
+    "DEAD",
+    "RUNNING",
+    "WAIT",
+    "BLOCKED"
+  };
+
+  int tidColumnWidth = 3;
+  int stateColumnWidth = 5;
+  
+  for (int i = 0; stats[i] != 0; i++) {
+    snprintf(buffer, PATH_MAX, "%d", (unsigned) stats[i]->tid);
+    int len = strlen(buffer);
+    if (len > tidColumnWidth) {
+      tidColumnWidth = len;
+    }
+    len = strlen(lookup[stats[i]->state]);
+    if (len > stateColumnWidth) {
+      stateColumnWidth = len;
+    }
+  }
+  
+
+  sprintf(buffer, "%%%ds %%-%ds %%s\n", tidColumnWidth, stateColumnWidth);
+     
+  printf(buffer, "TID", "STATE", "CMD");
+
+  sprintf(buffer, "%%%dd %%-%ds %%s\n", tidColumnWidth, stateColumnWidth);
+
+  for (int i = 0; stats[i] != 0; i++) {
+    printf(buffer, (unsigned)stats[i]->tid, lookup[stats[i]->state], stats[i]->name);
+  }
+
+
+  kernel_threadFreeStats(stats);
   return 0;
+
 }
 
 static int 
@@ -882,7 +942,7 @@ shell_exec(char* cmd)
       if (strcmp(argv[0], builtins[i].name) == 0) {
 	if (builtins[i].spawn) {
 	  kernel_threadSpawn(builtins[i].function, argv, 0);
-	  // argv free'd by kernel on thread exit
+	  argv_free(argv);
 	  return;
 	} else {
 	  builtins[i].function(argv_argc(argv), argv);

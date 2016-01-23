@@ -18,6 +18,9 @@ shell_filesAreIdentical(char* p1, char* p2);
 void 
 shell_exec(char* cmd);
 
+int
+shell_execBuiltinFromArgv(int argc, char** argv, int argvSkip);
+
 void
 shell_globArgv(char* command, int* out_argc, char*** out_argv);
 

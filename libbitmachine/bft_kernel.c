@@ -8,6 +8,7 @@
 #include "simulator.h"
 #include "file.h"
 #include "_termios.h"
+#include "lock.h"
 
 extern void 
 dlmalloc_stats(void);
@@ -33,7 +34,7 @@ _bft_t __bft  = {
   &kernel_threadDie,
   &kernel_threadGetWindow,
   &kernel_threadSpawn,
-  &kernel_stats,
+  &kernel_threadGetStats,
   &kernel_threadGetFds,
   &dlmalloc_stats,
 
@@ -111,7 +112,9 @@ _bft_t __bft  = {
   &kernel_threadGetExitStatus,
 
   &signal_registerHandler,
-  &signal_fire
+  &signal_fire,
+
+  &kernel_threadFreeStats
 };
 
 _bft_t* _bft = &__bft;

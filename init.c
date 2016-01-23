@@ -3,9 +3,8 @@
 #include "gfx.h"
 #include "kernel.h"
 #include "window.h"
-#include "argv.h"
 #include "thread.h"
-#include "shell.h"
+#include "argv.h"
 
 #ifdef GITVERSION
 static const char* version=GITVERSION;
@@ -13,36 +12,15 @@ static const char* version=GITVERSION;
 static const char* version="local";
 #endif
 
-extern void 
-memory_cleanupThread(unsigned);
-
-extern void 
-shell();
-
-int 
-runShell(int argc, char** argv)
-{
-  unsigned w = 320, h = 200;
-  window_h window = window_create("Shell", 0, 0, w, h);
-  gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
-  kernel_threadSetWindow(window);
-  shell(); 
-  window_close(window);
-  kernel_threadDie(0);
-  return 0;
-}
-
 int
 go(int argc, char** argv)
 {
-  if (strncmp(argv[0], "test", 5) == 0) {
-    kernel_threadSpawn(&shell_test, argv, 0);
+  if (strcmp(argv[0], "kernel") == 0) {
+    thread_spawn("bsh");
   } else {
-    if (thread_spawn("bsh") == INVALID_THREAD) {
-      kernel_threadSpawn(&runShell, argv_build("bsh"), 0); 
-    }
+    char* command = argv_reconstruct(argv);
+    thread_spawn(command);
   }
-
   window_loop();
   return 0;
 }

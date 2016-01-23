@@ -1,5 +1,6 @@
 #pragma once
-#include "bft.h"
+
+#include "types.h"
 
 #define WINDOWS_MAX 20
 
@@ -88,6 +89,7 @@ window_cleanup(thread_h owner);
 
 #else
 
+#include "bft.h"
 #define window_create _bft->window_create
 #define window_getFrameBuffer _bft->window_getFrameBuffer
 #define window_close _bft->window_close

@@ -1,29 +1,16 @@
-#include <sys/syslimits.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/times.h>
-#include <unistd.h>
+#include <stddef.h>
+#include <sys/syslimits.h> // PATH_MAX
 #include "kernel.h"
 #include "peripheral.h"
 #include "panic.h"
 #include "argv.h"
 #include "simulator.h"
 #include "memory.h"
-#include "console.h"
 #include "window.h"
 #include "threadcontext.h"
 
-extern void* 
-malloc(unsigned);
-
-extern void 
-free(void*ptr);
-
 extern void 
 _kernel_resume_asm(unsigned int *sp);
-
-extern unsigned 
-_kernel_atomic_lock_asm(void* ptr);
 
 
 #define _thread_max 16
@@ -37,22 +24,11 @@ _kernel_atomic_lock_asm(void* ptr);
 
 static volatile unsigned _kernel_thread_stack_size_bytes = _thread_stack_size_bytes;
 
-enum {
-    _THREAD_DEAD = 0,
-    _THREAD_RUNNING = 1,
-    _THREAD_WAIT = 2,
-    _THREAD_BLOCKED = 3,
-};
-
 const char* _version;
-
-static char* states[] = {
-  "D", "R", "W", "B"
-};
 
 typedef struct {
   thread_h tid;
-  unsigned state;
+  unsigned state; // TODO: thread_state_t
   unsigned *sp;
   window_h window;
   unsigned* thread_stack;
@@ -189,6 +165,77 @@ _kernel_schedule()
 }
 
 
+static void *
+_kernel_memset(void *v,
+	       int c,
+	       size_t length)
+{
+  char* p = v;
+  for (unsigned i = 0; i < length; i++) {
+    *p++ = c;
+  }
+  return v;
+}
+
+
+static int
+_kernel_strlen(char* s)
+{
+  for (int i = 0; i != 0 && i < PATH_MAX; i++) {
+    if (s[i] == 0) {
+      return i;
+    }
+  }
+
+  return PATH_MAX;
+}
+
+static char*
+_kernel_strncpy(char *s1, const char *s2, size_t n)
+{
+  char *s = s1;
+  while (n > 0 && *s2 != '\0') {
+    *s++ = *s2++;
+    --n;
+  }
+  while (n > 0) {
+    *s++ = '\0';
+    --n;
+  }
+  return s1;
+}
+
+static char** 
+_kernel_argvDup(char** argv)
+{
+  int argc = argv_argc(argv);
+
+  if (argv != 0) {
+    char **vector = memory_kmalloc((argc+1)*sizeof(char*));
+    int i;
+    for (i = 0;i  <  argc; i++) {
+      vector[i] = memory_kmalloc(_kernel_strlen(argv[i])+1);
+      _kernel_strncpy(vector[i], argv[i], PATH_MAX);
+    }
+    vector[i] = 0;
+    return vector;
+  }
+
+  return 0;
+}
+
+void 
+_kernel_argvFree (char **vector)
+{
+  if (vector != NULL) {
+    for (char** scan = vector; *scan != NULL; scan++) {
+      memory_free(*scan);
+    }
+    memory_free(vector);
+  }
+}
+
+
 static thread_h 
 _kernel_threadCreate(unsigned int threadIndex, unsigned* image, unsigned imageSize, int(* ptr)(int,char**),  char**argv, fds_t* fds)
 {
@@ -197,7 +244,7 @@ _kernel_threadCreate(unsigned int threadIndex, unsigned* image, unsigned imageSi
   _thread_entry_t *entry = &threadTable[threadIndex];
   entry->tid = (thread_h)nextTid++;
   entry->argc = argv_argc(argv);
-  entry->argv = argv;
+  entry->argv = _kernel_argvDup(argv);
   entry->image = image;
   entry->imageSize = imageSize;
   entry->state = _THREAD_WAIT;
@@ -215,15 +262,15 @@ _kernel_threadCreate(unsigned int threadIndex, unsigned* image, unsigned imageSi
     entry->fd._stderr = STDERR_FILENO;
   }
 
-  entry->thread_stack[(_thread_stack_size_words)-1] = 0x00; // SR - all ints enabled
+  entry->sp = (unsigned int*)&entry->thread_stack[(_thread_stack_size_words)-STACK_OFFSET_BASE];
+
+  entry->sp[STACK_OFFSET_SR] =  0x00; // SR - all ints enabled
 
   if (ptr != 0) {
-    entry->thread_stack[(_thread_stack_size_words)-2] = ((unsigned int)ptr); // PC
-    entry->thread_stack[(_thread_stack_size_words)-10] = (unsigned) entry->argc; // R4
-    entry->thread_stack[(_thread_stack_size_words)-11] = (unsigned) argv; // R5
+    entry->sp[STACK_OFFSET_PC] = ((unsigned int)ptr); // PC
+    entry->sp[STACK_OFFSET_R4] = (unsigned) entry->argc; // R4
+    entry->sp[STACK_OFFSET_R5] = (unsigned) argv; // R5
   }
-  
-  entry->sp = (unsigned int*)&entry->thread_stack[(_thread_stack_size_words)-38];
 
   return entry->tid;
 }
@@ -254,7 +301,7 @@ _kernel_threadSetInfo(unsigned threadIndex, thread_info_t type, unsigned info)
     entry->window = (window_h)info;
     return 1;
   case KERNEL_CURRENT_WORKING_DIRECTORY:
-    strncpy(threadTable[threadIndex].cwd, (char*)info, PATH_MAX);
+    _kernel_strncpy(threadTable[threadIndex].cwd, (char*)info, PATH_MAX);
     return 1;
   }
 
@@ -324,11 +371,8 @@ void
 kernel_assertKernelMode(unsigned pr)
 {
 #ifdef _KERNEL_ASSERTS
-  if (currentThread != 0) {
-    
-    static char buffer[1024];
-    sprintf(buffer, "kernel_assertKernelMode: not in kernel mode pr = 0x%x", pr);
-    panic(buffer);
+  if (currentThread != 0) {    
+    panic("kernel_assertKernelMode: not in kernel mode");
   }
 #endif
 }
@@ -385,36 +429,38 @@ _from_asm_kernel_blocked(unsigned int *sp)
 }
 
 static void 
-_kernel_threadKill(int status)
+_kernel_threadKill(int status, int saveHistory)
 {
   KERNEL_ASSERT_INTERRUPTS_DISABLED();
 
   _thread_entry_t *entry = &threadTable[currentThread];
-  unsigned long _currentThreadSave = currentThread;
-  currentThread = 0;
-  kernel_memoryBarrier();
 
-  unsigned i;
-  for (i = 0; i < _thread_historyMax; i++) {
-    if (threadHistory[i].tid == 0) {
-      threadHistory[i].exitStatus = status;
-      threadHistory[i].tid = entry->tid;
-      threadHistory[i]._stdout = entry->fd._stdout;
-      break;
+  //  unsigned long _currentThreadSave = currentThread;
+  //  kernel_memoryBarrier();
+  
+  if (saveHistory) {
+    unsigned i;
+    for (i = 0; i < _thread_historyMax; i++) {
+      if (threadHistory[i].tid == 0) {
+	threadHistory[i].exitStatus = status;
+	threadHistory[i].tid = entry->tid;
+	threadHistory[i]._stdout = entry->fd._stdout;
+	break;
+      }
     }
+    
+    if (i == _thread_historyMax) {
+      panic("_from_asm_kernel_kill: exceeded thread history limits");
+    }    
   }
-
-  if (i == _thread_historyMax) {
-    panic("_from_asm_kernel_kill: exceeded thread history limits");
-  }    
     
   if (entry->argv != 0) {
-      argv_free(entry->argv);
-      entry->argv = 0;
+    _kernel_argvFree(entry->argv);
+    entry->argv = 0;
   }
 
   if (entry->image != 0) {
-    free(entry->image);
+    memory_free(entry->image);
     entry->image = 0;
     // I think we might be able to call this for everyone now as only "client" allocations are tracked
     // We only want to do this if we are in "client" world, otherwise we will be free'ing shared crap
@@ -425,11 +471,13 @@ _kernel_threadKill(int status)
 
   entry->state = _THREAD_DEAD;
   entry->tid = 0;
-  memset(&entry->fd, 0, sizeof(entry->fd));
-  memset(&_signalHandlers[_currentThreadSave].handlers, 0, sizeof(_signalHandlers[_currentThreadSave].handlers));
+  _kernel_memset(&entry->fd, 0, sizeof(entry->fd));
+  //  _kernel_memset(&_signalHandlers[_currentThreadSave].handlers, 0, sizeof(_signalHandlers[_currentThreadSave].handlers));
+  _kernel_memset(&_signalHandlers[currentThread].handlers, 0, sizeof(_signalHandlers[currentThread].handlers));
 
-  currentThread = _currentThreadSave;
-  kernel_memoryBarrier();
+
+  //  currentThread = _currentThreadSave;
+  //  kernel_memoryBarrier();
 
   _kernel_checkStack();
 }
@@ -440,7 +488,7 @@ _from_asm_kernel_kill(int status, int context)
 {
   KERNEL_ASSERT_INTERRUPTS_DISABLED();
 
-  _kernel_threadKill(status);
+  _kernel_threadKill(status, 1);
   currentThread = _kernel_schedule();
   kernel_memoryBarrier();
   JMP_kernel_resume_asm(threadTable[currentThread].sp);
@@ -493,7 +541,7 @@ _from_asm_kernel_kill_thread(unsigned* sp, thread_h tid)
 
   window_cleanup(tid);
 
-  _kernel_threadKill(1);
+  _kernel_threadKill(1, 0);
 
   currentThread = _kernel_schedule();
   kernel_memoryBarrier();
@@ -514,17 +562,14 @@ kernel_init(int (*ptr)(int argc, char** argv), const char* version)
   ktrace_reset();
   currentThread = 0;
   for (int i = 0; i < _thread_max; i++) {
-    threadTable[i].thread_stack = malloc(_thread_stack_size_bytes);
+    threadTable[i].thread_stack = memory_kmalloc(_thread_stack_size_bytes);
     threadTable[i].thread_stack[0] = _KERNEL_STACK_CANARY;
   }
 
   char** argv = simulator_kernelArgv();
 
-  
-
   _kernel_threadCreate(currentThread, 0, 0, ptr, argv, 0);
   JMP_kernel_resume_asm(threadTable[currentThread].sp);
-
 }
 
 
@@ -615,7 +660,7 @@ kernel_threadLoad(unsigned* image, unsigned imageSize, int (*entry)(int,char**),
   if (threadIndex > 0) {
     tid = _kernel_threadCreate(threadIndex, image, imageSize, entry, argv, fds);
     if (clone_cwd) {
-      strncpy(threadTable[threadIndex].cwd, threadTable[currentThread].cwd, PATH_MAX);      
+      _kernel_strncpy(threadTable[threadIndex].cwd, threadTable[currentThread].cwd, PATH_MAX);      
     }
   }
   _threadTable_unlock();
@@ -639,27 +684,6 @@ kernel_threadBlocked()
   
   __asm__ volatile("trapa #36":::"memory");
 }
-
-
-void
-kernel_spinLock(void* ptr)
-{
-  for(;;) {
-    if ( _kernel_atomic_lock_asm(ptr)) {
-      return;
-    } else {
-      kernel_threadBlocked();
-    }
-  }
-}
-
-
-void
-kernel_unlock(void* ptr)
-{
-  *(char *)ptr = 0;
-}
-
 
 window_h
 kernel_threadGetWindow()
@@ -695,11 +719,11 @@ char*
 kernel_getcwd(char *buf, unsigned size)
 {
   if (buf == 0) {
-    buf = malloc(PATH_MAX);
+    buf = memory_malloc(PATH_MAX);
     size = PATH_MAX;
   }
 
-  strncpy(buf, threadTable[currentThread].cwd, size);
+  _kernel_strncpy(buf, threadTable[currentThread].cwd, size);
   return buf;
 }
 
@@ -723,7 +747,7 @@ kernel_times (struct tms *tp)
      tms_cutime  The sum of the tms_utimes and tms_cutimes of the child processes.
 
      tms_cstime  The sum of the tms_stimes and tms_cstimes of the child processes.
-     printf("_times_r called\n");*/
+  */
 
   
   
@@ -790,6 +814,7 @@ int
 kernel_threadGetExitStatus(thread_h tid)
 {
   int status = -1, success, count = 0;
+
   do {
     success = _kernel_threadGetExitStatus(tid, &status);
     if (!success) {
@@ -801,23 +826,53 @@ kernel_threadGetExitStatus(thread_h tid)
 }
 
 
-void
-kernel_stats()
+
+thread_status_t**
+kernel_threadGetStats()
 {
   _threadTable_lock();
+
+  unsigned numThreads = 0;
   for (int i = 0; i < _thread_max; i++) {
     _thread_entry_t *entry = &threadTable[i];
-    //    if (entry->state != _THREAD_DEAD) {
-      char* name = "";
-      if (entry->state != _THREAD_DEAD) {
-	if (entry->argc > 0) {
-	  name = entry->argv[0];
-	}
-      }
-      printf("%d: %s %d i: %X %X s: %X %X %X %s\n", (int)entry->tid,  states[entry->state], entry->fd._stdout, (unsigned)entry->image, (unsigned)(entry->image) + entry->imageSize, (unsigned)&entry->thread_stack[0], (unsigned)entry->sp, (unsigned)((char*)&entry->thread_stack[0])+_thread_stack_size_bytes, name);
-      //    }
+    if (entry->state != _THREAD_DEAD) {
+      numThreads++;
+    }
   }
+
+
+  thread_status_t** status = memory_kmalloc((sizeof(thread_status_t*)*numThreads)+1);
+  status[numThreads] = 0;
+
+  for (int i = 0; i < _thread_max; i++) {
+    _thread_entry_t *entry = &threadTable[i];
+    if (entry->state != _THREAD_DEAD) {
+      int argvLen = _kernel_strlen(entry->argv[0]);
+      status[i] = memory_kmalloc(sizeof(thread_status_t));
+      status[i]->state = entry->state;
+      status[i]->tid = entry->tid;
+      status[i]->name = memory_kmalloc(argvLen+1);
+      _kernel_strncpy(status[i]->name, entry->argv[0], argvLen);
+    }
+  }
+
   _threadTable_unlock();
+
+  return status;
+}
+
+void
+kernel_threadFreeStats(thread_status_t** stats)
+{
+
+  if (stats) {
+    for (int i = 0; stats[i] != 0; i++) {
+      memory_free(stats[i]->name);
+      memory_free(stats[i]);
+    }
+
+    memory_free(stats);
+  }
 }
 
 
@@ -829,116 +884,6 @@ _exit(int c)
 }
 
 
-void 
-_kernel_newlib_lock_init_recursive(_LOCK_RECURSIVE_T* lock) 
-{
-  lock->thread = 0;
-  lock->count = 0;
-  lock->lock = 0;
-}
-
-
-void 
-_kernel_newlib_lock_close_recursive(_LOCK_RECURSIVE_T* lock)
-{
-  lock->thread = 0;
-  lock->count = 0;
-  lock->lock = 0;
-}
-
-
-unsigned 
-_kernel_newlib_lock_acquire_recursive(_LOCK_RECURSIVE_T* lock)
-{
-  thread_h tid = kernel_threadGetId();
-
-  for (;;) {
-    kernel_spinLock(&lock->lock);
-    if (lock->thread == 0) {
-      lock->thread = (unsigned)tid;
-    }
-    if (lock->thread == (unsigned)tid) {
-      lock->count++;
-      kernel_unlock(&lock->lock);
-      return lock->count;
-    }
-    kernel_unlock(&lock->lock);
-  }
-}
-
- 
-unsigned 
-_kernel_newlib_lock_try_acquire_recursive(_LOCK_RECURSIVE_T* lock)
-{
-  panic("_kernel_newlib_lock_try_acquire_recursive: not implemented");
-  return 0;
-}
-
-
-void 
-_kernel_newlib_lock_release_recursive(_LOCK_RECURSIVE_T* lock)
-{
-#ifdef _KERNEL_ASSERTS
-  thread_h tid = kernel_threadGetId();
-#endif
-
-  kernel_spinLock(&lock->lock);
-
-#ifdef _KERNEL_ASSERTS
-  
-  if (lock->thread != (unsigned)tid) {
-    if (lock->count == 0 && lock->thread == 0) {
-      kernel_unlock(&lock->lock);
-      return;
-    }
-    panic("_kernel_newlib_lock_release_recursive: lock->thread != tid");
-  }
-#endif
-
-  lock->count--;
-  if (lock->count == 0) {
-    lock->thread = 0;
-  }
-
-  kernel_unlock(&lock->lock);
-}
-
-
-void 
-_kernel_newlib_lock_init(unsigned* lock)
-{
-  *lock = 0;
-}
-
-
-void 
-_kernel_newlib_lock_close(unsigned* lock) 
-{
-  panic("_kernel_newlib_lock_close:  not implemented");
-}
-
-
-unsigned 
-_kernel_newlib_lock_acquire(unsigned* lock) 
-{
-  kernel_spinLock(lock);
-
-  return 0;
-}
-
-
-unsigned 
-_kernel_newlib_lock_try_acquire(unsigned* lock) 
-{
-  panic("_kernel_newlib_lock_try_acquire: not implemented");
-  return 0;
-}
-
- 
-void _kernel_newlib_lock_release(unsigned* lock) 
-{
-  *lock = 0;
-}
 
 int 
 kernel_threadWait(thread_h tid)
@@ -988,7 +933,6 @@ kernel_threadKill(thread_h tid)
  void
  _kernel_threadExecSignalHandler(kernel_signal_handler_t handler, int sig, unsigned* sp)
 {
-  //simulator_printf("_kernel_threadExecSignalHandler: %x %d %x %x\n", handler, sig, sp);
   handler(sig);
   JMP_kernel_resume_asm(sp);  
   

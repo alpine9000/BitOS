@@ -81,6 +81,10 @@ int main(int argc, char**argv)
 
   setbuf(stdout, NULL);
 
+  if (argc > 1) {
+    shell_execBuiltinFromArgv(argc, argv, 1);
+  }
+
   char* line = 0;
   while (!_shell_complete) {
     if (line != 0) {

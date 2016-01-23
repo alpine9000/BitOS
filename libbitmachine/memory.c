@@ -72,6 +72,22 @@ memory_malloc(size_t size)
   return ptr;
 }
 
+void*
+memory_kmalloc(size_t size)
+{
+  _memory_lock();
+  
+  void* ptr = dlmalloc(size);
+  
+  peripheral.malloc.mallocSize = size;
+  peripheral.malloc.pid = 0;
+  peripheral.malloc.mallocAddress = (unsigned)ptr;
+
+  _memory_unlock();
+
+  return ptr;
+}
+
 void 
 memory_free(void *ptr)
 {
@@ -120,7 +136,7 @@ memory_cleanupThread(thread_h tid)
     unsigned address;
     while ((address = peripheral.malloc.mallocAddress) != 0) {
       //if (!kernel_threadGetIsActiveImage((void*)address)) {
-	free((void*)address);
+	memory_free((void*)address);
       //} 
     }
 

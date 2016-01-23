@@ -10,6 +10,9 @@ memory_sbrk(ptrdiff_t incr);
 void* 
 memory_malloc(size_t size);
 
+void*
+memory_kmalloc(size_t size);
+
 void  
 memory_free(void*);
 
@@ -18,9 +21,6 @@ memory_realloc(void* ptr, size_t size);
 
 void  
 memory_cleanupThread(thread_h tid);
-
-void* 
-memory_clientMalloc(size_t size);
 
 extern unsigned _memory_total;
 

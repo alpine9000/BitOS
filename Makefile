@@ -9,7 +9,7 @@ CFLAGS=$(VERSION) -g $(OPTIMIZE) $(WARNINGS) -D_KERNEL_BUILD  -I/usr/local/sh-el
 CPPFLAGS = -D_KERNEL_BUILD $(OPTIMIZE) $(CPP_WARNINGS)  -m2e -falign-jumps  -I./libbitmachine -fno-rtti -fno-exceptions
 LDFLAGS= -L$(LIB_PATH)sh-elf/lib/m2e/ -L/usr/local/sh-elf/lib/gcc/sh-elf/5.3.0/m2e/ -L/usr/local/sh-elf/lib
 
-LIBS =  /usr/local/sh-elf/sh-elf/lib/m2e/crt0.o -L.  -L./libbitmachine  --start-group -lwolf -lbitmachine -lshell -lc-kernel -lm -lgcc --end-group
+LIBS =  /usr/local/sh-elf/sh-elf/lib/m2e/crt0.o -L.  -L./libbitmachine  --start-group -lwolf -lbitmachine -lc-kernel -lm -lgcc --end-group
 
 IMG_OBJ= media/martini.o
 WOLF_MEDIA=apps/wolf/media/eagle.o apps/wolf/media/redbrick.o apps/wolf/media/purplestone.o apps/wolf/media/greystone.o apps/wolf/media/bluestone.o apps/wolf/media/mossy.o apps/wolf/media/wood.o apps/wolf/media/colorstone.o 
@@ -90,7 +90,7 @@ libwolf.a: $(WOLF_MEDIA)
 
 
 .SECONDARY:
-$(ELF_FILE): $(OBJ_FILES) libwolf.a libbitmachine/libc-kernel.a libbitmachine/libbitmachine.a libbitmachine/libshell.a
+$(ELF_FILE): $(OBJ_FILES) libwolf.a libbitmachine/libc-kernel.a libbitmachine/libbitmachine.a
 	$(LD) $(LDFLAGS) -T start.l -no-keep-memory -Map bin/bitos.map -o $(ELF_FILE) $(OBJ_FILES) $(LIBS) 
 
 strip:
