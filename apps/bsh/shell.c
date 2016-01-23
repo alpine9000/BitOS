@@ -1,4 +1,3 @@
-#undef _KERNEL_BUILD
 #include <glob.h>
 #include <sys/dirent.h>
 #include <sys/syslimits.h>
@@ -12,9 +11,10 @@
 #include <errno.h>
 #include <libgen.h>
 #include <signal.h>
+#include <sys/time.h>
+#include <sys/times.h>
 #include "bft.h"
 #include "kernel.h"
-#include "simulator.h"
 #include "console.h"
 #include "thread.h"
 #include "argv.h"
@@ -92,6 +92,12 @@ shell_time(int argc, char** argv);
 static int
 shell_kill(int argc, char** argv);
 
+static int
+shell_catchSignal(int argc, char** argv);
+
+static int
+shell_spawn(int argc, char** argv);
+
 typedef void(*arg_function)(int,char**);
 
 typedef struct {
@@ -127,7 +133,9 @@ static builtin_t builtins[] = {
   {"kernel", 0, kernel},
   {"touch", 0, touch},
   {"time", 0,shell_time},
-  {"kill", 0, shell_kill}
+  {"kill", 0, shell_kill},
+  {"catch", 0, shell_catchSignal},
+  {"spawn", 0, shell_spawn}
 };
 
 static unsigned numBuiltins = sizeof(builtins)/sizeof(builtin_t);
@@ -242,21 +250,23 @@ static int
 sh(int argc, char** argv)
 {
   if (!(argc > 2)) { // /bin/sh -c rm blah blah2
-    printf("%s: usage: %s -c command\n", argv[0], argv[0]);
+    printf("%s: usage: %s -C command\n", argv[0], argv[0]);
     return 1;
   }
+  
+  int dontQuit = 0;
+  if (strcmp(argv[1], "-dontquit") == 0) {
+    dontQuit = 1;
+  }
 
-  /*  int argc2;
-  char** argv2;
-  char* cmd = argv_reconstruct(argv);
-  shell_globArgv(cmd, &argc2, &argv2);
-  free(cmd);
-  char** argv3 = shell_argvDup(argc2, argv2, 2);
-  shell_execBuiltin(argc2-2, argv3);
-  argv_free(argv2);
-  argv_free(argv3);*/
+  shell_execBuiltinFromArgv(argc, argv, 2); // sh -C
 
-  shell_execBuiltinFromArgv(argc, argv, 2); // sh -c
+  if (dontQuit) {
+    for (;;) {
+      kernel_threadBlocked();
+    }
+  }
+
   return 0;
 }
 
@@ -656,6 +666,25 @@ diff(int argc, char** argv)
 }
 
 static int
+shell_spawn(int argc, char** argv)
+{
+  if (argc != 2) {
+    fprintf(stderr, "usage: %s command\n", argv[0]);
+  }
+
+  thread_h tid = thread_spawn(argv[1]);
+
+  if (tid == INVALID_THREAD) {
+    return -1;
+  }
+
+  setbuf(stdout, NULL);  
+  printf("%d\n", (unsigned)tid);
+
+  return 0;
+}
+
+static int
 shell_kill(int argc, char** argv)
 {
   if (argc == 2) {
@@ -664,10 +693,45 @@ shell_kill(int argc, char** argv)
     if (kill(pid, SIGINT) != 0) {
       printf("%s: failed\n", argv[0]);
     }
+
+  } else if (argc == 3) {
+    unsigned pid = atoi(argv[1]);
+    int signo = atoi(argv[1]);
+    printf("Sending %d to %d\n", signo, pid);
+    if (kill(pid, signo) != 0) {
+      printf("%s: failed\n", argv[0]);
+    }
   } else {
-    fprintf(stderr, "usage: %s tid\n", argv[0]);
+    fprintf(stderr, "usage: %s tid [signal number]\n", argv[0]);
   }
 
+  return 0;
+}
+
+void shell_signalHandler(int signo)
+{
+  printf("bsh: caught signal %d\n", signo);
+}
+
+int
+shell_catchSignal(int argc, char** argv)
+{
+  if (argc != 2) {
+    fprintf(stderr, "usage: %s signalNumber\n", argv[0]);
+    return -1;
+  }
+
+  int signo = atoi(argv[1]);
+  printf("bsh: catching signal %d...\n", signo);
+  if (signal(signo, shell_signalHandler) == SIG_ERR) {
+    fprintf(stderr, "%s: error: failed to register handler\n", argv[0]);
+    return -1;
+  }
+  
+  for(;;) {
+    kernel_threadBlocked();
+  }
+  
   return 0;
 }
 

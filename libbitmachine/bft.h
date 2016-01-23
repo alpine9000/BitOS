@@ -100,6 +100,7 @@ typedef struct {
 
   void (*kernel_threadFreeStats)(thread_status_t** stats);
 
+  thread_h (*kernel_threadGetIdForStdout)(unsigned fd);
 } _bft_t;
 
 extern _bft_t* _bft;

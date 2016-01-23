@@ -125,7 +125,7 @@ kernel_version();
 #define kernel_threadSpawn(x,v,f) _bft->kernel_threadSpawn(x,v,f)
 #define kernel_threadGetFds(x) _bft->kernel_threadGetFds(x)
 #define kernel_threadGetExitStatus(x) _bft->kernel_threadGetExitStatus(x)
-
+#define kernel_threadGetIdForStdout(x) _bft->kernel_threadGetIdForStdout(x)
 #endif
 
 #define KERNEL_MODE() unsigned __kernelMode = kernel_enterKernelMode();

@@ -462,12 +462,9 @@ _kernel_threadKill(int status, int saveHistory)
   if (entry->image != 0) {
     memory_free(entry->image);
     entry->image = 0;
-    // I think we might be able to call this for everyone now as only "client" allocations are tracked
-    // We only want to do this if we are in "client" world, otherwise we will be free'ing shared crap
-        memory_cleanupThread(entry->tid); // TODO: this is not the definitive way to say we are in client world [ better way will be to only save client mallocs' ]
+    memory_cleanupThread(entry->tid); 
   }
   
-  //  memory_cleanupThread(entry->tid); 
 
   entry->state = _THREAD_DEAD;
   entry->tid = 0;
@@ -841,18 +838,19 @@ kernel_threadGetStats()
   }
 
 
-  thread_status_t** status = memory_kmalloc((sizeof(thread_status_t*)*numThreads)+1);
+  thread_status_t** status = memory_kmalloc((sizeof(thread_status_t*)*(numThreads+1)));
   status[numThreads] = 0;
 
-  for (int i = 0; i < _thread_max; i++) {
+  for (int i = 0, y = 0; i < _thread_max; i++) {
     _thread_entry_t *entry = &threadTable[i];
     if (entry->state != _THREAD_DEAD) {
       int argvLen = _kernel_strlen(entry->argv[0]);
-      status[i] = memory_kmalloc(sizeof(thread_status_t));
-      status[i]->state = entry->state;
-      status[i]->tid = entry->tid;
-      status[i]->name = memory_kmalloc(argvLen+1);
-      _kernel_strncpy(status[i]->name, entry->argv[0], argvLen);
+      status[y] = memory_kmalloc(sizeof(thread_status_t));
+      status[y]->state = entry->state;
+      status[y]->tid = entry->tid;
+      status[y]->name = memory_kmalloc(argvLen+1);
+      _kernel_strncpy(status[y]->name, entry->argv[0], argvLen);
+      y++;
     }
   }
 
@@ -864,13 +862,11 @@ kernel_threadGetStats()
 void
 kernel_threadFreeStats(thread_status_t** stats)
 {
-
   if (stats) {
     for (int i = 0; stats[i] != 0; i++) {
       memory_free(stats[i]->name);
       memory_free(stats[i]);
     }
-
     memory_free(stats);
   }
 }

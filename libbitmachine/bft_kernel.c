@@ -114,7 +114,9 @@ _bft_t __bft  = {
   &signal_registerHandler,
   &signal_fire,
 
-  &kernel_threadFreeStats
+  &kernel_threadFreeStats,
+
+  &kernel_threadGetIdForStdout
 };
 
 _bft_t* _bft = &__bft;
