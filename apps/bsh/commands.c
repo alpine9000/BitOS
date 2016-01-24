@@ -20,6 +20,7 @@
 
 #include "shell.h" 
 #include "runtest.h"
+#include "commands.h"
 
 static int
 mv(int argc, char** argv);
@@ -81,42 +82,126 @@ shell_spawn(int argc, char** argv);
 static int
 shell_echo(int argc, char** argv);
 
-typedef void(*arg_function)(int,char**);
+static int
+help(int argc, char** argv);
 
+
+typedef void(*arg_function)(int,char**);
 
 typedef struct {
   char *name;
   unsigned spawn;
   int(*function)(int, char**);
+  char* help;
+  char* usage;
 } builtin_t;
 
 static builtin_t builtins[] = {
-  {"ps", 0, shell_kernel_stats},
-  {"free", 0, shell_malloc_stats},
-  {"cat", 0, cat},
-  {"cp", 0, cp},
-  {"mv", 0, mv},
-  {"ls", 0, ls},
-  {"rm", 0, rm},
-  {"pwd", 0, pwd},
-  {"cd", 0, cd},
-  {"sh", 0, sh},
-  {"mkdir", 0, shell_mkdir},
-  {"rwolf", 1, rwolf},
-  {"stress", 0, shell_stress},
-  {"diff", 0, diff},
-  {"rt", 0,runtest},
-  {"test", 0, shell_test},
-  {"version", 0, version},
-  {"kernel", 0, kernel},
-  {"touch", 0, touch},
-  {"time", 0,shell_time},
-  {"kill", 0, shell_kill},
-  {"spawn", 0, shell_spawn},
-  {"echo", 0, shell_echo}
+  {"ps", 0, shell_kernel_stats, "Display process status", 0},
+  {"free", 0, shell_malloc_stats, "Display some fairly meaningless memory stats", 0},
+  {"cat", 0, cat, "print a file", 0},
+  {"cp", 0, cp, "copy files", 0},
+  {"mv", 0, mv, "move files", 0},
+  {"ls", 0, ls, "list directory contents", 0},
+  {"rm", 0, rm, "remove files", 0},
+  {"pwd", 0, pwd, "print the current working directory", 0},
+  {"cd", 0, cd, "change the current working directory", 0},
+  {"sh", 0, sh, "execute a shell", 0},
+  {"mkdir", 0, shell_mkdir, "make new directories", 0},
+  {"rwolf", 1, rwolf, "run a raycasting demo", 0},
+  {"stress", 0, shell_stress, "run a stress test", 0},
+  {"diff", 0, diff, "compare files", 0},
+  {"rt", 0, runtest, "run tests", 0},
+  {"test", 0, shell_test, "run a torture test", 0},
+  {"version", 0, version, "print the BitOS version", 0},
+  {"kernel", 0, kernel, "load a new kernel", 0},
+  {"touch", 0, touch, "change the file access and modification times", 0},
+  {"time", 0,shell_time, "time command execution", 0},
+  {"kill", 0, shell_kill, "terminate or signal a thread", "%s: [-signal number] tid"},
+  {"spawn", 0, shell_spawn, "spawn a new command", 0},
+  {"echo", 0, shell_echo, "print arguments", 0},
+  {"help", 0, help, "print help", "%s: [command]"}
 };
 
 static unsigned numBuiltins = sizeof(builtins)/sizeof(builtin_t);
+
+
+char* stripDash(char* argument)
+{
+  char* p = argument;
+  for (; *p != 0 && *p == '-'; p++);
+  return p;
+}
+
+
+static void usage(char* command)
+{
+  for (unsigned i = 0; i < numBuiltins; i++) {
+    if (strcmp(command, builtins[i].name) == 0) {
+      if (builtins[i].usage) {
+	printf("usage: ");
+	printf(builtins[i].usage, command);
+	printf("\n");
+      }
+      break;
+    }
+  }
+}
+
+
+static void
+printHelpSummary()
+{
+  printf("Built in commands:\n");
+    int longestString = 0;
+  for (unsigned i = 0; i < numBuiltins; i++) {
+    int len = strlen(builtins[i].name);
+    if (len > longestString) {
+      longestString = len;
+    }
+  }
+  
+  char formatString[255];
+  sprintf(formatString, "%%%ds", longestString+5);
+  
+  for (unsigned i = 0; i < numBuiltins; i++) {
+    printf(formatString, builtins[i].name);
+    if (i % 3 == 2) {
+      printf("\n");
+    }
+  }
+  printf("\n");
+}
+
+
+static void
+printHelp(const char* command)
+{
+  for (unsigned i = 0; i < numBuiltins; i++) {
+    if (strcmp(command, builtins[i].name) == 0) {
+      printf("%s - %s\n", builtins[i].name, builtins[i].help);
+      usage(builtins[i].name);
+      break;
+    }
+  }
+}
+
+
+static int
+help(int argc, char** argv)
+{ 
+  if (argc == 1) {
+    printHelpSummary();
+    usage(argv[0]);
+  } else if (argc == 2) {
+    printHelp(argv[1]);
+  } else {
+    usage(argv[0]);
+  }
+
+  return 0;
+}
+
 
 static int
 version(int argc, char** argv)
@@ -394,16 +479,15 @@ shell_kill(int argc, char** argv)
     if (kill(pid, SIGINT) != 0) {
       printf("%s: failed\n", argv[0]);
     }
-
   } else if (argc == 3) {
-    unsigned pid = atoi(argv[1]);
-    int signo = atoi(argv[2]);
+    unsigned pid = atoi(argv[2]);
+    int signo = atoi(stripDash(argv[1]));
     printf("Sending %d to %d\n", signo, pid);
     if (kill(pid, signo) != 0) {
       printf("%s: failed\n", argv[0]);
     }
   } else {
-    fprintf(stderr, "usage: %s tid [signal number]\n", argv[0]);
+    usage(argv[0]);
   }
 
   return 0;
@@ -494,7 +578,7 @@ cat(int argc, char** argv)
 }
 
 
-int
+static int
 touch(int argc, char** argv)
 {
   if (argc == 1) {

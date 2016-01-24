@@ -21,6 +21,7 @@
 #include "gfx.h"
 #include "file.h"
 #include "shell.h"
+#include "commands.h"
 
 #define SUCCESS 0
 #define FAIL -1
