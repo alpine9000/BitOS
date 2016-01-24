@@ -1,4 +1,3 @@
-#undef _KERNEL_BUILD
 #include <stdio.h>
 #include <sys/syslimits.h>
 #include <sys/stat.h>
@@ -8,6 +7,7 @@
 #include <string.h>
 #include "shell.h"
 #include "thread.h"
+#include "commands.h"
 
 static int numPass = 0;
 static int numFail = 0;
@@ -90,19 +90,18 @@ _runtest_dir(char* src)
 }
 
 
-
 int 
-runtest(int argc, char** argv)
+runtest_rt(int argc, char** argv)
 {
   numPass = 0;
   numFail = 0;
 
   if (argc < 2) {
-    printf("usage: [-r] %s testfiles...\n", argv[0]);
+    commands_usage(argv[0]);
     return 1;
   }
-
-  if (argv[1][0] == '-' && argv[1][1] == 'r') {
+  
+  if (shell_isOption(argv[1], 'r')) {
     _runtest_dir(".");
   } else {
     for (int i = 1; i < argc; i++) {

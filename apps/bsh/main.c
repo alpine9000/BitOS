@@ -12,42 +12,20 @@
 #include "console.h"
 #include "argv.h"
 #include "shell.h"
-
-extern void 
-shell();
-
-extern int 
-shell_execBuiltin(int argc, char** argv);
+#include "commands.h"
 
 extern int _shell_complete;
 
-static int
-execBuiltin(int argc, char** argv)
-{
-  int argc2;
-  char** argv2;
-  char* cmd = argv_reconstruct(argv);
-  shell_globArgv(cmd, &argc2, &argv2);
-  int retval = shell_execBuiltin(argc2, argv2);
-  argv_free(argv2);
-  free(cmd);
-  return retval;
-}
-
-
 int 
 main(int argc, char**argv)
-{
-  shell_init();
-  
-  if (argc > 0) {
-    char *base = basename(argv[0]);
-    if (strcmp(base, "bsh") != 0) {
-      strcpy(argv[0], base);
-      int retval = execBuiltin(argc, argv);
-      return retval;
-    }
+{ 
+  char *base = basename(argv[0]);
+  if (strcmp(base, "bsh") != 0) {
+    strcpy(argv[0], base);
+    return shell_execBuiltinFromArgv(argc, argv, 0);
   }
+
+  shell_init();
 
   unsigned w = (gfx_fontWidth+gfx_spaceWidth)*80, h = gfx_fontHeight*24;
   window_h window = window_create("bsh", 20, 20, w, h);

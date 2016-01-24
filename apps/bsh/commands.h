@@ -1,17 +1,17 @@
 #pragma once
 
 int 
-shell_execBuiltin(int argc, char** argv);
+commands_execBuiltin(int argc, char** argv);
 
 int 
-shell_launchBuiltin(int argc, char** argv);
-
-int 
-shell_copy(char* s, char* dest_filename);
+commands_launchBuiltin(int argc, char** argv);
 
 int
 shell_stress(int argc, char** argv);
 
 int
-shell_test(int argc, char** argv);
+commands_test(int argc, char** argv);
 
+
+void 
+commands_usage(char* command);

@@ -1,4 +1,4 @@
 #pragma once
 
 int 
-runtest(int argc, char** argv);
+runtest_rt(int argc, char** argv);

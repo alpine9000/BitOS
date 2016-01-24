@@ -123,7 +123,7 @@ shell_execBuiltinFromArgv(int argc, char** argv, int argvSkip)
   shell_globArgv(cmd, &argc2, &argv2);
   free(cmd);
   char** argv3 = shell_argvDup(argc2, argv2, argvSkip);
-  shell_execBuiltin(argc2-argvSkip, argv3);
+  commands_execBuiltin(argc2-argvSkip, argv3);
   argv_free(argv2);
   argv_free(argv3);
   return 0;
@@ -199,7 +199,7 @@ shell_timeval_subtract (struct timeval *result, struct timeval *x, struct timeva
 
 
 static void 
-lsdir(char* path, int argc, char** argv)
+_lsdir(char* path, int argc, char** argv)
 {
   struct stat statBuffer;
   int len = 0;
@@ -256,7 +256,7 @@ shell_listPath(char* path, char* cwd, int argc, char** argv)
   
   if (statBuffer.st_mode & S_IFDIR) {
     chdir(path);
-    lsdir(path, argc, argv);
+    _lsdir(path, argc, argv);
     chdir(cwd);
   } else {
     time_t t = statBuffer.st_mtime;
@@ -351,9 +351,9 @@ static void
 _shell_sigintHandler(int sig)
 {
   if (shell_runningThreadId != INVALID_THREAD) {
+    printf("Killing %d\n", (unsigned)shell_runningThreadId);
     kill((int)shell_runningThreadId, SIGINT);
     shell_runningThreadId = INVALID_THREAD;
-    signal(SIGINT, SIG_DFL);
   }
 }
 
@@ -467,7 +467,7 @@ shell_exec(char* cmd)
 
   shell_runningThreadId = INVALID_THREAD;
 
-  if (shell_launchBuiltin(argc, argv) != 0) {
+  if (commands_launchBuiltin(argc, argv) != 0) {
     if (argc > 0) {
       if (background) {
 	thread_spawn(cmd);
@@ -478,4 +478,46 @@ shell_exec(char* cmd)
   }
 
   argv_free(argv);
+}
+
+
+int 
+shell_isOption(char* argv, char option)
+{
+  return argv[0] == '-' && argv[1] == option;
+}
+
+
+int 
+shell_isLongOption(char* argv, char* option)
+{
+  if (argv[0] == '-' && argv[1] == '-') {
+    return strcmp(&argv[2], option) == 0;
+  }
+
+  return 0;
+}
+
+int 
+shell_hasOption(int argc, char** argv, char option)
+{
+  for (int i = 1; i < argc; i++) {
+    if (shell_isOption(argv[i], option)) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+int 
+shell_hasLongOption(int argc, char** argv, char* option)
+{
+  for (int i = 1; i < argc; i++) {
+    if (shell_isLongOption(argv[i], option)) {
+      return 1;
+    }
+  }
+
+  return 0;
 }

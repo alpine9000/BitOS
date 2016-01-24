@@ -23,67 +23,67 @@
 #include "commands.h"
 
 static int
-mv(int argc, char** argv);
+_mv(int argc, char** argv);
 
 static int
-cd(int argc, char** argv);
+_cd(int argc, char** argv);
 
 static int
-cp(int argc, char** argv);
+_cp(int argc, char** argv);
 
 static int
-pwd(int argc, char** argv);
+_pwd(int argc, char** argv);
 
 static int
-ls(int argc, char** argv);
+_ls(int argc, char** argv);
 
 static int 
-diff(int argc, char** argv);
+_diff(int argc, char** argv);
 
 static int
-rm(int argc, char** argv);
+_rm(int argc, char** argv);
 
 static int
-cat(int argc, char** argv);
+_cat(int argc, char** argv);
 
 static int
-touch(int argc, char** argv);
+_touch(int argc, char** argv);
 
 static int
-shell_mkdir(int argc, char** argv);
+_mkdir(int argc, char** argv);
 
 static int
-sh(int argc, char** argv);
+_sh(int argc, char** argv);
 
 static int
-version(int argc, char** argv);
+_version(int argc, char** argv);
 
 static int
-rwolf(int argc, char** argv);
+_rwolf(int argc, char** argv);
 
 static int
-kernel(int argc, char** argv);
+_kernel(int argc, char** argv);
 
 static int
-shell_kernel_stats(int argc, char** argv);
+_kernel_stats(int argc, char** argv);
 
 static int
-shell_malloc_stats(int argc, char** argv);
+_malloc_stats(int argc, char** argv);
 
 static int 
-shell_time(int argc, char** argv);
+_time(int argc, char** argv);
 
 static int
-shell_kill(int argc, char** argv);
+_kill(int argc, char** argv);
 
 static int
-shell_spawn(int argc, char** argv);
+_spawn(int argc, char** argv);
 
 static int
-shell_echo(int argc, char** argv);
+_echo(int argc, char** argv);
 
 static int
-help(int argc, char** argv);
+_help(int argc, char** argv);
 
 
 typedef void(*arg_function)(int,char**);
@@ -97,30 +97,30 @@ typedef struct {
 } builtin_t;
 
 static builtin_t builtins[] = {
-  {"ps", 0, shell_kernel_stats, "Display process status", 0},
-  {"free", 0, shell_malloc_stats, "Display some fairly meaningless memory stats", 0},
-  {"cat", 0, cat, "print a file", 0},
-  {"cp", 0, cp, "copy files", 0},
-  {"mv", 0, mv, "move files", 0},
-  {"ls", 0, ls, "list directory contents", 0},
-  {"rm", 0, rm, "remove files", 0},
-  {"pwd", 0, pwd, "print the current working directory", 0},
-  {"cd", 0, cd, "change the current working directory", 0},
-  {"sh", 0, sh, "execute a shell", 0},
-  {"mkdir", 0, shell_mkdir, "make new directories", 0},
-  {"rwolf", 1, rwolf, "run a raycasting demo", 0},
+  {"ps", 0, _kernel_stats, "Display process status", 0},
+  {"free", 0, _malloc_stats, "Display some fairly meaningless memory stats", 0},
+  {"cat", 0, _cat, "print a file", 0},
+  {"cp", 0, _cp, "copy files", 0},
+  {"mv", 0, _mv, "move files", 0},
+  {"ls", 0, _ls, "list directory contents", 0},
+  {"rm", 0, _rm, "remove files", 0},
+  {"pwd", 0, _pwd, "print the current working directory", 0},
+  {"cd", 0, _cd, "change the current working directory", 0},
+  {"sh", 0, _sh, "execute a shell", "[--dontquit] -C command"},
+  {"mkdir", 0, _mkdir, "make new directories", 0},
+  {"rwolf", 1, _rwolf, "run a raycasting demo", 0},
   {"stress", 0, shell_stress, "run a stress test", 0},
-  {"diff", 0, diff, "compare files", 0},
-  {"rt", 0, runtest, "run tests", 0},
-  {"test", 0, shell_test, "run a torture test", 0},
-  {"version", 0, version, "print the BitOS version", 0},
-  {"kernel", 0, kernel, "load a new kernel", 0},
-  {"touch", 0, touch, "change the file access and modification times", 0},
-  {"time", 0,shell_time, "time command execution", 0},
-  {"kill", 0, shell_kill, "terminate or signal a thread", "%s: [-signal number] tid"},
-  {"spawn", 0, shell_spawn, "spawn a new command", 0},
-  {"echo", 0, shell_echo, "print arguments", 0},
-  {"help", 0, help, "print help", "%s: [command]"}
+  {"diff", 0, _diff, "compare files", 0},
+  {"rt", 0, runtest_rt, "run tests", "[-r] [testfiles]"},
+  {"test", 0, commands_test, "run a torture test", 0},
+  {"version", 0, _version, "print the BitOS version", 0},
+  {"kernel", 0, _kernel, "load a new kernel", 0},
+  {"touch", 0, _touch, "change the file access and modification times", 0},
+  {"time", 0,_time, "time command execution", 0},
+  {"kill", 0, _kill, "terminate or signal a thread", "[-signal number] tid"},
+  {"spawn", 0, _spawn, "spawn a new command", 0},
+  {"echo", 0, _echo, "print arguments", 0},
+  {"help", 0, _help, "print help", "[command]"}
 };
 
 static unsigned numBuiltins = sizeof(builtins)/sizeof(builtin_t);
@@ -139,9 +139,10 @@ static void usage(char* command)
   for (unsigned i = 0; i < numBuiltins; i++) {
     if (strcmp(command, builtins[i].name) == 0) {
       if (builtins[i].usage) {
-	printf("usage: ");
-	printf(builtins[i].usage, command);
+	printf("usage: %s ", command);
+	printf(builtins[i].usage);
 	printf("\n");
+	kernel_threadBlocked(); // TODO: pipe related lost data :(
       }
       break;
     }
@@ -152,7 +153,7 @@ static void usage(char* command)
 static void
 printHelpSummary()
 {
-  printf("Built in commands:\n");
+  printf("Built in commands:\n\n");
     int longestString = 0;
   for (unsigned i = 0; i < numBuiltins; i++) {
     int len = strlen(builtins[i].name);
@@ -162,7 +163,7 @@ printHelpSummary()
   }
   
   char formatString[255];
-  sprintf(formatString, "%%%ds", longestString+5);
+  sprintf(formatString, " %%-%ds", longestString+4);
   
   for (unsigned i = 0; i < numBuiltins; i++) {
     printf(formatString, builtins[i].name);
@@ -188,7 +189,7 @@ printHelp(const char* command)
 
 
 static int
-help(int argc, char** argv)
+_help(int argc, char** argv)
 { 
   if (argc == 1) {
     printHelpSummary();
@@ -204,21 +205,21 @@ help(int argc, char** argv)
 
 
 static int
-version(int argc, char** argv)
+_version(int argc, char** argv)
 {
   printf("BitOS %s\n", _bft->kernel_version());
   return 0;
 }
 
 static int
-rwolf(int argc, char** argv)
+_rwolf(int argc, char** argv)
 {
   return _bft->wolf(argc, argv);
 }
 
 
 static int
-mv(int argc, char** argv)
+_mv(int argc, char** argv)
 {
   if (argc != 3) {
     printf("usage: %ssrc dest\n", argv[0]);
@@ -230,7 +231,7 @@ mv(int argc, char** argv)
 
 
 static int
-cp(int argc, char** argv)
+_cp(int argc, char** argv)
 {
   if (!(argc == 3 || argc == 4)) {
     printf("usage: %s [-r] src dest\n", argv[0]);
@@ -256,7 +257,7 @@ cp(int argc, char** argv)
 
 
 static int
-shell_mkdir(int argc, char** argv)
+_mkdir(int argc, char** argv)
 {
   if (argc != 2) {
     printf("usage: %s path\n", argv[0]);
@@ -268,7 +269,7 @@ shell_mkdir(int argc, char** argv)
 
 
 static int
-runTestBuild(int argc, char** argv)
+_runTestBuild(int argc, char** argv)
 {
   unsigned w = shell_windowWidth, h = shell_windowHeight;
   setbuf(stdout, NULL);
@@ -309,7 +310,7 @@ runTestBuild(int argc, char** argv)
 
 
 int
-shell_test(int argc, char** argv)
+commands_test(int argc, char** argv)
 {
    unsigned w = shell_windowWidth, h = shell_windowHeight;
 
@@ -331,8 +332,8 @@ shell_test(int argc, char** argv)
   char** argv1 = argv_build(cmd1);
   char** argv2 = argv_build(cmd2);
 
-  thread_h t1 = kernel_threadSpawn(&runTestBuild, argv1, 0); 
-  thread_h t2 = kernel_threadSpawn(&runTestBuild, argv2, 0);
+  thread_h t1 = kernel_threadSpawn(&_runTestBuild, argv1, 0); 
+  thread_h t2 = kernel_threadSpawn(&_runTestBuild, argv2, 0);
 
   int result1 = -1;
   int result2 = -1;
@@ -359,7 +360,7 @@ shell_test(int argc, char** argv)
 
 
 static int
-pwd(int argc, char** argv)
+_pwd(int argc, char** argv)
 {
   char buffer[PATH_MAX];
   printf("%s\n", getcwd(buffer, PATH_MAX));
@@ -368,7 +369,7 @@ pwd(int argc, char** argv)
 
 
 static int 
-cd(int argc, char** argv)
+_cd(int argc, char** argv)
 {
   if (argc == 1) {
     return chdir("~");
@@ -384,7 +385,7 @@ cd(int argc, char** argv)
 
 
 static int 
-shell_time(int argc, char** argv)
+_time(int argc, char** argv)
 {
   if (argc == 1) {
     printf("usage: %s command\n", argv[0]);
@@ -415,7 +416,7 @@ shell_time(int argc, char** argv)
 
 
 static int 
-diff(int argc, char** argv)
+_diff(int argc, char** argv)
 {
   if (argc != 3) {
     fprintf(stderr, "usage: %s file1 file2\n", argv[0]);
@@ -431,7 +432,7 @@ diff(int argc, char** argv)
 
 
 static int
-shell_echo(int argc, char** argv)
+_echo(int argc, char** argv)
 {
   for (int i = 1; i < argc; i++) {
     printf("%s ", argv[i]);
@@ -446,7 +447,7 @@ shell_echo(int argc, char** argv)
 
 
 static int
-shell_spawn(int argc, char** argv)
+_spawn(int argc, char** argv)
 {
   if (argc == 1) {
     fprintf(stderr, "usage: %s command\n", argv[0]);
@@ -471,7 +472,7 @@ shell_spawn(int argc, char** argv)
 
 
 static int
-shell_kill(int argc, char** argv)
+_kill(int argc, char** argv)
 {
   if (argc == 2) {
     unsigned pid = atoi(argv[1]);
@@ -495,7 +496,7 @@ shell_kill(int argc, char** argv)
 
 
 static int
-ls(int argc, char** argv)
+_ls(int argc, char** argv)
 {
   char cwd[PATH_MAX];
   char path[PATH_MAX];
@@ -519,7 +520,7 @@ ls(int argc, char** argv)
 
 
 static int 
-rm(int argc, char** argv)
+_rm(int argc, char** argv)
 {
   if (argc == 1) {
     printf("usage: %s [path...]\n", argv[0]);
@@ -547,7 +548,7 @@ rm(int argc, char** argv)
 
 
 static int 
-cat(int argc, char** argv)
+_cat(int argc, char** argv)
 {
   if (argc != 2) {
     printf("usage: %s file\n", argv[0]);
@@ -579,7 +580,7 @@ cat(int argc, char** argv)
 
 
 static int
-touch(int argc, char** argv)
+_touch(int argc, char** argv)
 {
   if (argc == 1) {
     printf("usage: %s [path...]\n", argv[0]);
@@ -606,7 +607,7 @@ touch(int argc, char** argv)
 
 
 static int 
-kernel(int argc, char** argv)
+_kernel(int argc, char** argv)
 {
   if (argc != 2) {
     printf("usage: %s file\n", argv[0]);
@@ -626,7 +627,7 @@ kernel(int argc, char** argv)
 
 
 static int
-shell_kernel_stats(int argc, char** argv)
+_kernel_stats(int argc, char** argv)
 {  
   char buffer[PATH_MAX];
   thread_status_t** stats = kernel_threadGetStats();
@@ -664,7 +665,6 @@ shell_kernel_stats(int argc, char** argv)
     printf(buffer, (unsigned)stats[i]->tid, lookup[stats[i]->state], stats[i]->name);
   }
 
-
   kernel_threadFreeStats(stats);
   return 0;
 
@@ -672,7 +672,7 @@ shell_kernel_stats(int argc, char** argv)
 
 
 static int 
-shell_malloc_stats(int argc, char** argv)
+_malloc_stats(int argc, char** argv)
 {
   malloc_stats();
   return 0;
@@ -680,19 +680,22 @@ shell_malloc_stats(int argc, char** argv)
 
 
 static int
-sh(int argc, char** argv)
+_sh(int argc, char** argv)
 {
-  if (!(argc > 2)) { // /bin/sh -c rm blah blah2
-    printf("%s: usage: %s -C command\n", argv[0], argv[0]);
+  signal(SIGINT, SIG_DFL); 
+
+  if (argc <= 2 || !shell_hasOption(argc, argv, 'C')) {
+    usage(argv[0]);
     return 1;
   }
   
   int dontQuit = 0;
-  if (strcmp(argv[1], "-dontquit") == 0) {
+  
+  if (shell_hasLongOption(argc, argv, "dontquit")) {
     dontQuit = 1;
   }
 
-  shell_execBuiltinFromArgv(argc, argv, 2); // sh -C
+  shell_execBuiltinFromArgv(argc, argv, argc-1);
 
   if (dontQuit) {
     for (;;) {
@@ -705,7 +708,7 @@ sh(int argc, char** argv)
 
 
 int 
-shell_execBuiltin(int argc, char** argv)
+commands_execBuiltin(int argc, char** argv)
 {
   int retval = -2;
   if (argc > 0) {
@@ -723,7 +726,7 @@ shell_execBuiltin(int argc, char** argv)
 }
 
 int 
-shell_launchBuiltin(int argc, char** argv)
+commands_launchBuiltin(int argc, char** argv)
 {
   if (argc > 0) {
     for (unsigned i = 0; i < numBuiltins; i++) {
@@ -740,4 +743,11 @@ shell_launchBuiltin(int argc, char** argv)
   }
 
   return -1;
+}
+
+
+void 
+commands_usage(char* command)
+{
+  usage(command);
 }

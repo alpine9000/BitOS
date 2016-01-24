@@ -39,3 +39,18 @@ shell_listPath(char* path, char* cwd, int argc, char** argv);
 
 void
 shell_cleanup();
+
+int 
+shell_copy(char* s, char* dest_filename);
+
+int 
+shell_isOption(char* argv, char option);
+
+int 
+shell_isLongOption(char* argv, char* option);
+
+int 
+shell_hasOption(int argc, char** argv, char option);
+
+int 
+shell_hasLongOption(int argc, char** argv, char* option);

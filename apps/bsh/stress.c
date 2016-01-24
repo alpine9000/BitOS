@@ -1,4 +1,3 @@
-#undef _KERNEL_BUILD
 #include <glob.h>
 #include <sys/dirent.h>
 #include <sys/syslimits.h>
