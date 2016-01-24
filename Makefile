@@ -40,6 +40,7 @@ gdrive: all
 
 local: all
 	cp $(ELF_FILE) ../BitMachine/BitFS/
+	cp apps/bsh/bsh ../BitMachine/BitFS/
 
 install:
 	cp apps/bsh/bsh /usr/local/bin
