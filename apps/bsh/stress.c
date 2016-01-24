@@ -223,15 +223,15 @@ shell_stress(int argc, char** argv)
     0};
    
   for (unsigned i = 0; cmds[i] != 0; i++) {
-    KERNEL_MODE();
     char** _argv = argv_build(cmds[i]);
-    USER_MODE();
     
     if (strcmp(_argv[0], "malloc") == 0) {
 	kernel_threadSpawn(&_stress_malloc, _argv, 0); 
     } else {
       kernel_threadSpawn(&_stress_filesystem, _argv, 0); 
     }
+
+    argv_free(_argv);
   }
   
   

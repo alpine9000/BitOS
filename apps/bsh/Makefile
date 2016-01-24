@@ -1,4 +1,4 @@
-OBJ_FILES=bsh.o shell.o runtest.o stress.o 
+OBJ_FILES=bsh.o shell.o runtest.o stress.o commands.o
 ELF_FILE=bsh
 LIBS=-lreadline
 EXTRA_DEPS=

@@ -113,6 +113,10 @@ kernel_version();
 
 #endif
 
+
+#define KERNEL_MODE() unsigned __kernelMode = kernel_enterKernelMode();
+#define USER_MODE() kernel_exitKernelMode(__kernelMode);
+
 #else //_KERNEL_BUILD
 
 #define kernel_threadGetStats() _bft->kernel_threadGetStatus()
@@ -128,8 +132,7 @@ kernel_version();
 #define kernel_threadGetIdForStdout(x) _bft->kernel_threadGetIdForStdout(x)
 #endif
 
-#define KERNEL_MODE() unsigned __kernelMode = kernel_enterKernelMode();
-#define USER_MODE() kernel_exitKernelMode(__kernelMode);
+
 
 extern int kernel_signalMax;
 

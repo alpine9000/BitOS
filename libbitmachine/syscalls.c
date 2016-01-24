@@ -8,7 +8,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/times.h>
-#include <sys/dirent.h>
+#include <dirent.h>
 #include <utime.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -20,7 +20,7 @@
 #include "peripheral.h"
 #include "memory_config.h"
 #include "bft.h"
-
+#include "file.h"
 void 
 _bitos_lock_init(unsigned* lock)
 {
@@ -493,5 +493,19 @@ int _raise_r (struct _reent *ptr,   int sig)
 int
 __sigtramp_r(struct _reent *ptr, int sig)
 {
+  return -1;
+}
+
+
+int 
+_fcntl_r(struct _reent *ptr, int fd, int flag, int arg)
+{
+  if (flag == F_GETFL) {
+    return file_getOptions(fd);
+  } else if (flag == F_SETFL) {
+    return file_setOptions(fd, arg);
+  }
+
+  ptr->_errno = ENOSYS;
   return -1;
 }

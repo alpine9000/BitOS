@@ -1,6 +1,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <signal.h>
 #include "simulator.h"
 #include "console.h"
 #include "kernel.h"
@@ -209,7 +210,12 @@ _console_read_char()
   fds_t *fds = kernel_threadGetFds();
   if (fds->_stdin == STDIN_FILENO) {
     if (window_getZ(kernel_threadGetWindow()) == 0) {
-      return peripheral.console.consoleRead;
+      //return peripheral.console.consoleRead;
+      int c = peripheral.console.consoleRead;
+      if (c == 3) { // ctrl-c
+	raise(SIGINT);
+      }
+      return c;
     } else {
       return -1;
     }

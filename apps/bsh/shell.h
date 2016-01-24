@@ -29,3 +29,21 @@ shell_argvDup(int argc, char** argv, int skip);
 
 const char *
 shell_getFilenameExt(const char *filename);
+
+int
+shell_getc();
+
+void
+shell_init();
+
+int 
+shell_rcopy(char* src, char* dest);
+
+struct timeval* 
+shell_timeval_subtract (struct timeval *result, struct timeval *x, struct timeval *y);
+
+int
+shell_listPath(char* path, char* cwd, int argc, char** argv);
+
+void
+shell_cleanup();

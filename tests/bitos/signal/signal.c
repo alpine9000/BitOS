@@ -9,10 +9,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int 
+int numDelayLoops = 100;
+void
 delay()
 {
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < numDelayLoops; i++) {
     kernel_threadBlocked();
   }
 }
@@ -84,7 +85,7 @@ thread_h read_thread_handle(int fd)
 void
 simple_launch_and_kill()
 {
-  thread_h tid = thread_spawn("bsh");
+  thread_h tid = thread_spawn("bsh echo Testing if we can kill this bsh thread...");
   
   if (tid == INVALID_THREAD) {
     fprintf(stderr, "Failed to spawn thread\n");
@@ -93,15 +94,13 @@ simple_launch_and_kill()
 
   delay();
 
-  kill_thread(tid, SIGINT);
+  kill_thread(tid, SIGKILL);
 }
 
 void
 catching()
 {
-  char buffer[1024];
-  snprintf(buffer, 1024, "bsh catch %d", SIGINT);
-  thread_h tid = thread_spawn(buffer);
+  thread_h tid = thread_spawn("bsh echo Testing if bsh catches SIGINT...");
   
   if (tid == INVALID_THREAD) {
     fprintf(stderr, "Failed to spawn thread\n");
@@ -130,7 +129,7 @@ catching()
 void
 killing_parent_doesnt_kill_child()
 {
-  FILE* fp = popen("/bin/sh -dontquit spawn bsh", "r");
+  FILE* fp = popen("/bin/sh -dontquit spawn bsh echo Testing if killing a parent incorrectly kills its child", "r");
 
   if (fp == NULL) {
     fprintf(stderr, "Failed to popen\n");
@@ -148,29 +147,29 @@ killing_parent_doesnt_kill_child()
   thread_h parent = kernel_threadGetIdForStdout(fd);
 
   if (!is_thread_running(child)) {
-    fprintf(stderr, "child thread %d is not running\n", child);
+    fprintf(stderr, "child thread %d is not running\n", (unsigned) child);
     abort();
   }
 
   if (!is_thread_running(parent)) {
-    fprintf(stderr, "parent thread %d is not running\n", parent);
+    fprintf(stderr, "parent thread %d is not running\n", (unsigned) parent);
     abort();
   }
 
-  kill_thread(parent, SIGINT);
+  kill_thread(parent, SIGKILL);
 
   if (!is_thread_running(child)) {
-    fprintf(stderr, "child thread %d is not running after killing parent\n",child);
+    fprintf(stderr, "child thread %d is not running after killing parent\n", (unsigned) child);
     abort();
   }
 
-  kill_thread(child, SIGINT);
+  kill_thread(child, SIGKILL);
 }
 
 void
 killing_child_doesnt_kill_parent()
 {
-  FILE* fp = popen("/bin/sh -dontquit spawn bsh", "r");
+  FILE* fp = popen("/bin/sh -dontquit spawn bsh echo Testing if killing a child incorrectly kills its parent", "r");
 
   if (fp == NULL) {
     fprintf(stderr, "Failed to popen\n");
@@ -187,24 +186,26 @@ killing_child_doesnt_kill_parent()
 
   thread_h parent = kernel_threadGetIdForStdout(fd);
 
+  delay();
+
   if (!is_thread_running(child)) {
-    fprintf(stderr, "child thread %d is not running\n", child);
+    fprintf(stderr, "child thread %d is not running\n", (unsigned) child);
     abort();
   }
 
   if (!is_thread_running(parent)) {
-    fprintf(stderr, "parent thread %d is not running\n", parent);
+    fprintf(stderr, "parent thread %d is not running\n", (unsigned) parent);
     abort();
   }
 
-  kill_thread(child, SIGINT);
+  kill_thread(child, SIGKILL);
   
   if (!is_thread_running(parent)) {
-    fprintf(stderr, "parent thread %d is not running after killing child\n", parent);
+    fprintf(stderr, "parent thread %d is not running after killing child\n", (unsigned) parent);
     abort();
   }
 
-  kill_thread(parent, SIGINT);
+  kill_thread(parent, SIGKILL);
 
 }
 
@@ -213,6 +214,6 @@ int main(int argc, char** argv)
   simple_launch_and_kill();
   catching();
   killing_parent_doesnt_kill_child();
-  
+  killing_child_doesnt_kill_parent();  
   return 0;
 }

@@ -2,7 +2,7 @@
 
 #ifdef _KERNEL_BUILD
 
-#include <sys/dirent.h>
+#include <dirent.h>
 #include <sys/stat.h>
 
 int      
@@ -61,6 +61,12 @@ file_readdir(DIR *dirp);
 
 void 
 file_loadElfKernel(unsigned fd);
+
+int
+file_getOptions(int fd);
+
+int
+file_setOptions(int fd, unsigned options);
 
 #else
 

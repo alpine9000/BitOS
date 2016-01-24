@@ -115,8 +115,12 @@ _bft_t __bft  = {
   &signal_fire,
 
   &kernel_threadFreeStats,
+  &kernel_threadGetIdForStdout,
 
-  &kernel_threadGetIdForStdout
+  &file_setOptions,
+  &file_getOptions
+
+
 };
 
 _bft_t* _bft = &__bft;

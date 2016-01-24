@@ -245,7 +245,7 @@ case "${host_cpu}" in
 	;;
   sh | sh64)
 	machine_dir=sh
-	newlib_cflags="${newlib_cflags} -DREENTRANT_SYSCALLS_PROVIDED -DHAVE_RENAME -D__BITOS__"
+	newlib_cflags="${newlib_cflags} -DREENTRANT_SYSCALLS_PROVIDED -DHAVE_RENAME -DHAVE_FCNTL -D__BITOS__"
 	;;
   sparc*)
 	machine_dir=sparc

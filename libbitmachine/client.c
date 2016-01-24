@@ -196,3 +196,15 @@ kernel_exitKernelMode(unsigned ___ints_disabled)
 {
 
 }
+
+int
+file_getOptions(int fd)
+{
+  return _bft->file_getOptions(fd);
+}
+
+int
+file_setOptions(int fd, unsigned options)
+{
+  return _bft->file_setOptions(fd, options);
+}

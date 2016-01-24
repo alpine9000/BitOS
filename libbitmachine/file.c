@@ -189,7 +189,11 @@ file_read (int fd, char *ptr, int len)
   do {
     val =  _file_read(fd, ptr, len);
     if (val == -2) {
+      if (file_getOptions(fd) & O_NONBLOCK) {
+	return val;
+      } else {
        kernel_threadBlocked();
+      }
     }
   } while (val == -2); // Blocked pipe
   return val;
@@ -599,4 +603,30 @@ file_loadElfKernel(unsigned fd)
   peripheral.file.elf.kernelLoad = 1;
   
   _file_unlock();
+}
+
+int
+file_setOptions(int fd, unsigned options)
+{
+  _file_lock();
+  
+  peripheral.file.fd = fd;
+  peripheral.file.options = options;
+  
+  _file_unlock();
+
+  return 0;
+}
+
+int
+file_getOptions(int fd)
+{
+  _file_lock();
+  
+  peripheral.file.fd = fd;
+  unsigned options = peripheral.file.options;
+  
+  _file_unlock();
+
+  return options;
 }

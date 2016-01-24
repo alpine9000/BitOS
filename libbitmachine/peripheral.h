@@ -65,6 +65,7 @@ typedef struct {
   unsigned fd;
   unsigned filename;
   unsigned flags;
+  unsigned options;
 
   int stat;
   unsigned statPath;
