@@ -16,7 +16,7 @@ int
 go(int argc, char** argv)
 {
   if (strcmp(argv[0], "kernel") == 0) {
-    thread_spawn("/web/BitFS/bsh");
+    thread_spawn("bsh");
   } else {
     char* command = argv_reconstruct(argv);
     thread_spawn(command);
