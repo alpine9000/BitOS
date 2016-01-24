@@ -5,7 +5,7 @@ Copyright (C) Enable Software Pty Ltd 2014
 
 BitOS is a very basic newlib based operating system. BitMachine is browser based emulator that emulates a basic SH7058 "like" computer.
 
-The operating system emulates file I/O, graphics, keyboard, mouse and sound. The most significant thing is can do is recompile itself using GCC (sans newlib).
+The operating system emulates file I/O, graphics, keyboard, mouse and sound. The most significant thing is can do is recompile itself (except newlib) using GCC.
 
 It was hacked together to excerise the BitMachine SH7058 instruction set emulation.
 
@@ -77,30 +77,39 @@ make elf
 
 You are now running bitos built on bitos (-:
 
-(6) Make a change to the OS
-============================
-* Navigate to https://alpine9000.github.io/BitMachine/ (Chrome works best)
-* Menu "Drive" -> "Boot BitOS from Google Drive"
-bemacs /usr/local/src/BitOS/libbitmachine/shell.c (Change the version function to print something else)
-* Follow previous step (Rebuild bitos in BitMachine)
-version
-
-(7) Other Things To Try
+(6) Other things to try
 ========================
 
-bemacs - emacs "like" editor (Ersatz emacs - https://github.com/stangelandcl/ersatz-emacs)
+bemacs - emacs "like" editor (modified from Ersatz emacs - https://github.com/stangelandcl/ersatz-emacs)
 rwolf - simple raycasting demo (http://lodev.org/cgtutor/raycasting.html)
 si - Start of a Space Invaders tribute
-ps - See some process information
-free - See some memory usage stats
-ls/dir/cat/rm/mkdir/pwd/mv/cp - simple unix commands
+ls/dir/cat/rm/mkdir/pwd/mv/cp/ps/kill - simple unix inspired commands
 kernel - boot a new kernel
 
-(8)Some BitMachine stuff to try from the javascript console
-============================================================
+(7) Current test regime
+========================
+
+# Build hello.c
+cd /usr/local/home
+make
+/usr/local/home/hello
+
+# Auto tests
+mkdir /usr/local/home/tests
+# From javascript console
+Unzip("/gdrive/tests.zip", "/bitfs/usr/local/home/tests")
+# Back to bsh
+cd /usr/local/home/tests
+rt -r
+
+# Torture test (Rebuild BitOS in two threads at the same time, N = 2 times)
+test 2
+
+(8) Some BitMachine stuff to try from the javascript console
+=============================================================
 kernel.init() // Enable stack tracing
 kernel.PrintThreadTable() // Prints information about the running threads
-kernel.kernel.DumpStack() // Shows the stack traces of each thread
+kernel.DumpStack() // Shows the stack traces of each running thread
 
 
 
