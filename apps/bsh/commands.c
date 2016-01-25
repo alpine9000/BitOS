@@ -106,7 +106,7 @@ static builtin_t builtins[] = {
   {"rm", 0, _rm, "remove files", 0},
   {"pwd", 0, _pwd, "print the current working directory", 0},
   {"cd", 0, _cd, "change the current working directory", 0},
-  {"sh", 0, _sh, "execute a shell", "[--dontquit] -C command"},
+  {"sh", 0, _sh, "execute a shell", "[--dontquit] -c command"},
   {"mkdir", 0, _mkdir, "make new directories", 0},
   {"rwolf", 1, _rwolf, "run a raycasting demo", 0},
   {"stress", 0, shell_stress, "run a stress test", 0},
@@ -142,7 +142,6 @@ static void usage(char* command)
 	printf("usage: %s ", command);
 	printf(builtins[i].usage);
 	printf("\n");
-	kernel_threadBlocked(); // TODO: pipe related lost data :(
       }
       break;
     }
@@ -683,8 +682,9 @@ static int
 _sh(int argc, char** argv)
 {
   signal(SIGINT, SIG_DFL); 
+  int numOptions = 2;
 
-  if (argc <= 2 || !shell_hasOption(argc, argv, 'C')) {
+  if (argc <= 2 || !shell_hasOption(argc, argv, 'c')) {
     usage(argv[0]);
     return 1;
   }
@@ -693,9 +693,10 @@ _sh(int argc, char** argv)
   
   if (shell_hasLongOption(argc, argv, "dontquit")) {
     dontQuit = 1;
+    numOptions++;
   }
 
-  shell_execBuiltinFromArgv(argc, argv, argc-1);
+  shell_execBuiltinFromArgv(argc, argv, numOptions);
 
   if (dontQuit) {
     for (;;) {

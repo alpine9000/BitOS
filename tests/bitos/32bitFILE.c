@@ -42,6 +42,7 @@ void prime(char* filename)
 
 int main(int argc, char** argv)
 {
+#if 0
   char tmpFile[PATH_MAX];
 
   snprintf(tmpFile, PATH_MAX, "%s.tmp", argv[0]);
@@ -62,6 +63,7 @@ int main(int argc, char** argv)
   }
 
   test(tmpFile);
+#endif
 
   return 0;
 }

@@ -374,6 +374,7 @@ void
 shell_cleanup()
 {
   close(_shell_inputFd);
+  close(_shell_inputFd); // close both sides of the pipe
 }
 
 int
@@ -428,8 +429,10 @@ shell_threadLoad(char* commandLine)
 	}
 	kernel_threadBlocked();
       } else {
+	if (result == 0) {
+	  break;
+	}
 	kernel_threadBlocked();
-	break;
       }
     } else {
       printf("%c", c);
