@@ -77,7 +77,7 @@ _bft_t __bft  = {
 
   &thread_spawn,
   &thread_spawnFileDescriptors,
-  &thread_load,
+  &thread_run,
   &kernel_threadWait,
 
   &_kernel_newlib_lock_init_recursive,
@@ -118,8 +118,12 @@ _bft_t __bft  = {
   &kernel_threadGetIdForStdout,
 
   &file_setOptions,
-  &file_getOptions
+  &file_getOptions,
 
+  &thread_open,
+  &thread_close,
+
+  &kernel_threadGetStdoutForId
 
 };
 

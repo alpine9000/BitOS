@@ -56,7 +56,7 @@ main(int argc, char** argv)
   createFile("__test_2");
   createFile("__test_3");
 
-  if (!thread_load("/bin/sh -c rm __test_*")) {
+  if (thread_run("/bin/sh -c rm __test_*") != 0) {
     fprintf(stderr, "Failed to load sh\n");
     kernel_threadBlocked();
     abort();

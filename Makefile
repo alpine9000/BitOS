@@ -177,7 +177,7 @@ filesystem:
 	cp $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-ar $(FS_BASE)/usr/local/bin/ar
 	cp $(FS_BASE)/usr/local/sh-elf/bin/sh-elf-ld $(FS_BASE)/usr/local/bin/ld
 	cp $(FS_BASE)/usr/local/bin/bsh $(FS_BASE)/bin/sh
-	cp $(FS_BASE)/usr/local/bin/bsh $(FS_BASE)/usr/local/bin/s
+	cp $(FS_BASE)/usr/local/bin/bsh $(FS_BASE)/usr/local/bin/ls
 	cp $(FS_BASE)/usr/local/bin/bsh $(FS_BASE)/usr/local/bin/cp
 	cp $(FS_BASE)/usr/local/bin/bsh $(FS_BASE)/usr/local/bin/rm
 	cp $(FS_BASE)/usr/local/bin/bsh $(FS_BASE)/usr/local/bin/touch
@@ -200,6 +200,13 @@ localfs: fs
 
 gdrivefs: fs
 	cp $(TOOLS_BASE)/filesystem.zip ~/Google\ Drive/BitFS
+
+tests.zip:
+	cd $(BITOS_PATH)/tests; ./make-test.sh; ./make-zip.sh
+
+localtests.zip:
+	#cd $(BITOS_PATH)/tests; ./make-test.sh; ./make-zip.sh
+	cp $(BITOS_PATH)/tests/tests.zip ../BitMachine/BitFS
 
 
 full: gdrive web filesystem

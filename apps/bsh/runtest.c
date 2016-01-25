@@ -42,7 +42,7 @@ _runtest_file(char* filename)
 
   char touchCmd[PATH_MAX*2];
   printf("%s... ", fullPath);
-  if (thread_load(fullPath)) {
+  if (thread_run(fullPath) == 0) {
     sprintf(touchCmd, "touch %s", resultFilename);
     shell_exec(touchCmd);
     numPass++;

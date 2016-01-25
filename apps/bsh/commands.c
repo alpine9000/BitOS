@@ -289,8 +289,8 @@ _runTestBuild(int argc, char** argv)
   sprintf(elfCommandPtr, "%s%s", elfCommand, argv[0]);
 
   for (int i = 0; i < numLoops; i++) {
-    if (!thread_load(cleanCommandPtr) ||
-	!thread_load(elfCommandPtr)) {
+    if (thread_run(cleanCommandPtr) != 0 ||
+	thread_run(elfCommandPtr) != 0) {
       exitStatus = 1;
       break;
     }
@@ -399,7 +399,7 @@ _time(int argc, char** argv)
   
   gettimeofday(&start,0);
 
-  int success = thread_load(command);
+  int success = shell_threadLoad(command) == 0;
   
   gettimeofday(&end,0);
 

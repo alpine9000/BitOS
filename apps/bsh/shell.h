@@ -54,3 +54,6 @@ shell_hasOption(int argc, char** argv, char option);
 
 int 
 shell_hasLongOption(int argc, char** argv, char* option);
+
+int 
+shell_threadLoad(char* commandLine);

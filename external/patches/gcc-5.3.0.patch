@@ -1,6 +1,95 @@
+Index: gcc/gcc.c
+===================================================================
+--- gcc/gcc.c	(revision 232115)
++++ gcc/gcc.c	(working copy)
+@@ -187,6 +187,11 @@
+ 
+ static struct obstack collect_obstack;
+ 
++
++#ifdef __BITOS__
++static struct pex_obj *_bitos_pex;
++#endif
++
+ /* Forward declaration for prototypes.  */
+ struct path_prefix;
+ struct prefix_list;
+@@ -2856,6 +2861,10 @@
+   pex = pex_init (PEX_USE_PIPES | ((report_times || report_times_to_file)
+ 				   ? PEX_RECORD_TIMES : 0),
+ 		  progname, temp_filename);
++  
++#ifdef __BITOS__
++  _bitos_pex = pex;
++#endif  
+   if (pex == NULL)
+     fatal_error (input_location, "pex_init failed: %m");
+ 
+@@ -6756,7 +6765,15 @@
+ }
+ 
+ /* On fatal signals, delete all the temporary files.  */
++#ifdef __BITOS__
++static void
++kill_children (int signum)
++{
++  pex_kill(_bitos_pex, signum);
++}
+ 
++#endif
++
+ static void
+ fatal_signal (int signum)
+ {
+@@ -6765,6 +6782,9 @@
+   delete_temp_files ();
+   /* Get the same signal again, this time not handled,
+      so its normal effect occurs.  */
++#ifdef __BITOS__
++  kill_children(signum);
++#endif
+   kill (getpid (), signum);
+ }
+ 
+Index: include/libiberty.h
+===================================================================
+--- include/libiberty.h	(revision 232115)
++++ include/libiberty.h	(working copy)
+@@ -408,6 +408,10 @@
+ extern struct pex_obj *pex_init (int flags, const char *pname,
+ 				 const char *tempbase) ATTRIBUTE_RETURNS_NONNULL;
+ 
++#ifdef __BITOS__
++extern void pex_kill(struct pex_obj *pex, int signum);
++#endif
++
+ /* Flags for pex_run.  These are bits to be or'ed together.  */
+ 
+ /* Last program in pipeline.  Standard output of program goes to
+Index: libiberty/pex-common.c
+===================================================================
+--- libiberty/pex-common.c	(revision 232115)
++++ libiberty/pex-common.c	(working copy)
+@@ -364,6 +364,16 @@
+   return errmsg;
+ }
+ 
++#ifdef __BITOS__
++void 
++pex_kill(struct pex_obj *pex, int signum)
++{
++  for (int i = 0; i < pex->count; i++) {
++    kill (pex->children[i], signum);
++  }
++}
++#endif
++
+ /* Run a program.  */
+ 
+ const char *
 Index: libiberty/pex-unix.c
 ===================================================================
---- libiberty/pex-unix.c	(revision 231581)
+--- libiberty/pex-unix.c	(revision 232115)
 +++ libiberty/pex-unix.c	(working copy)
 @@ -1,3 +1,4 @@
 +#ifdef __BITOS__

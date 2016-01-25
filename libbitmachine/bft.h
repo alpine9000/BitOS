@@ -61,7 +61,7 @@ typedef struct {
 
   thread_h (*thread_spawn)(char* command);
   thread_h (*thread_spawnFileDescriptors)(char* command, int in, int out, int err);
-  int (*thread_load)(char* commandLine);
+  int (*thread_run)(char* commandLine);
   int (*thread_wait)(thread_h tid);
 
   void (*_bitos_lock_init_recursive)(_LOCK_RECURSIVE_T* lock);
@@ -104,6 +104,11 @@ typedef struct {
 
   int (*file_setOptions)(int fd, unsigned options);
   int (*file_getOptions)(int fd);
+
+  int (*thread_open)(char* command);
+  int (*thread_close)(int fd);
+
+  int (*kernel_threadGetStdoutForId)(thread_h tid);
 
 } _bft_t;
 

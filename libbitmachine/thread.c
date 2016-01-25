@@ -79,7 +79,7 @@ _thread_load(char* command, _thread_info_t* info)
 
 
 FILE* 
-thread_open(char* command)
+thread_fopen(char* command)
 {
   _thread_info_t info;
 
@@ -99,8 +99,9 @@ thread_open(char* command)
   return 0;
 }
 
+
 int 
-thread_close(FILE* stream)
+thread_fclose(FILE* stream)
 {
   unsigned fd = fileno(stream);
   thread_h tid = kernel_threadGetIdForStdout(fd);
@@ -110,6 +111,42 @@ thread_close(FILE* stream)
 
   return status;
 }
+
+
+int
+thread_open(char* command)
+{
+  _thread_info_t info;
+
+  if (_thread_load(command, &info)) {
+
+    KERNEL_MODE();
+    int fd = open("/dev/pipe", O_RDWR);  
+    USER_MODE();
+
+    fds_t fds = {STDIN_FILENO, fd, STDERR_FILENO};
+    
+    kernel_threadLoad(info.image, info.imageSize, info.entry, info.argv, &fds, 1);
+    
+    return fd;
+  } 
+  
+  return -1;
+}
+
+
+int 
+thread_close(int fd)
+{
+  thread_h tid = kernel_threadGetIdForStdout(fd);
+  int status = kernel_threadGetExitStatus(tid);
+
+  close(fd);
+
+  return status;
+}
+
+
 
 thread_h 
 thread_spawn(char* command)
@@ -132,25 +169,25 @@ thread_spawnFileDescriptors(char* command, int in, int out, int err)
   return INVALID_THREAD;
 }
 
-int thread_load(char* commandLine)
+int thread_run(char* commandLine)
 { 
-  FILE *fp = popen(commandLine, "r");
+  int fd = thread_open(commandLine);
 
-  for(;fp != 0;) {
-    char c;
-    if (read(fileno(fp), &c, 1) <= 0) {
-      kernel_threadBlocked();
-      break;
+  if (fd > -1) {
+    for(;;) {
+      char c;
+      if (read(fd, &c, 1) <= 0) {
+	kernel_threadBlocked();
+	break;
+      }
+      printf("%c", c);
+      fflush(stdout);
     }
-    printf("%c", c);
-    fflush(stdout);
-  }
-
-  if (fp) {
-    return pclose(fp) == 0;
+    
+    return thread_close(fd);
   }
   
-  return 0;
+  return -1;
 }
 
 

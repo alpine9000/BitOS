@@ -6,10 +6,10 @@
 #ifdef _KERNEL_BUILD
 
 FILE* 
-thread_open(char* command);
+thread_fopen(char* command);
 
 int 
-thread_close(FILE* fp);
+thread_fclose(FILE* fp);
 
 #endif
 
@@ -20,7 +20,10 @@ thread_h
 thread_spawnFileDescriptors(char* command, int in, int out, int err);
 
 int 
-thread_load(char* commandLine);
+thread_run(char* commandLine);
 
+int
+thread_open(char* command);
 
-
+int
+thread_close(int fd);

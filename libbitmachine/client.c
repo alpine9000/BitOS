@@ -52,9 +52,9 @@ thread_wait(thread_h tid)
 }
 
 int 
-thread_load(char* commandLine)
+thread_run(char* commandLine)
 {
-  return _bft->thread_load(commandLine);
+  return _bft->thread_run(commandLine);
 }
 
 long  
@@ -207,4 +207,31 @@ int
 file_setOptions(int fd, unsigned options)
 {
   return _bft->file_setOptions(fd, options);
+}
+
+
+thread_h
+kernel_threadGetIdForStdout(unsigned fd)
+{
+  return _bft->kernel_threadGetIdForStdout(fd);
+}
+
+int
+kernel_threadGetStdoutForId(thread_h tid)
+{
+  return _bft->kernel_threadGetStdoutForId(tid);
+}
+
+
+int
+thread_open(char* command)
+{
+  return _bft->thread_open(command);
+}
+
+
+int
+thread_close(int fd)
+{
+  return _bft->thread_close(fd);
 }

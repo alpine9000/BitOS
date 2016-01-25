@@ -712,6 +712,32 @@ kernel_threadGetFds()
 }
 
 
+int
+kernel_threadGetStdoutForId(thread_h tid)
+{
+  _threadTable_lock();
+
+  for (unsigned i = 0; i < _thread_max; i++) {
+    if (threadTable[i].tid == tid) {
+      int _stdout = threadTable[i].fd._stdout;
+      _threadTable_unlock();
+      return _stdout;
+    }
+  }
+
+  for (unsigned i = 0; i < _thread_historyMax; i++) {
+    if (threadHistory[i].tid == tid) {
+      int _stdout = threadHistory[i]._stdout;
+      _threadTable_unlock();
+      return _stdout;
+    }
+  }
+
+  _threadTable_unlock();
+  return -1;
+}
+
+
 char*
 kernel_getcwd(char *buf, unsigned size)
 {
