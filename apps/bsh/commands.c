@@ -122,7 +122,7 @@ static builtin_t builtins[] = {
   {"kernel", 0, _kernel, "load a new kernel", 0},
   {"touch", 0, _touch, "change the file access and modification times", 0},
   {"time", 0,_time, "time command execution", 0},
-  {"kill", 0, _kill, "terminate or signal a thread", "[-signal number] tid"},
+  {"kill", 0, _kill, "terminate or message a thread", "[-message id] [-d data] tid"},
   {"spawn", 0, _spawn, "spawn a new command", 0},
   {"echo", 0, _echo, "print arguments", 0},
   {"mecho", 0, _mecho, "echo any messages received back to the sender", 0},
@@ -479,30 +479,54 @@ _spawn(int argc, char** argv)
 static int
 _kill(int argc, char** argv)
 {
-  if (argc == 2) {
-    unsigned pid = atoi(argv[1]);
-    printf("Sending %d to %d\n", SIGINT, pid);
-    if (kill(pid, SIGINT) != 0) {
-      printf("%s: failed\n", argv[0]);
+  int signo = SIGINT;
+  int data = 0;
+  int tid;
+  char c;
+
+  opterr = 0;
+
+  while ((c = getopt(argc, argv, "d:1::2::3::4::5::6::7::8::9::")) != -1) {
+    switch (c) {
+    case 'd':
+      if (sscanf(optarg, "%d", &data) != 1) {
+	fprintf(stderr, "%s: invalid data -- %s\n", argv[0], optarg);
+	usage(argv[0]);
+	return -1;
+      }
+      break;
+    default:
+      if ((char)optopt >= '1' && (char)optopt <= '9') {
+	char* opt = argv[optind-1];
+	if (*opt != '-'|| sscanf((opt+1), "%d", &signo) != 1) {
+	  fprintf(stderr, "%s: invalid option -- %s\n", argv[0], argv[optind-1]);
+	  usage(argv[0]);
+	  return -1;
+	}
+      } else {
+	  fprintf(stderr, "%s: invalid option -- %s\n", argv[0], argv[optind-1]);
+	  usage(argv[0]);
+	  return -1;
+      }
     }
-  } else if (argc == 3) {
-    unsigned pid = atoi(argv[2]);
-    int signo = atoi(stripDash(argv[1]));
-    printf("Sending %d to %d\n", signo, pid);
-    if (kill(pid, signo) != 0) {
-      printf("%s: failed\n", argv[0]);
-    }
-  } else if (argc == 4) {
-    unsigned pid = atoi(argv[2]);
-    int signo = atoi(stripDash(argv[1]));
-    int data = atoi(argv[3]);
-    printf("Sending %d to %d with data %d\n", signo, pid, data);
-    if (message_send((thread_h)pid, signo, (void*)data) != 0) {
-      printf("%s: failed\n", argv[0]);
-    }
-  } else {
-    usage(argv[0]);
   }
+   
+  if (optind >= argc) {
+    usage(argv[0]);
+    return -1;
+  }
+
+  if (sscanf(argv[optind], "%d", &tid) != 1) {
+    fprintf(stderr, "%s: invalid tid -- %s\n", argv[0], optarg);
+    usage(argv[0]);
+    return -1;
+  } 
+
+  printf("Sending message id %d to %d with data %d\n", signo, tid, data);    
+  if (message_send((thread_h)tid, signo, (void*)data) != 0) {
+    fprintf(stderr, "%s: failed to send message\n", argv[0]);
+    return -1;
+  }  
 
   return 0;
 }
@@ -745,6 +769,9 @@ _mecho(int argc, char** argv)
 int 
 commands_execBuiltin(int argc, char** argv)
 {
+  // reset gotopt globals
+  optind = 0;
+
   int retval = -2;
   if (argc > 0) {
     for (unsigned i = 0; i < numBuiltins; i++) {
@@ -763,6 +790,9 @@ commands_execBuiltin(int argc, char** argv)
 int 
 commands_launchBuiltin(int argc, char** argv)
 {
+  // reset gotopt globals
+  optind = 0;
+
   if (argc > 0) {
     for (unsigned i = 0; i < numBuiltins; i++) {
       if (strcmp(argv[0], builtins[i].name) == 0) {
