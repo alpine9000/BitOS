@@ -1,6 +1,7 @@
 #pragma once
 
 #include "types.h"
+#include "bft.h"
 
 struct tms;
 
@@ -73,7 +74,7 @@ void
 kernel_threadKill(thread_h tid);
 
 void
-kernel_threadQueueSignalHandler(thread_h tid, kernel_signal_handler_t handler, int sig);
+kernel_threadQueueMessageHandler(thread_h tid, message_handler_t handler, int id, thread_h sender, void* data);
 
 void 
 kernel_assertKernelMode(unsigned pr);
@@ -85,14 +86,8 @@ void
 kernel_unlock(void* ptr);
 
 
-kernel_signal_handler_t*
-kernel_threadGetSignalHandler(thread_h tid);
-
-int
-signal_registerHandler(kernel_signal_handler_t *handler,  int sig, kernel_signal_handler_t func);
-
-int 
-signal_fire(thread_h tid, int sig);
+message_handler_t*
+kernel_threadGetMessageHandler(thread_h tid);
 
 const char*
 kernel_version();
@@ -134,7 +129,7 @@ kernel_version();
 
 
 
-extern int kernel_signalMax;
+extern int kernel_messageMax;
 
 unsigned 
 kernel_enterKernelMode();

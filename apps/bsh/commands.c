@@ -17,6 +17,7 @@
 #include "thread.h"
 #include "argv.h"
 #include "file.h"
+#include "message.h"
 
 #include "shell.h" 
 #include "runtest.h"
@@ -83,6 +84,10 @@ static int
 _echo(int argc, char** argv);
 
 static int
+_mecho(int argc, char** argv);
+
+
+static int
 _help(int argc, char** argv);
 
 
@@ -120,6 +125,7 @@ static builtin_t builtins[] = {
   {"kill", 0, _kill, "terminate or signal a thread", "[-signal number] tid"},
   {"spawn", 0, _spawn, "spawn a new command", 0},
   {"echo", 0, _echo, "print arguments", 0},
+  {"mecho", 0, _mecho, "echo any messages received back to the sender", 0},
   {"help", 0, _help, "print help", "[command]"}
 };
 
@@ -486,6 +492,14 @@ _kill(int argc, char** argv)
     if (kill(pid, signo) != 0) {
       printf("%s: failed\n", argv[0]);
     }
+  } else if (argc == 4) {
+    unsigned pid = atoi(argv[2]);
+    int signo = atoi(stripDash(argv[1]));
+    int data = atoi(argv[3]);
+    printf("Sending %d to %d with data %d\n", signo, pid, data);
+    if (message_send((thread_h)pid, signo, (void*)data) != 0) {
+      printf("%s: failed\n", argv[0]);
+    }
   } else {
     usage(argv[0]);
   }
@@ -704,6 +718,26 @@ _sh(int argc, char** argv)
     }
   }
 
+  return 0;
+}
+
+static void 
+_mecho_handler(int message, thread_h sender, void* data)
+{
+  printf("Got %d from %d with data %d\n", message, (unsigned)sender, (unsigned)data);
+  message_send(sender, message, data);
+}
+
+static int 
+_mecho(int argc, char** argv)
+{
+  message_handle(0, _mecho_handler);
+  
+  signal(9, SIG_DFL);
+
+  for (;;) {
+    kernel_threadBlocked();
+  }
   return 0;
 }
 

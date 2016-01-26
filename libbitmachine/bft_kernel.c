@@ -9,6 +9,7 @@
 #include "file.h"
 #include "_termios.h"
 #include "lock.h"
+#include "message.h"
 
 extern void 
 dlmalloc_stats(void);
@@ -111,8 +112,8 @@ _bft_t __bft  = {
 
   &kernel_threadGetExitStatus,
 
-  &signal_registerHandler,
-  &signal_fire,
+  &message_handle,
+  &message_send,
 
   &kernel_threadFreeStats,
   &kernel_threadGetIdForStdout,
@@ -123,7 +124,9 @@ _bft_t __bft  = {
   &thread_open,
   &thread_close,
 
-  &kernel_threadGetStdoutForId
+  &kernel_threadGetStdoutForId,
+
+  &message_getHandler
 
 };
 

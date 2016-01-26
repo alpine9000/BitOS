@@ -21,6 +21,7 @@
 #include "memory_config.h"
 #include "bft.h"
 #include "file.h"
+
 void 
 _bitos_lock_init(unsigned* lock)
 {
@@ -153,7 +154,7 @@ _isatty_r (struct _reent *re, int fd)
 int 
 _kill_r (struct _reent *re, int pid, int sig)
 {
-  return _bft->signal_fire((thread_h)pid, sig);
+  return _bft->message_send((thread_h)pid, sig, 0);
 }
 
 int 
@@ -478,16 +479,21 @@ _init_signal_r (struct _reent *ptr)
 
 _sig_func_ptr _signal_r(struct _reent *ptr, int sig,_sig_func_ptr func)
 {
-  _sig_func_ptr oldHandler = 0;;
-  if (_bft->signal_registerHandler(&oldHandler, sig, func) != 0) {
+  _sig_func_ptr oldHandler;
+  if (_bft->message_getHandler((message_handler_t*)&oldHandler, sig) != 0) {
     ptr->_errno = EINVAL;
+    return SIG_ERR;
+  }
+  if (_bft->message_handle(sig, (message_handler_t)func) != 0) {
+    ptr->_errno = EINVAL;
+    return SIG_ERR;
   }
   return oldHandler;
 }
 
 int _raise_r (struct _reent *ptr,   int sig)
 {
-  return _bft->signal_fire(kernel_threadGetId(), sig);
+  return _bft->message_send(kernel_threadGetId(), sig, 0);
 }
 
 int

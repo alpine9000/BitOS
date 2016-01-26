@@ -15,7 +15,7 @@ _kernel_resume_asm(unsigned int *sp);
 
 #define _thread_max 16
 #define _thread_historyMax 32
-#define _signal_max 32
+#define _message_max 64
 
 #define _thread_stack_size_bytes  (0x100000)
 //#define _thread_stack_size_bytes  (0x10000)
@@ -47,19 +47,19 @@ typedef struct {
 } _thread_history_t;
 
 typedef struct {
-  kernel_signal_handler_t handlers[_signal_max];
-} _signal_handler;
+  message_handler_t handlers[_message_max];
+} _thread_message_handler_t;
 
 
 int errno;
 static unsigned nextTid = 1;
 static _thread_entry_t threadTable[_thread_max];
 static _thread_history_t threadHistory[_thread_historyMax];
-static _signal_handler _signalHandlers[_thread_max];
+static _thread_message_handler_t _threadMessageHandlers[_thread_max];
 static unsigned int currentThread;
 static unsigned int currentThreadSave;
 static volatile unsigned kernel_threadMax = _thread_max;
-int kernel_signalMax = _signal_max;
+int kernel_messageMax = _message_max;
 
 static inline unsigned _kernel_disableInts();
 static inline void _kernel_enableInts(unsigned);
@@ -469,8 +469,7 @@ _kernel_threadKill(int status, int saveHistory)
   entry->state = _THREAD_DEAD;
   entry->tid = 0;
   _kernel_memset(&entry->fd, 0, sizeof(entry->fd));
-  //  _kernel_memset(&_signalHandlers[_currentThreadSave].handlers, 0, sizeof(_signalHandlers[_currentThreadSave].handlers));
-  _kernel_memset(&_signalHandlers[currentThread].handlers, 0, sizeof(_signalHandlers[currentThread].handlers));
+  _kernel_memset(&_threadMessageHandlers[currentThread].handlers, 0, sizeof(_threadMessageHandlers[currentThread].handlers));
 
 
   //  currentThread = _currentThreadSave;
@@ -924,8 +923,8 @@ kernel_threadWait(thread_h tid)
   return kernel_threadGetExitStatus(tid);
 }
 
-kernel_signal_handler_t*
-kernel_threadGetSignalHandler(thread_h tid)
+message_handler_t*
+kernel_threadGetMessageHandler(thread_h tid)
 {
   _threadTable_lock();
   
@@ -933,7 +932,7 @@ kernel_threadGetSignalHandler(thread_h tid)
     _thread_entry_t *entry = &threadTable[i];
     if (entry->tid == tid) {
       _threadTable_unlock();
-      return _signalHandlers[i].handlers;
+      return _threadMessageHandlers[i].handlers;
     }
   }
 
@@ -952,16 +951,16 @@ kernel_threadKill(thread_h tid)
 }
 
 
- void
- _kernel_threadExecSignalHandler(kernel_signal_handler_t handler, int sig, unsigned* sp)
+static  void
+_kernel_threadExecMessageHandler(message_handler_t handler, int id, thread_h sender, unsigned* sp, void* data)
 {
-  handler(sig);
+  handler(id, sender, data);
   JMP_kernel_resume_asm(sp);  
   
 }
 
 void
-kernel_threadQueueSignalHandler(thread_h tid, kernel_signal_handler_t handler, int sig)
+kernel_threadQueueMessageHandler(thread_h tid, message_handler_t handler, int id, thread_h sender, void* data)
 {
   _threadTable_lock();
 
@@ -973,9 +972,13 @@ kernel_threadQueueSignalHandler(thread_h tid, kernel_signal_handler_t handler, i
   }
 
   unsigned *sp = threadTable[threadIndex].sp;
-  void (*fp)(kernel_signal_handler_t, int, unsigned*) = _kernel_threadExecSignalHandler; 
+  unsigned *save = sp;
+  void (*fp)(message_handler_t, int, thread_h, unsigned*, void*) = _kernel_threadExecMessageHandler; 
+
+  *(--sp) = (unsigned)data;       // Arg5 goes on the stack
   unsigned *stack = sp;
   
+
   *(--stack) = sp[STACK_OFFSET_SR]; 
   *(--stack) = (unsigned)fp; 
   *(--stack) = sp[STACK_OFFSET_PC]; 
@@ -985,10 +988,10 @@ kernel_threadQueueSignalHandler(thread_h tid, kernel_signal_handler_t handler, i
   *(--stack) = sp[STACK_OFFSET_R1]; 
   *(--stack) = sp[STACK_OFFSET_R2]; 
   *(--stack) = sp[STACK_OFFSET_R3]; 
-  *(--stack) = (unsigned)handler;
-  *(--stack) = sig;
-  *(--stack) = (unsigned)sp;
-  *(--stack) = sp[STACK_OFFSET_R7]; 
+  *(--stack) = (unsigned)handler; // R4 = Arg1
+  *(--stack) = id;                // R5 = Arg2
+  *(--stack) = (unsigned)sender;  // R6 = Arg3
+  *(--stack) = (unsigned)save;    // R7 = Arg4
   *(--stack) = sp[STACK_OFFSET_R8]; 
   *(--stack) = sp[STACK_OFFSET_R9]; 
   *(--stack) = sp[STACK_OFFSET_R10]; 

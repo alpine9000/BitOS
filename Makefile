@@ -59,9 +59,9 @@ $(LIB_BITMACHINE):
 .PHONY: $(BSH)
 
 $(BSH):
-	make  -C $(BSH)
-	make  -C $(BEMACS)
-	make  -C $(SI)
+	make -C $(BSH)
+	make -C $(BEMACS)
+	make -C $(SI)
 
 include ./makefiles/base.mk
 
@@ -205,7 +205,7 @@ tests.zip:
 	cd $(BITOS_PATH)/tests; ./make-test.sh; ./make-zip.sh
 
 localtests.zip:
-	#cd $(BITOS_PATH)/tests; ./make-test.sh; ./make-zip.sh
+	cd $(BITOS_PATH)/tests; ./make-test.sh; ./make-zip.sh
 	cp $(BITOS_PATH)/tests/tests.zip ../BitMachine/BitFS
 
 

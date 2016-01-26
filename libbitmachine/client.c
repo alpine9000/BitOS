@@ -235,3 +235,17 @@ thread_close(int fd)
 {
   return _bft->thread_close(fd);
 }
+
+
+int
+message_handle(int id, message_handler_t func)
+{
+  return _bft->message_handle(id, func);
+}
+
+int 
+message_send(thread_h tid, int id, void* data)
+{
+  return _bft->message_send(tid, id, data);
+}
+

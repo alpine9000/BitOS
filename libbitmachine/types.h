@@ -65,7 +65,7 @@ typedef struct {
   char* name;
 } thread_status_t;
   
-typedef void (*kernel_signal_handler_t) (int);
+typedef void (*message_handler_t) (int, thread_h, void*);
 
 #define STDIN_FILENO    0       /* standard input file descriptor */
 #define STDOUT_FILENO   1       /* standard output file descriptor */
