@@ -1,7 +1,7 @@
 diff -Naur make-4.1.orig/commands.c make-4.1/commands.c
 --- make-4.1.orig/commands.c	2014-10-06 03:24:51.000000000 +1100
-+++ make-4.1/commands.c	2016-01-25 20:10:50.000000000 +1100
-@@ -567,6 +567,17 @@
++++ make-4.1/commands.c	2016-01-26 19:55:38.000000000 +1100
+@@ -567,6 +567,16 @@
        for (c = children; c != 0; c = c->next)
          delete_child_targets (c);
  
@@ -10,7 +10,6 @@ diff -Naur make-4.1.orig/commands.c make-4.1/commands.c
 +      struct child *c;
 +      for (c = children; c != 0; c = c->next)
 +        if (!c->remote) {
-+	  printf("signaling %d %d\n", c->pid, sig);
 +          (void) kill (c->pid, sig);
 +	}
 +    }
