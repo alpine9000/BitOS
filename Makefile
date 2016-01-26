@@ -203,10 +203,14 @@ gdrivefs: fs
 
 tests.zip:
 	cd $(BITOS_PATH)/tests; ./make-test.sh; ./make-zip.sh
-
-localtests.zip:
-	cd $(BITOS_PATH)/tests; ./make-test.sh; ./make-zip.sh
 	cp $(BITOS_PATH)/tests/tests.zip ../BitMachine/BitFS
+	cp $(BITOS_PATH)/tests/tests.zip ~/Google\ Drive/BitFS
+
+
+
+bitostests.zip:
+	cd $(BITOS_PATH)/tests/bitos; ../make-test.sh; ../make-zip.sh
+	cp $(BITOS_PATH)/tests/bitos/tests.zip ../BitMachine/BitFS
 
 
 full: gdrive web filesystem

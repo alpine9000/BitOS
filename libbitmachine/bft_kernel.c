@@ -37,7 +37,11 @@ _bft_t __bft  = {
   &kernel_threadSpawn,
   &kernel_threadGetStats,
   &kernel_threadGetFds,
-  &dlmalloc_stats,
+  &kernel_threadGetExitStatus,
+  &kernel_threadFreeStats,
+  &kernel_threadGetIdForStdout,
+  &kernel_threadWait,
+  &kernel_threadGetStdoutForId,
 
   &gfx_fillRect,
   &gfx_drawPixel,
@@ -79,7 +83,8 @@ _bft_t __bft  = {
   &thread_spawn,
   &thread_spawnFileDescriptors,
   &thread_run,
-  &kernel_threadWait,
+  &thread_open,
+  &thread_close,
 
   &_kernel_newlib_lock_init_recursive,
   &_kernel_newlib_lock_close_recursive,
@@ -92,9 +97,9 @@ _bft_t __bft  = {
   &_kernel_newlib_lock_try_acquire,
   &_kernel_newlib_lock_release,
 
-  &simulator_printf,
-
   &file_loadElfKernel,
+  &file_setOptions,
+  &file_getOptions,
 
   &tputs,
   &tcsetattr,
@@ -108,25 +113,13 @@ _bft_t __bft  = {
   &tgetent,
   &cfmakeraw,
 
-  &wolf,
-
-  &kernel_threadGetExitStatus,
-
   &message_handle,
   &message_send,
+  &message_getHandler,
 
-  &kernel_threadFreeStats,
-  &kernel_threadGetIdForStdout,
-
-  &file_setOptions,
-  &file_getOptions,
-
-  &thread_open,
-  &thread_close,
-
-  &kernel_threadGetStdoutForId,
-
-  &message_getHandler
+  &simulator_printf,
+  &wolf,
+  &dlmalloc_stats
 
 };
 

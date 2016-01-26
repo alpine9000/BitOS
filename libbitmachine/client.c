@@ -48,7 +48,7 @@ thread_spawn(char* command)
 int 
 thread_wait(thread_h tid)
 {
-  return _bft->thread_wait(tid);
+  return _bft->kernel_threadWait(tid);
 }
 
 int 
@@ -249,3 +249,9 @@ message_send(thread_h tid, int id, void* data)
   return _bft->message_send(tid, id, data);
 }
 
+
+int      
+kernel_threadGetExitStatus(thread_h tid)
+{
+  return _bft->kernel_threadGetExitStatus(tid);
+}

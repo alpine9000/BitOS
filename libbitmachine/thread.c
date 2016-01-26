@@ -78,41 +78,6 @@ _thread_load(char* command, _thread_info_t* info)
 }
 
 
-FILE* 
-thread_fopen(char* command)
-{
-  _thread_info_t info;
-
-  if (_thread_load(command, &info)) {
-
-    KERNEL_MODE();
-    FILE* fp = fopen("/dev/pipe", "rw");  
-    USER_MODE();
-
-    fds_t fds = {STDIN_FILENO, fileno(fp), STDERR_FILENO};
-    
-    kernel_threadLoad(info.image, info.imageSize, info.entry, info.argv, &fds, 1);
-    
-    return fp;
-  } 
-
-  return 0;
-}
-
-
-int 
-thread_fclose(FILE* stream)
-{
-  unsigned fd = fileno(stream);
-  thread_h tid = kernel_threadGetIdForStdout(fd);
-  int status = kernel_threadGetExitStatus(tid);
-
-  fclose(stream);
-
-  return status;
-}
-
-
 int
 thread_open(char* command)
 {

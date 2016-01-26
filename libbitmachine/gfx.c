@@ -11,11 +11,8 @@ static int frameBufferDirty[PERIPHERAL_MAX_FRAMEBUFFERS];
 #define _gfx_lock() unsigned ___ints_disabled = kernel_disableInts()
 #define _gfx_unlock() kernel_enableInts(___ints_disabled)
 
-//unsigned int videoWidth = 640;
-//unsigned int videoHeight = 480;
-
 unsigned int videoWidth = 1140;
-unsigned int videoHeight = 768;
+unsigned int videoHeight = 740;
 extern  unsigned char  font[];
 
 #define dirty() frameBufferDirty[fb] = 1;

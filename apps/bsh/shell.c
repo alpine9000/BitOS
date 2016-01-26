@@ -441,7 +441,7 @@ shell_threadLoad(char* commandLine)
   }
 
   if (fp) {
-    return pclose(fp) == 0;
+    return pclose(fp);
   }
   
   return 0;

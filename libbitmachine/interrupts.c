@@ -40,8 +40,8 @@
 #define _SYS_malloc        memory_malloc
 #define _SYS_free          memory_free
 #define _SYS_realloc       memory_realloc
-#define _SYS_popen         thread_fopen
-#define _SYS_pclose        thread_fclose
+#define _SYS_popen         _notImplemented
+#define _SYS_pclose        _notImplemented
 #define _SYS_times         kernel_times
 #define _SYS_stat          file_stat
 #define _SYS_opendir       file_opendir

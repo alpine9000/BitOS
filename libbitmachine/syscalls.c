@@ -21,6 +21,7 @@
 #include "memory_config.h"
 #include "bft.h"
 #include "file.h"
+#include "thread.h"
 
 void 
 _bitos_lock_init(unsigned* lock)
@@ -163,11 +164,16 @@ _getpid_r (struct _reent *re)
   return __trap34 (SYS_getpid);
 }
 
-
 FILE *
 popen(const char *command, const char *mode)
 {
-  return (FILE*)__trap34 (SYS_popen, (int)command);
+  FILE* fp = fopen("/dev/pipe", mode);  
+  
+  if (thread_spawnFileDescriptors((char*)command, STDIN_FILENO, fileno(fp), STDERR_FILENO) != INVALID_THREAD) {  
+    return fp;
+  }
+
+  return 0;  
 }
 
 
@@ -175,8 +181,11 @@ int
 pclose(FILE *stream)
 {
   if (stream != 0) {
-    int retval =  (int)__trap34 (SYS_pclose, (int)stream);
-    return retval;
+    unsigned fd = fileno(stream);
+    thread_h tid = kernel_threadGetIdForStdout(fd);
+    int status = kernel_threadGetExitStatus(tid);
+    fclose(stream);
+    return status;
   } else {
     return -1;
   }

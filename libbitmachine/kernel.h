@@ -61,9 +61,6 @@ kernel_threadGetId();
 fds_t*   
 kernel_threadGetFds();
 
-int      
-kernel_threadGetExitStatus(thread_h tid);
-
 thread_h    
 kernel_threadGetIdForStdout(unsigned fd);
 
@@ -123,7 +120,6 @@ kernel_version();
 #define kernel_threadDie(x) _bft->kernel_threadDie(x)
 #define kernel_threadSpawn(x,v,f) _bft->kernel_threadSpawn(x,v,f)
 #define kernel_threadGetFds(x) _bft->kernel_threadGetFds(x)
-#define kernel_threadGetExitStatus(x) _bft->kernel_threadGetExitStatus(x)
 
 #endif
 
@@ -142,3 +138,6 @@ kernel_threadGetIdForStdout(unsigned fd);
 
 int
 kernel_threadGetStdoutForId(thread_h tid);
+
+int      
+kernel_threadGetExitStatus(thread_h tid);
