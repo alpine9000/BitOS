@@ -391,8 +391,6 @@ _file_opendir(DIR *dirp, const char* filename)
 
   file_realpath(filename, path);
 
-  simulator_printf("filename = %s, path = %s\n", filename, path);
-
   _file_lock();
   peripheral.file.dir.opendirStruct = (unsigned)dirp;
   peripheral.file.dir.opendir = (unsigned)path;
