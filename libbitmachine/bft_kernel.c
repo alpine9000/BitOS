@@ -119,8 +119,9 @@ _bft_t __bft  = {
 
   &simulator_printf,
   &wolf,
-  &dlmalloc_stats
+  &dlmalloc_stats,
 
+  &console_getCursorCol
 };
 
 _bft_t* _bft = &__bft;

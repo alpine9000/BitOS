@@ -192,6 +192,9 @@ typedef struct {
   (*wolf)(int argc, char** argv);
   void
   (*malloc_stats)();
+
+  unsigned
+  (*console_getCursorCol)();
 } _bft_t;
 
 extern _bft_t* _bft;

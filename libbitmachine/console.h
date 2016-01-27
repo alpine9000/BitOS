@@ -39,6 +39,9 @@ console_setCursorRow(unsigned row);
 unsigned
 console_getCursorRow();
 
+unsigned
+console_getCursorCol();
+
 void
 console_insertAtCursor();
 
@@ -75,6 +78,7 @@ console_clearBehaviour(unsigned mask);
 #define console_setCursorCol(c) _bft->console_setCursorCol(c)
 #define console_setCursorRow(r) _bft->console_setCursorRow(r)
 #define console_getCursorRow() _bft->console_getCursorRow()
+#define console_getCursorCol() _bft->console_getCursorCol()
 #define console_insertAtCursor() _bft->console_insertAtCursor()
 #define console_deleteAtCursor() _bft->console_deleteAtCursor()
 #define console_clearToEndOfLine() _bft->console_clearToEndOfLine()

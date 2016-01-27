@@ -288,6 +288,13 @@ console_getCursorRow()
   return window_getCursorY(w) / window_getCharacterPixelHeight(w);
 }
 
+unsigned 
+console_getCursorCol()
+{
+  window_h w = kernel_threadGetWindow();
+  return window_getCursorX(w) / window_getCharacterPixelWidth(w);
+}
+
 void 
 console_clearToEndOfLine()
 {
