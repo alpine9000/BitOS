@@ -199,7 +199,7 @@ shell_timeval_subtract (struct timeval *result, struct timeval *x, struct timeva
 
 
 static void 
-_lsdir(char* path, int argc, char** argv)
+_lsdirlong(char* path, int argc, char** argv)
 {
   struct stat statBuffer;
   int len = 0;
@@ -222,9 +222,12 @@ _lsdir(char* path, int argc, char** argv)
 
     closedir(dirp);
     dirp = opendir(path);
-    
+    char cwd[PATH_MAX];
+    getcwd(cwd, PATH_MAX);
+    chdir(path);    
     do {
       if ((dp = readdir(dirp)) != NULL) {
+
 	if (stat(dp->d_name, &statBuffer) == 0) {
 	  time_t t = statBuffer.st_mtime;
 	  struct tm lt;
@@ -237,6 +240,60 @@ _lsdir(char* path, int argc, char** argv)
 	}
       }
     } while (dp != NULL);
+    chdir(cwd);
+
+    closedir(dirp);
+  } else {
+    printf("%s: %s: No such file or directory\n", argv[0], path);
+  }
+}
+
+static void 
+_lsdir(char* path, int argc, char** argv)
+{
+  int len = 0;
+  DIR* dirp = opendir(path);
+
+  if (dirp) {
+    struct dirent* dp;
+    
+    do {
+      if ((dp = readdir(dirp)) != NULL) {
+	int l = strlen(dp->d_name);
+	if (l > len) {
+	  len = l;
+	}
+      }
+    } while (dp != NULL);
+
+    len++;
+    closedir(dirp);
+    dirp = opendir(path);
+
+    console_clearBehaviour(CONSOLE_BEHAVIOUR_AUTO_WRAP);
+
+    int numColumns = console_getColumns() / len;
+    int column = 1;
+    char format[80];
+    sprintf(format, "%%-%ds", len);
+    do {
+      if ((dp = readdir(dirp)) != NULL) {
+	if (column++ > (numColumns)) {
+	  printf("\n");
+	  column = 1;
+	}
+
+	printf(format, dp->d_name);	  
+      }
+    } while (dp != NULL);
+
+    fflush(stdout);
+
+    if (console_getCursorCol() != 0) {
+      printf("\n");
+    }
+
+    console_setBehaviour(CONSOLE_BEHAVIOUR_AUTO_WRAP);
 
     closedir(dirp);
   } else {
@@ -245,7 +302,7 @@ _lsdir(char* path, int argc, char** argv)
 }
 
 int
-shell_listPath(char* path, char* cwd, int argc, char** argv)
+shell_listPath(char* path, int argc, char** argv, int longFlag)
 {
   struct stat statBuffer;
 
@@ -253,18 +310,24 @@ shell_listPath(char* path, char* cwd, int argc, char** argv)
     fprintf(stderr, "%s: %s: %s\n", argv[0], path, strerror(errno));
     return 1;
   }
-  
+
   if (statBuffer.st_mode & S_IFDIR) {
-    chdir(path);
-    _lsdir(path, argc, argv);
-    chdir(cwd);
+    if (longFlag) {
+      _lsdirlong(path, argc, argv);
+    } else {
+      _lsdir(path, argc, argv);
+    }
   } else {
-    time_t t = statBuffer.st_mtime;
-    struct tm lt;
-    localtime_r(&t, &lt);
-    char timbuf[80];
-    strftime(timbuf, sizeof(timbuf), "%c", &lt);
-    printf("%ld %s %s\n", statBuffer.st_size, timbuf, path);
+    if (longFlag) {
+      time_t t = statBuffer.st_mtime;
+      struct tm lt;
+      localtime_r(&t, &lt);
+      char timbuf[80];
+      strftime(timbuf, sizeof(timbuf), "%c", &lt);
+      printf("%ld %s %s\n", statBuffer.st_size, timbuf, path);
+    } else {
+      printf("%s\n", path);
+    }
   }
 
   return 0;

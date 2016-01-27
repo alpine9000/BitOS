@@ -107,7 +107,7 @@ static builtin_t builtins[] = {
   {"cat", 0, _cat, "print a file", 0},
   {"cp", 0, _cp, "copy files", 0},
   {"mv", 0, _mv, "move files", 0},
-  {"ls", 0, _ls, "list directory contents", 0},
+  {"ls", 0, _ls, "list directory contents", "[-l] [file ...]"},
   {"rm", 0, _rm, "remove files", 0},
   {"pwd", 0, _pwd, "print the current working directory", 0},
   {"cd", 0, _cd, "change the current working directory", 0},
@@ -535,21 +535,30 @@ _kill(int argc, char** argv)
 static int
 _ls(int argc, char** argv)
 {
-  char cwd[PATH_MAX];
   char path[PATH_MAX];
+  int c;
+  int longFlag = 0;
   
-  int file = 0;
-  for (int i = 1; i < argc; i++) {
-    if (argv[i][0] != '-') {
-      file = 1;
-      shell_listPath(argv[i], cwd, argc, argv);
+  while ((c = getopt(argc, argv, "l")) != -1) {  
+    switch (c) {
+    case 'l':
+      longFlag = 1;
+      break;
+    default:
+      usage(argv[0]);
+      return -1;
+      break;
     }
   }
 
-  if (!file) {
+
+  if (optind < argc) {
+    for (int i = optind; i < argc; i++) {
+      shell_listPath(argv[i], argc, argv, longFlag);
+    }
+  } else {
     getcwd(path, PATH_MAX);
-    getcwd(cwd, PATH_MAX);
-    shell_listPath(path, cwd, argc, argv);
+    shell_listPath(path, argc, argv, longFlag);
   }
   
   return 0;
@@ -771,6 +780,7 @@ commands_execBuiltin(int argc, char** argv)
 {
   // reset gotopt globals
   optind = 0;
+  opterr = 1;
 
   int retval = -2;
   if (argc > 0) {
