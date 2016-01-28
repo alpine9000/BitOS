@@ -42,7 +42,7 @@ _thread_load(char* command, _thread_info_t* info)
   if (name[0] != '/') {
     snprintf(buffer, PATH_MAX, "/usr/local/bin/%s", name);
   } else {
-    strncpy(buffer, name, PATH_MAX);
+    strlcpy(buffer, name, PATH_MAX);
   }
 
   fd = open(buffer, O_RDONLY);

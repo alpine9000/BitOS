@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <sys/syslimits.h> // PATH_MAX
+#include <string.h>        // strcpy,strlcpy
 #include "kernel.h"
 #include "peripheral.h"
 #include "panic.h"
@@ -178,33 +179,6 @@ _kernel_memset(void *v,
 }
 
 
-static int
-_kernel_strlen(char* s)
-{
-  for (int i = 0; i != 0 && i < PATH_MAX; i++) {
-    if (s[i] == 0) {
-      return i;
-    }
-  }
-
-  return PATH_MAX;
-}
-
-static char*
-_kernel_strncpy(char *s1, const char *s2, size_t n)
-{
-  char *s = s1;
-  while (n > 0 && *s2 != '\0') {
-    *s++ = *s2++;
-    --n;
-  }
-  while (n > 0) {
-    *s++ = '\0';
-    --n;
-  }
-  return s1;
-}
-
 static char** 
 _kernel_argvDup(char** argv)
 {
@@ -214,8 +188,8 @@ _kernel_argvDup(char** argv)
     char **vector = memory_kmalloc((argc+1)*sizeof(char*));
     int i;
     for (i = 0;i  <  argc; i++) {
-      vector[i] = memory_kmalloc(_kernel_strlen(argv[i])+1);
-      _kernel_strncpy(vector[i], argv[i], PATH_MAX);
+      vector[i] = memory_kmalloc(strlen(argv[i])+1);
+      strcpy(vector[i], argv[i]);
     }
     vector[i] = 0;
     return vector;
@@ -301,7 +275,7 @@ _kernel_threadSetInfo(unsigned threadIndex, thread_info_t type, unsigned info)
     entry->window = (window_h)info;
     return 1;
   case KERNEL_CURRENT_WORKING_DIRECTORY:
-    _kernel_strncpy(threadTable[threadIndex].cwd, (char*)info, PATH_MAX);
+    strlcpy(threadTable[threadIndex].cwd, (char*)info, PATH_MAX);
     return 1;
   }
 
@@ -656,7 +630,7 @@ kernel_threadLoad(unsigned* image, unsigned imageSize, int (*entry)(int,char**),
   if (threadIndex > 0) {
     tid = _kernel_threadCreate(threadIndex, image, imageSize, entry, argv, fds);
     if (clone_cwd) {
-      _kernel_strncpy(threadTable[threadIndex].cwd, threadTable[currentThread].cwd, PATH_MAX);      
+      strlcpy(threadTable[threadIndex].cwd, threadTable[currentThread].cwd, PATH_MAX);      
     }
   }
   _threadTable_unlock();
@@ -745,7 +719,7 @@ kernel_getcwd(char *buf, unsigned size)
     size = PATH_MAX;
   }
 
-  _kernel_strncpy(buf, threadTable[currentThread].cwd, size);
+  strlcpy(buf, threadTable[currentThread].cwd, size);
   return buf;
 }
 
@@ -869,12 +843,12 @@ kernel_threadGetStats()
   for (int i = 0, y = 0; i < _thread_max; i++) {
     _thread_entry_t *entry = &threadTable[i];
     if (entry->state != _THREAD_DEAD) {
-      int argvLen = _kernel_strlen(entry->argv[0]);
+      int argvLen = strlen(entry->argv[0]);
       status[y] = memory_kmalloc(sizeof(thread_status_t));
       status[y]->state = entry->state;
       status[y]->tid = entry->tid;
       status[y]->name = memory_kmalloc(argvLen+1);
-      _kernel_strncpy(status[y]->name, entry->argv[0], argvLen);
+      strlcpy(status[y]->name, entry->argv[0], argvLen);
       y++;
     }
   }
