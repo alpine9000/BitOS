@@ -129,7 +129,7 @@ catching()
 void
 killing_parent_doesnt_kill_child()
 {
-  FILE* fp = popen("/bin/sh --dontquit -c spawn bsh echo Testing if killing a parent incorrectly kills its child", "r");
+  FILE* fp = popen("/bin/sh -d -c spawn bsh echo Testing if killing a parent incorrectly kills its child", "r");
 
   if (fp == NULL) {
     fprintf(stderr, "Failed to popen\n");
@@ -169,7 +169,7 @@ killing_parent_doesnt_kill_child()
 void
 killing_child_doesnt_kill_parent()
 {
-  FILE* fp = popen("/bin/sh --dontquit -c spawn bsh echo Testing if killing a child incorrectly kills its parent", "r");
+  FILE* fp = popen("/bin/sh -d -c spawn bsh echo Testing if killing a child incorrectly kills its parent", "r");
 
   if (fp == NULL) {
     fprintf(stderr, "Failed to popen\n");

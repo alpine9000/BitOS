@@ -108,10 +108,10 @@ static builtin_t builtins[] = {
   {"cp", 0, _cp, "copy files", 0},
   {"mv", 0, _mv, "move files", 0},
   {"ls", 0, _ls, "list directory contents", "[-l] [file ...]"},
-  {"rm", 0, _rm, "remove files", 0},
+  {"rm", 0, _rm, "remove files", "[-f] [file...]"},
   {"pwd", 0, _pwd, "print the current working directory", 0},
   {"cd", 0, _cd, "change the current working directory", 0},
-  {"sh", 0, _sh, "execute a shell", "[--dontquit] -c command"},
+  {"sh", 0, _sh, "execute a shell", "[-d] -c command"},
   {"mkdir", 0, _mkdir, "make new directories", 0},
   {"rwolf", 1, _rwolf, "run a raycasting demo", 0},
   {"stress", 0, shell_stress, "run a stress test", 0},
@@ -568,27 +568,35 @@ _ls(int argc, char** argv)
 static int 
 _rm(int argc, char** argv)
 {
-  if (argc == 1) {
-    printf("usage: %s [path...]\n", argv[0]);
-    return 1;
+  int force = 0;
+  int c;
+  
+  while ((c = getopt(argc, argv, "f")) != -1) {  
+    switch (c) {
+    case 'f':
+      force = 1;
+      break;
+    case '?':
+      usage(argv[0]);
+      return -1;
+      break;
+    }
   }
 
-  int force = 0;
+  if (optind >= argc) {
+    usage(argv[0]);
+    return -1;
+  }
   
-  for (int i = 1; i < argc; i++) {
-    if (argv[i][0] != '-') {
-      if (unlink(argv[i]) != 0) {
-	if (!force) {
-	  printf("%s: failed to rm %s\n", argv[0], argv[i]);
-	  return 1;
-	}
-      }
-    } else {
-      if (argv[i][1] == 'f') {
-	force = 1;
+  for (int i = optind; i < argc; i++) {
+    if (unlink(argv[i]) != 0) {
+      if (!force) {
+	printf("%s: failed to rm %s\n", argv[0], argv[i]);
+	return 1;
       }
     }
-  }  
+  } 
+
   return 0;
 } 
 
@@ -729,22 +737,32 @@ static int
 _sh(int argc, char** argv)
 {
   signal(SIGINT, SIG_DFL); 
-  int numOptions = 2;
+  int hasOptionC = 0;
+  int dontQuit = 0;
+  int c;
 
-  if (argc <= 2 || !shell_hasOption(argc, argv, 'c')) {
+  while ((c = getopt(argc, argv, "cd")) != -1) {  
+    switch (c) {
+    case 'c':
+      hasOptionC = 1;
+      break;
+    case 'd':
+      dontQuit = 1;
+      break;
+    case '?':
+      usage(argv[0]);
+      return -1;
+      break;
+    }
+  }
+
+  if (!hasOptionC) {
     usage(argv[0]);
     return 1;
   }
+ 
+  shell_execBuiltinFromArgv(argc, argv, optind);
   
-  int dontQuit = 0;
-  
-  if (shell_hasLongOption(argc, argv, "dontquit")) {
-    dontQuit = 1;
-    numOptions++;
-  }
-
-  shell_execBuiltinFromArgv(argc, argv, numOptions);
-
   if (dontQuit) {
     for (;;) {
       kernel_threadBlocked();

@@ -61,7 +61,7 @@ shell_copy(char* s, char* dest_filename)
     }
     sprintf(d, "%s/%s", dest_filename, basename(s));
   } else {
-    strncpy(d, dest_filename, PATH_MAX);
+    strlcpy(d, dest_filename, PATH_MAX);
   }
 
   int src = open(s, O_RDONLY);
@@ -551,39 +551,4 @@ int
 shell_isOption(char* argv, char option)
 {
   return argv[0] == '-' && argv[1] == option;
-}
-
-
-int 
-shell_isLongOption(char* argv, char* option)
-{
-  if (argv[0] == '-' && argv[1] == '-') {
-    return strcmp(&argv[2], option) == 0;
-  }
-
-  return 0;
-}
-
-int 
-shell_hasOption(int argc, char** argv, char option)
-{
-  for (int i = 1; i < argc; i++) {
-    if (shell_isOption(argv[i], option)) {
-      return 1;
-    }
-  }
-
-  return 0;
-}
-
-int 
-shell_hasLongOption(int argc, char** argv, char* option)
-{
-  for (int i = 1; i < argc; i++) {
-    if (shell_isLongOption(argv[i], option)) {
-      return 1;
-    }
-  }
-
-  return 0;
 }

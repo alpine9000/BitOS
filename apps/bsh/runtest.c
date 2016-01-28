@@ -93,19 +93,34 @@ _runtest_dir(char* src)
 int 
 runtest_rt(int argc, char** argv)
 {
+  int c;
+  int recursive = 0;
   numPass = 0;
   numFail = 0;
-
-  if (argc < 2) {
-    commands_usage(argv[0]);
-    return 1;
-  }
   
-  if (shell_isOption(argv[1], 'r')) {
+  while ((c = getopt(argc, argv, "r")) != -1) {  
+    switch (c) {
+    case 'r':
+      recursive = 1;
+      break;
+    default:
+      commands_usage(argv[0]);
+      return -1;
+      break;
+    }
+  }
+
+
+  if (recursive) {
     _runtest_dir(".");
   } else {
-    for (int i = 1; i < argc; i++) {
-      _runtest_file(argv[i]);
+    if (argc == 1) {
+      commands_usage(argv[0]);
+      return -1;
+    } else {	
+      for (int i = 1; i < argc; i++) {
+	_runtest_file(argv[i]);
+      }
     }
   }
 

@@ -44,16 +44,4 @@ int
 shell_copy(char* s, char* dest_filename);
 
 int 
-shell_isOption(char* argv, char option);
-
-int 
-shell_isLongOption(char* argv, char* option);
-
-int 
-shell_hasOption(int argc, char** argv, char option);
-
-int 
-shell_hasLongOption(int argc, char** argv, char* option);
-
-int 
 shell_threadLoad(char* commandLine);
