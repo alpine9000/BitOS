@@ -211,6 +211,7 @@ tests.zip:
 bitostests.zip:
 	cd $(BITOS_PATH)/tests/bitos; ../make-test.sh; ../make-zip.sh
 	cp $(BITOS_PATH)/tests/bitos/tests.zip ../BitMachine/BitFS
+	cp $(BITOS_PATH)/tests/bitos/tests.zip ~/Google\ Drive/BitFS
 
 
 full: gdrive web filesystem
