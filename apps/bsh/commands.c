@@ -116,7 +116,7 @@ static builtin_t builtins[] = {
   {"rwolf", 1, _rwolf, "run a raycasting demo", 0},
   {"stress", 0, shell_stress, "run a stress test", 0},
   {"diff", 0, _diff, "compare files", 0},
-  {"rt", 0, runtest_rt, "run tests", "[-r] [testfiles]"},
+  {"rt", 0, runtest_rt, "run tests", "[-rf] [testfile ...]"},
   {"test", 0, commands_test, "run a torture test", 0},
   {"version", 0, _version, "print the BitOS version", 0},
   {"kernel", 0, _kernel, "load a new kernel", 0},
