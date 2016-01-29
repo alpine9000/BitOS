@@ -34,6 +34,9 @@
 # No zip files
 *.zip
 
+# RGBA files are intermediate
+*.rgba
+
 # Debug files
 *.dSYM/
 *.d
