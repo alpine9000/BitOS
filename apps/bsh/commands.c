@@ -853,6 +853,10 @@ _sh(int argc, char** argv)
       return -1;
       break;
     }
+
+    if (hasOptionC) {
+      break;
+    }
   }
 
   if (!hasOptionC) {
