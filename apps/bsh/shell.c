@@ -316,7 +316,7 @@ _lsdir(char* path, int argc, char** argv)
 }
 
 int
-shell_listPath(char* path, int argc, char** argv, int longFlag)
+shell_listPath(char* path, int argc, char** argv, int longFlag, int showDirName)
 {
   struct stat statBuffer;
 
@@ -327,8 +327,14 @@ shell_listPath(char* path, int argc, char** argv, int longFlag)
 
   if (statBuffer.st_mode & S_IFDIR) {
     if (longFlag) {
+      if (showDirName) {
+	printf("\n%s:\n", path);
+      }
       _lsdirlong(path, argc, argv);
     } else {
+      if (showDirName) {
+	printf("\n%s:\n", path);
+      }
       _lsdir(path, argc, argv);
     }
   } else {

@@ -627,11 +627,11 @@ _ls(int argc, char** argv)
 
   if (optind < argc) {
     for (int i = optind; i < argc; i++) {
-      shell_listPath(argv[i], argc, argv, longFlag);
+      shell_listPath(argv[i], argc, argv, longFlag, argc - optind > 1);
     }
   } else {
     getcwd(path, PATH_MAX);
-    shell_listPath(path, argc, argv, longFlag);
+    shell_listPath(path, argc, argv, longFlag, 0);
   }
   
   return 0;

@@ -35,7 +35,7 @@ struct timeval*
 shell_timeval_subtract (struct timeval *result, struct timeval *x, struct timeval *y);
 
 int
-shell_listPath(char* path, int argc, char** argv, int longFlag);
+shell_listPath(char* path, int argc, char** argv, int longFlag, int showDirName);
 
 void
 shell_cleanup();
