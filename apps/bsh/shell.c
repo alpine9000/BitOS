@@ -270,30 +270,44 @@ _lsdir(char* path, int argc, char** argv)
     closedir(dirp);
     dirp = opendir(path);
 
-    console_clearBehaviour(CONSOLE_BEHAVIOUR_AUTO_WRAP);
+    fds_t* fds = kernel_threadGetFds();
 
-    int numColumns = console_getColumns() / len;
+    int numColumns;
+    if (fds->_stdout == STDOUT_FILENO) {
+      console_clearBehaviour(CONSOLE_BEHAVIOUR_AUTO_WRAP);
+      numColumns = console_getColumns() / len;
+    } else {
+      numColumns = 0;
+    }
+
     int column = 1;
     char format[80];
     sprintf(format, "%%-%ds", len);
     do {
       if ((dp = readdir(dirp)) != NULL) {
-	if (column++ > (numColumns)) {
+	
+	if (numColumns > 0 && column++ > (numColumns)) {
 	  printf("\n");
 	  column = 1;
 	}
-
+	
 	printf(format, dp->d_name);	  
+
+	if (numColumns == 0) {
+	  printf("\n");
+	}
       }
     } while (dp != NULL);
 
     fflush(stdout);
 
-    if (console_getCursorCol() != 0) {
-      printf("\n");
-    }
+    if (fds->_stdout == STDOUT_FILENO) {
+      if (console_getCursorCol() != 0) {
+	printf("\n");
+      }
 
-    console_setBehaviour(CONSOLE_BEHAVIOUR_AUTO_WRAP);
+      console_setBehaviour(CONSOLE_BEHAVIOUR_AUTO_WRAP);
+    } 
 
     closedir(dirp);
   } else {
