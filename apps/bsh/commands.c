@@ -104,40 +104,32 @@ typedef struct {
 static builtin_t builtins[] = {
   {"ps", 0, _kernel_stats, "Display process status", 0},
   {"free", 0, _malloc_stats, "Display some fairly meaningless memory stats", 0},
-  {"cat", 0, _cat, "print a file", 0},
-  {"cp", 0, _cp, "copy files", 0},
-  {"mv", 0, _mv, "move files", 0},
+  {"cat", 0, _cat, "print a file", "file ..."},
+  {"cp", 0, _cp, "copy files", "[-r] source target"},
+  {"mv", 0, _mv, "move files", "source target"},
   {"ls", 0, _ls, "list directory contents", "[-l] [file ...]"},
   {"rm", 0, _rm, "remove files", "[-f] [file...]"},
   {"pwd", 0, _pwd, "print the current working directory", 0},
-  {"cd", 0, _cd, "change the current working directory", 0},
+  {"cd", 0, _cd, "change the current working directory", "[directory]"},
   {"sh", 0, _sh, "execute a shell", "[-d] -c command"},
-  {"mkdir", 0, _mkdir, "make new directories", 0},
+  {"mkdir", 0, _mkdir, "make new directories", "directory ..."},
   {"rwolf", 1, _rwolf, "run a raycasting demo", 0},
   {"stress", 0, shell_stress, "run a stress test", 0},
-  {"diff", 0, _diff, "compare files", 0},
+  {"diff", 0, _diff, "compare files", "file1 file2"},
   {"rt", 0, runtest_rt, "run tests", "[-rf] [testfile ...]"},
   {"test", 0, commands_test, "run a torture test", 0},
   {"version", 0, _version, "print the BitOS version", 0},
-  {"kernel", 0, _kernel, "load a new kernel", 0},
-  {"touch", 0, _touch, "change the file access and modification times", 0},
-  {"time", 0,_time, "time command execution", 0},
+  {"kernel", 0, _kernel, "load a new kernel", "file"},
+  {"touch", 0, _touch, "change the file access and modification times", "file ..."},
+  {"time", 0,_time, "time command execution", "command"},
   {"kill", 0, _kill, "terminate or message a thread", "[-message id] [-d data] tid"},
-  {"spawn", 0, _spawn, "spawn a new command", 0},
-  {"echo", 0, _echo, "print arguments", 0},
+  {"spawn", 0, _spawn, "spawn a new command", "command"},
+  {"echo", 0, _echo, "print arguments", "text ..."},
   {"mecho", 0, _mecho, "echo any messages received back to the sender", 0},
   {"help", 0, _help, "print help", "[command]"}
 };
 
 static unsigned numBuiltins = sizeof(builtins)/sizeof(builtin_t);
-
-
-char* stripDash(char* argument)
-{
-  char* p = argument;
-  for (; *p != 0 && *p == '-'; p++);
-  return p;
-}
 
 
 static void usage(char* command)
@@ -226,8 +218,19 @@ _rwolf(int argc, char** argv)
 static int
 _mv(int argc, char** argv)
 {
-  if (argc != 3) {
-    printf("usage: %ssrc dest\n", argv[0]);
+  int c;
+  
+  while ((c = getopt(argc, argv, "")) != -1) {  
+    switch (c) {
+    case '?':
+      usage(argv[0]);
+      return -1;
+      break;
+    }
+  }
+
+  if (argc - optind != 2) {
+    usage(argv[0]);
     return 1;
   }
 
@@ -238,19 +241,26 @@ _mv(int argc, char** argv)
 static int
 _cp(int argc, char** argv)
 {
-  if (!(argc == 3 || argc == 4)) {
-    printf("usage: %s [-r] src dest\n", argv[0]);
-    return 1;
-  }
-
-  int argvIndex = 1;
   int recursive = 0;
-  if (argc == 4) {
-    if (strcmp(argv[argvIndex++], "-r") == 0) {
+  int c;
+  
+  while ((c = getopt(argc, argv, "r")) != -1) {  
+    switch (c) {
+    case 'r':
       recursive = 1;
+    case '?':
+      usage(argv[0]);
+      return -1;
+      break;
     }
   }
 
+  if (argc - optind != 2) {
+    usage(argv[0]);
+    return 1;
+  }
+
+  int argvIndex = optind;
   char* s = argv[argvIndex++];
   char* d = argv[argvIndex++];
   if (!recursive) {
@@ -264,12 +274,30 @@ _cp(int argc, char** argv)
 static int
 _mkdir(int argc, char** argv)
 {
-  if (argc != 2) {
-    printf("usage: %s path\n", argv[0]);
+  int c;
+  
+  while ((c = getopt(argc, argv, "")) != -1) {  
+    switch (c) {
+    case '?':
+      usage(argv[0]);
+      return -1;
+      break;
+    }
+  }
+
+  if (argc == optind) {
+    usage(argv[0]);
     return 1;
   }
 
-  return mkdir(argv[1], 0);
+  for (int i = optind; i < argc; i++) {
+    if (mkdir(argv[i], 0) != 0) {
+      fprintf(stderr, "%s: failed to create %s\n", argv[0], argv[i]);
+      return -1;
+    }
+  }
+
+  return 0;
 }
 
 
@@ -376,12 +404,23 @@ _pwd(int argc, char** argv)
 static int 
 _cd(int argc, char** argv)
 {
-  if (argc == 1) {
+  int c;
+  
+  while ((c = getopt(argc, argv, "")) != -1) {  
+    switch (c) {
+    case '?':
+      usage(argv[0]);
+      return -1;
+      break;
+    }
+  }
+
+  if (optind == argc) {
     return chdir("~");
   }
 
-  if (argc != 2) {
-    printf("usage: %s path\n", argv[0]);
+  if (argc - optind != 1) {
+    usage(argv[0]);
     return 1;
   }
 
@@ -392,12 +431,24 @@ _cd(int argc, char** argv)
 static int 
 _time(int argc, char** argv)
 {
-  if (argc == 1) {
-    printf("usage: %s command\n", argv[0]);
+
+  int c;
+  
+  while ((c = getopt(argc, argv, "")) != -1) {  
+    switch (c) {
+    case '?':
+      usage(argv[0]);
+      return -1;
+      break;
+    }
+  }
+
+  if (optind == argc) {
+    usage(argv[0]);
     return -1;
   }  
 
-  char** newArgv = shell_argvDup(argc, argv, 1);
+  char** newArgv = shell_argvDup(argc, argv, optind);
 
   char* command = argv_reconstruct(newArgv);
 
@@ -423,9 +474,20 @@ _time(int argc, char** argv)
 static int 
 _diff(int argc, char** argv)
 {
-  if (argc != 3) {
-    fprintf(stderr, "usage: %s file1 file2\n", argv[0]);
-    return 1;
+  int c;
+  
+  while ((c = getopt(argc, argv, "")) != -1) {  
+    switch (c) {
+    case '?':
+      usage(argv[0]);
+      return -1;
+      break;
+    }
+  }
+
+  if (argc - optind != 2) {
+    usage(argv[0]);
+    return -1;
   }
 
   if (!shell_filesAreIdentical(argv[1], argv[2])) {
@@ -454,12 +516,23 @@ _echo(int argc, char** argv)
 static int
 _spawn(int argc, char** argv)
 {
-  if (argc == 1) {
-    fprintf(stderr, "usage: %s command\n", argv[0]);
+  int c;
+  
+  while ((c = getopt(argc, argv, "")) != -1) {  
+    switch (c) {
+    case '?':
+      usage(argv[0]);
+      return -1;
+      break;
+    }
+  }
+
+  if (optind == argc) {
+    usage(argv[0]);
     return 0;
   }
 
-  char** argv2 = shell_argvDup(argc, argv, 1);
+  char** argv2 = shell_argvDup(argc, argv, optind);
   char* command = argv_reconstruct(argv2);
   thread_h tid = thread_spawn(command);
   free(command);
@@ -604,30 +677,42 @@ _rm(int argc, char** argv)
 static int 
 _cat(int argc, char** argv)
 {
-  if (argc != 2) {
-    printf("usage: %s file\n", argv[0]);
-    return 1;
-  }
+  int c;
   
-  FILE *fp = fopen(argv[1], "r");
-  
-  if (fp == 0) {
-    printf("%s: %s: %s\n", argv[0], argv[1], strerror(errno));
-    return 1;
-  }
-  
-  char buffer[255];
-  for(;;) {
-    int len = fread(&buffer, 1, sizeof(buffer)-1, fp);
-    if (len > 0) {
-      buffer[len] = 0;
-      printf(buffer);
-    } else {
+  while ((c = getopt(argc, argv, "")) != -1) {  
+    switch (c) {
+    case '?':
+      usage(argv[0]);
+      return -1;
       break;
     }
-  } 
+  }
 
-  fclose(fp);
+  if (optind >= argc) {
+    usage(argv[0]);
+    return -1;
+  }
+
+  for (int i = optind; i < argc; i++) {
+    FILE *fp = fopen(argv[i], "r");
+    
+    if (fp == 0) {
+      printf("%s: %s: %s\n", argv[0], argv[i], strerror(errno));
+      return 1;
+    }
+    
+    char buffer[255];
+    for(;;) {
+      int len = fread(&buffer, 1, sizeof(buffer)-1, fp);
+      if (len > 0) {
+	buffer[len] = 0;
+	printf(buffer);
+      } else {
+	break;
+      }
+    } 
+    fclose(fp);
+  }
 
   return 0;
 }
@@ -636,26 +721,29 @@ _cat(int argc, char** argv)
 static int
 _touch(int argc, char** argv)
 {
-  if (argc == 1) {
-    printf("usage: %s [path...]\n", argv[0]);
-    return 1;
-  }
+  int c;
 
-  for (int i = 1; i < argc; i++) {
-    if (argv[i][0] != '-') {
-      int fd = open(argv[i], O_RDWR|O_APPEND);     
-      if (fd < 0) {
-	fd = open(argv[i], O_WRONLY|O_CREAT);
-	if (fd < 0) {
-	  printf("%s: %s: %s\n", argv[0], argv[1], strerror(errno));
-	  return 1;
-	}
-      }
-  
-      close(fd);
+  while ((c = getopt(argc, argv, "")) != -1) {  
+    switch (c) {
+    case '?':
+      usage(argv[0]);
+      return -1;
+      break;
     }
   }
 
+  for (int i = optind; i < argc; i++) {
+    int fd = open(argv[i], O_RDWR|O_APPEND);     
+    if (fd < 0) {
+      fd = open(argv[i], O_WRONLY|O_CREAT);
+      if (fd < 0) {
+	printf("%s: %s: %s\n", argv[0], argv[1], strerror(errno));
+	return 1;
+      }  
+      close(fd);
+    }
+  }
+  
   return 0; 
 }
 
@@ -663,8 +751,19 @@ _touch(int argc, char** argv)
 static int 
 _kernel(int argc, char** argv)
 {
-  if (argc != 2) {
-    printf("usage: %s file\n", argv[0]);
+  int c;
+
+  while ((c = getopt(argc, argv, "")) != -1) {  
+    switch (c) {
+    case '?':
+      usage(argv[0]);
+      return -1;
+      break;
+    }
+  }
+
+  if (optind != 1) {
+    usage(argv[0]);
     return 1;
   }
   
@@ -843,4 +942,40 @@ void
 commands_usage(char* command)
 {
   usage(command);
+}
+
+static char *
+dupstr (char* s)
+{
+  char *r;
+
+  r = malloc (strlen (s) + 1);
+  strcpy (r, s);
+  return (r);
+}
+
+char *
+commands_generator(const char *text, int state)
+{
+  static int list_index, len;
+  char *name;
+
+  /* If this is a new word to complete, initialize now.  This includes
+     saving the length of TEXT for efficiency, and initializing the index
+     variable to 0. */
+  if (!state) {
+    list_index = 0;
+    len = strlen (text);
+  }
+
+  /* Return the next name which partially matches from the command list. */
+  while ((name = builtins[list_index].name))  {
+    list_index++;
+    
+    if (strncmp (name, text, len) == 0)
+      return (dupstr(name));
+  }
+  
+  /* If no names matched, then return NULL. */
+  return ((char *)NULL);
 }

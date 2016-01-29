@@ -16,6 +16,19 @@
 
 extern int _shell_complete;
 
+
+static char **
+readline_completion(const char *text, int start, int end)
+{
+  char **matches = (char**)NULL;
+
+  if (start == 0) {
+    matches = rl_completion_matches(text, commands_generator);
+  }
+
+  return (matches);
+}
+
 int 
 main(int argc, char**argv)
 { 
@@ -48,6 +61,8 @@ main(int argc, char**argv)
   rl_terminal_name = "vt100";
   rl_catch_signals = 0;
   rl_getc_function = shell_getc;
+  rl_attempted_completion_function = readline_completion;
+
 
   setbuf(stdout, NULL);
 
