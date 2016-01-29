@@ -125,7 +125,7 @@ kernel_version();
 
 
 
-extern int kernel_messageMax;
+extern const int kernel_messageMax;
 
 unsigned 
 kernel_enterKernelMode();

@@ -59,8 +59,10 @@ static _thread_history_t threadHistory[_thread_historyMax];
 static _thread_message_handler_t _threadMessageHandlers[_thread_max];
 static unsigned int currentThread;
 static unsigned int currentThreadSave;
+const int kernel_messageMax = _message_max;
+
+// This is only accessed from the simulator
 static volatile unsigned kernel_threadMax = _thread_max;
-int kernel_messageMax = _message_max;
 
 static inline unsigned _kernel_disableInts();
 static inline void _kernel_enableInts(unsigned);
@@ -78,6 +80,7 @@ static inline unsigned _kernel_getSR();
 		   "kernel_resume_asm%=:\n"\
 		   ".long __kernel_resume_asm"\
 		   ::"m"(sp):"r0","r4");	      
+
 
 unsigned 
 kernel_enterKernelMode()
@@ -102,6 +105,7 @@ kernel_exitKernelMode(unsigned modeFlag)
   _kernel_enableInts(intsDisabled);  
 }
 
+
 static inline unsigned
 _kernel_getSR()
 {
@@ -113,6 +117,7 @@ _kernel_getSR()
 		    :"r0", "memory");
   return sr;
 }
+
 
 static unsigned 
 _kernel_scheduleFromBlocked()
@@ -197,6 +202,7 @@ _kernel_argvDup(char** argv)
 
   return 0;
 }
+
 
 void 
 _kernel_argvFree (char **vector)
@@ -341,6 +347,7 @@ _kernel_enableInts(unsigned enable)
   }
 }
 
+
 void 
 kernel_assertKernelMode(unsigned pr)
 {
@@ -365,6 +372,7 @@ _kernel_checkStack()
   }
 #endif
 }
+
 
 /* called from kernel_asm.S via simulated clock tick - level 15 interrupt (ints disabled) */
 void 
@@ -401,6 +409,7 @@ _from_asm_kernel_blocked(unsigned int *sp)
 
   JMP_kernel_resume_asm(threadTable[currentThread].sp);
 }
+
 
 static void 
 _kernel_threadKill(int status, int saveHistory)
@@ -452,6 +461,7 @@ _kernel_threadKill(int status, int saveHistory)
   _kernel_checkStack();
 }
 
+
 /* called from kernel_asm.S via INT_TRAPA37 - ints disabled before this is called */
 void 
 _from_asm_kernel_kill(int status, int context)
@@ -464,7 +474,9 @@ _from_asm_kernel_kill(int status, int context)
   JMP_kernel_resume_asm(threadTable[currentThread].sp);
 }
 
-static inline int _kernel_threadGetIndex(thread_h tid)
+
+static inline int 
+_kernel_threadGetIndex(thread_h tid)
 {
   KERNEL_ASSERT_INTERRUPTS_DISABLED();
 
@@ -476,6 +488,7 @@ static inline int _kernel_threadGetIndex(thread_h tid)
 
   return -1;
 }
+
 
 /* called from kernel_asm.S via INT_TRAPA38 - ints disabled before this is called */
 void
@@ -524,6 +537,7 @@ kernel_version()
 {
   return _version;
 }
+
 
 void
 kernel_init(int (*ptr)(int argc, char** argv), const char* version)
@@ -654,6 +668,7 @@ kernel_threadBlocked()
   
   __asm__ volatile("trapa #36":::"memory");
 }
+
 
 window_h
 kernel_threadGetWindow()
@@ -806,6 +821,7 @@ _kernel_threadGetExitStatus(thread_h tid, int* status)
   return success;
 }
 
+
 int 
 kernel_threadGetExitStatus(thread_h tid)
 {
@@ -820,7 +836,6 @@ kernel_threadGetExitStatus(thread_h tid)
 
   return status;
 }
-
 
 
 thread_status_t**
@@ -858,6 +873,7 @@ kernel_threadGetStats()
   return status;
 }
 
+
 void
 kernel_threadFreeStats(thread_status_t** stats)
 {
@@ -879,7 +895,6 @@ _exit(int c)
 }
 
 
-
 int 
 kernel_threadWait(thread_h tid)
 {
@@ -896,6 +911,7 @@ kernel_threadWait(thread_h tid)
 
   return kernel_threadGetExitStatus(tid);
 }
+
 
 message_handler_t*
 kernel_threadGetMessageHandler(thread_h tid)
@@ -932,6 +948,7 @@ _kernel_threadExecMessageHandler(message_handler_t handler, int id, thread_h sen
   JMP_kernel_resume_asm(sp);  
   
 }
+
 
 void
 kernel_threadQueueMessageHandler(thread_h tid, message_handler_t handler, int id, thread_h sender, void* data)
