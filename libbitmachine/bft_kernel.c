@@ -122,7 +122,8 @@ _bft_t __bft  = {
   &dlmalloc_stats,
 
   &console_getCursorCol,
-  & gfx_bitBltEx
+  &gfx_bitBltEx,
+  &gfx_drawLine
 };
 
 _bft_t* _bft = &__bft;

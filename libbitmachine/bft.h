@@ -198,6 +198,8 @@ typedef struct {
 
   void 
   (*gfx_bitBltEx)(unsigned fb, short sx, short sy, short dx, short dy, unsigned short sw, unsigned short sh, unsigned short dw, unsigned short dh, unsigned src);
+  void
+  (*gfx_drawLine)(unsigned fb, int x0, int y0, int x1, int y1, unsigned color);
 } _bft_t;
 
 extern _bft_t* _bft;

@@ -46,21 +46,54 @@ typedef struct {
   unsigned data;
 } actor_t;
 
-static actor_t invaders[55];
-static actor_t missile = {0, 0, 3, 0, DEAD, 0};
-static actor_t defender = {0, 200, 0, 0, ALIVE, 0};
+#define SCORE_X   23
+#define SCORE_Y   17
+#define HISCORE_X 87
+#define scoreBoardHeight 24
+
+#define NUM_DEFENDERS_X 7
+#define NUM_DEFENDERS_Y 233
 
 #define invaderW 12
 #define invaderH 8
 #define missileW 3
 #define missileH 7
+#define defenderW 13
+#define defenderH 8
+#define baseW 22
+#define baseH 16
+#define baseTop 184
+
+static actor_t invaders[55];
+
+static actor_t missile = {0, 0, 5, 0, DEAD, 0};
+
+static actor_t defender = {0, 208, 4, 0, ALIVE, 0};
+
+static actor_t spareDefenders[] = {
+  {24, 232, 4, 0, ALIVE, 0},
+  {40, 232, 4, 0, ALIVE, 0}
+};
+
+static actor_t bases[] = {
+  {30, baseTop, 6, 0, ALIVE, 0},
+  {75, baseTop, 6, 0, ALIVE, 0},
+  {120, baseTop, 6, 0, ALIVE, 0},
+  {165, baseTop, 6, 0, ALIVE, 0}
+};
+
+int spriteMapWidth = 128;
+int spriteMapHeight = 64;
 
 static sprite_t spriteConfig[] = { 
   {invaderW, invaderH, 3},
   {invaderW, invaderH, 3},
   {invaderW, invaderH, 3},
   {missileW, missileH, 3},
-  {0,0, 0}
+  {defenderW,defenderH, 1},
+  {1, 4, 2}, // Defender Missile
+  {baseW, baseH, 1},
+  {0, 0, 0}
 };
 
 static int invaderIndex = 0;
@@ -71,8 +104,7 @@ static int score = 0;
 static int hiscore = 0;
 static unsigned frame = 0;
 static int screenDirty = 1;
-
-static const int scoreBoardHeight = (gfx_retroFontHeight * 2) + 2;
+static int numDefenders = 3;
 
 static int target, work, width, height, spriteFrameBuffer;
 
@@ -114,9 +146,6 @@ initRender()
 {
   unsigned *ptr = (unsigned*) &sprite_rgba;
   int x, y;
-
-  int spriteMapHeight = 64;
-  int spriteMapWidth = 64;
 
 
   for (y = 0; y < spriteMapHeight; y++) {
@@ -182,9 +211,13 @@ moveMissile()
 {
   if (missile._state == ALIVE) {
     missile.y-=4;
+    if ((missile.y+missileH) < baseTop) {
+      missile.spriteIndex = 1;
+    }
     screenDirty = 1;
   }
-  if (missile.y <= 10) {
+
+  if (missile.y <= scoreBoardHeight) {
     missile._state = DEAD;
   }
 }
@@ -241,6 +274,7 @@ moveInvaders(int time)
 }
 
 
+
 static void
 renderActor(actor_t* actor)
 {
@@ -254,16 +288,39 @@ renderActor(actor_t* actor)
   gfx_bitBlt(work, sx, sy, actor->x, actor->y, s->width, s->height, spriteFrameBuffer);
 }
 
+static void
+renderBases()
+{
+  for (unsigned i = 0; i < (sizeof(bases)/sizeof(bases[0])); i++) {
+    renderActor(&bases[i]);
+  }
+}
+
+static void
+renderStatusBar(int w, int h)
+{
+  gfx_drawLine(work, 0, 231, w, 231, 0xFF00FF00);
+  gfx_fillRect(work, NUM_DEFENDERS_X, NUM_DEFENDERS_Y, gfx_retroFontWidth, gfx_retroFontHeight, 0xFF000000);
+  char buffer[2] = {'0' + numDefenders, 0};
+  gfx_drawStringRetro(work, NUM_DEFENDERS_X, NUM_DEFENDERS_Y, buffer , 0xFFFFFFFF, 1, 0);    
+
+  for (int i = 0; i < numDefenders; i++) {
+    renderActor(&spareDefenders[i]);
+  }
+
+  gfx_drawStringRetro(work, 135, NUM_DEFENDERS_Y, "CREDIT 00", 0xFFFFFFFF, 1, 3);    
+
+}
 
 static void 
 renderMissile()
 {
   if (missile._state == ALIVE) {
     renderActor(&missile);
-    if (frame % 10 == 0) {
+    /*if (frame % 10 == 0) {
       missile.spriteIndex++;
       missile.spriteIndex = missile.spriteIndex % spriteConfig[missile.sprite].count;
-    }
+      }*/
   }
 }
 
@@ -308,8 +365,8 @@ renderScores()
   
   if (dirty) {
     gfx_fillRect(work, 0, gfx_retroFontHeight, width, gfx_retroFontHeight+2, 0xFF000000);
-    gfx_drawStringRetro(work, 5+(2*(gfx_retroFontWidth+3)), gfx_retroFontHeight+2, scoreBuffer, 0xFFFFFFFF, 1, 3);    
-    gfx_drawStringRetro(work, 5+(10*(gfx_retroFontWidth+3)), gfx_retroFontHeight+2, hiScoreBuffer, 0xFFFFFFFF, 1, 3);
+    gfx_drawStringRetro(work, SCORE_X, SCORE_Y, scoreBuffer, 0xFFFFFFFF, 1, 3);    
+    gfx_drawStringRetro(work, HISCORE_X, SCORE_Y, hiScoreBuffer, 0xFFFFFFFF, 1, 3);
   }
 }
 
@@ -336,6 +393,10 @@ render(int scale, int dw, int dh)
 
   renderMissile();
 
+  renderBases();
+
+  renderStatusBar(width, height);
+
   if (scale) {
     gfx_bitBltEx(target, 0, 0, 0, 0, width, height, dw, dh, work);
   } else {
@@ -352,7 +413,7 @@ shoot()
   if (missile._state == DEAD) {
     missile.x = defender.x + (invaderW/2);
     missile.y = defender.y-spriteConfig[missile.sprite].height;
-    missile.spriteIndex = 1;
+    missile.spriteIndex = 0;
     missile._state = ALIVE;
     audio_execute(AUDIO_CHANNEL_SHOOT);
   }
@@ -393,7 +454,7 @@ int
 main(int agrc, char* argv[])
 {
   unsigned time = 0;
-  int scale = 2;
+  int scale = 1;
   const int w = 217, h = 248;
   const int dw = w*scale, dh = h*scale;
 

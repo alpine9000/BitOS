@@ -107,6 +107,7 @@ gfx_getVideoHeight();
 #define gfx_getVideoWidth() _bft->gfx_getVideoWidth()
 #define gfx_getVideoHeight() _bft->gfx_getVideoHeight()
 #define gfx_drawStringRetro(fb, x, y, c, color, size, spaceSize)  _bft->gfx_drawStringRetro(fb, x, y, c,  color, size, spaceSize)
+#define gfx_drawLine(fb, x0, y0, x1, y1, color) _bft->gfx_drawLine(fb, x0, y0, x1, y1, color)
 #endif
 
 inline void gfx_iPutData(unsigned fb, int x, int y, unsigned byte)
