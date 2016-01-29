@@ -11,41 +11,85 @@
 #include "si.h"
 #include "gfx.h"
 
-#define NUM_INVADERS 6
-#define NUM_MISSLES 3
 
-static const unsigned char invaderW = 12;
-static const unsigned char invaderH = 8;
-static const unsigned char missleW = 3;
-static const unsigned char missleH = 7;
+#define printf _bft->simulator_printf
+
+typedef enum {
+  ALIVE = 1,
+  EXPLODING = 2,
+  DEAD = 0
+} actor_state_t;
+
+typedef enum {
+  AUDIO_CHANNEL_SHOOT = 0,
+  AUDIO_CHANNEL_INVADER1 = 1,
+  AUDIO_CHANNEL_INVADER2 = 2,
+  AUDIO_CHANNEL_INVADER3 = 3,
+  AUDIO_CHANNEL_INVADER4 = 4,
+  AUDIO_CHANNEL_KILLED = 5
+} audio_channel_t;
+
 
 typedef struct {
-  short x;
-  short y;
-  unsigned char sprite;
-  unsigned char state;
-} invader_t;
+  int width;
+  int height;
+  int count;
+} sprite_t;
 
-invader_t invaders[55];
-invader_t missle = {0, 0, 0, 0};
 
-unsigned char invaderIndex = 0;
-char invaderDirection = 1;
-unsigned short invaderSpeed = 500;
-unsigned short missleSpeed = 1;
+typedef struct {
+  int x;
+  int y;
+  int sprite;
+  int spriteIndex;
+  actor_state_t _state;
+  unsigned data;
+} actor_t;
 
-unsigned target, work, sprite, width, height;
+static actor_t invaders[55];
+static actor_t missile = {0, 0, 3, 0, DEAD, 0};
+static actor_t defender = {0, 200, 0, 0, ALIVE, 0};
 
-void initInvader(short x, short y, unsigned char _sprite)
+#define invaderW 12
+#define invaderH 8
+#define missileW 3
+#define missileH 7
+
+static sprite_t spriteConfig[] = { 
+  {invaderW, invaderH, 3},
+  {invaderW, invaderH, 3},
+  {invaderW, invaderH, 3},
+  {missileW, missileH, 3},
+  {0,0, 0}
+};
+
+static int invaderIndex = 0;
+static int invaderDirection = 1;
+static int invaderSpeed = 500;
+
+static int score = 0;
+static int hiscore = 0;
+static unsigned frame = 0;
+static int screenDirty = 1;
+
+static const int scoreBoardHeight = (gfx_retroFontHeight * 2) + 2;
+
+static int target, work, width, height, spriteFrameBuffer;
+
+static void 
+initInvader(int x, int y, unsigned _sprite)
 {
-  invader_t *i = &  invaders[invaderIndex++];
+  actor_t *i = &  invaders[invaderIndex++];
   i->x = x;
   i->y = y;
   i->sprite = _sprite;
-  i->state = 0;
+  i->spriteIndex = 0;
+  i->_state = ALIVE;
 }
 
-void initInvaders()
+
+static void 
+initInvaders()
 {
   unsigned char sprites[] = {2, 0, 0, 1, 1};
   for (int y = 0; y < 5; y++) {
@@ -55,132 +99,46 @@ void initInvaders()
   }
 }
 
-void downShiftInvaders()
-{
-  invaderSpeed = invaderSpeed - 50;
-
-  for (int i = 0; i < invaderIndex; i++) {
-    invader_t *inv = &invaders[i];
-    inv->y += invaderH;
-  }
-}
-
-void moveMissle()
-{
-  if (missle.state == 1) {
-    missle.y-=4;
-  }
-  if (missle.y <= 10) {
-   missle.state = 0;
-  }
-}
-
-void moveInvaders(unsigned time) 
-{
-  static unsigned last = 0;
-  static unsigned beats[] = {1, 2, 3, 4};
-  static unsigned char beatIndex = 0;
-
-  if (time-last > invaderSpeed) {
-    last = time;
-    audio_execute(beats[beatIndex++]);
-    if (beatIndex > 3) {
-      beatIndex = 0;
-    }
-
-    for (int i = 0; i < invaderIndex; i++) {
-      invader_t *inv = &invaders[i];
-      inv->x += invaderDirection;
-      inv->state = !inv->state;
-    }
-    
-    for (int i = 0; i < invaderIndex; i++) {
-      invader_t *inv = &invaders[i];
-      if (inv->x > (short)width-20) {
-	invaderDirection = -1;
-	downShiftInvaders();
-	break;
-      }
-    }
-    
-    for (int i = 0; i < invaderIndex; i++) {
-      invader_t *inv = &invaders[i];
-      if (inv->x < 10) {
-	invaderDirection = 1;
-	downShiftInvaders();
-	break;
-      }
-    }
-  }
-}
-
-void renderMissle()
-{
-  if (missle.state == 1) {
-    gfx_bitBlt(work, missle.sprite*missleW, invaderH*NUM_INVADERS, missle.x, missle.y, missleW, missleH, sprite);
-  }
-}
-
-
-void drawRGBA(unsigned short x, unsigned short y, unsigned *ptr)
+static void 
+drawSpriteRGBA(unsigned x, unsigned y, unsigned *ptr)
 {
   unsigned data = (unsigned)(*ptr);
   unsigned char alpha = data & 0xFF;
   data = (data >> 8) | alpha << 24;
-  gfx_drawPixel(sprite, x, y, data);
+  gfx_drawPixel(spriteFrameBuffer, x, y, data);
 }
+  
 
-void preRender()
+static void 
+initRender()
 {
-  //  gfx_setFrameBuffer(OFFSCREEN2);
   unsigned *ptr = (unsigned*) &sprite_rgba;
-  unsigned short x, y;
+  int x, y;
 
-  unsigned short _height = (invaderH*NUM_INVADERS)+missleH;
+  int spriteMapHeight = 64;
+  int spriteMapWidth = 64;
 
-  for (y = 0; y < _height; y++) {
-    for (x = 0; x < invaderW; x++) {
-      drawRGBA(x, y, ptr++);
+
+  for (y = 0; y < spriteMapHeight; y++) {
+    for (x = 0; x < spriteMapWidth; x++) {
+      drawSpriteRGBA(x, y, ptr++);
     }
   }
 
-  //gfx_setFrameBuffer(OFFSCREEN1);
-  gfx_fillRect(work, 0, 0, width, _height, 0xFF000000);
-  gfx_drawStringRetro(work, 5, 1, "SCORE<1> HI-SCORE SCORE<2>", 0xFFFFFFFF, 1, 3);
-
+  gfx_fillRect(work, 0, 0, width, height, 0xFF000000);
+  gfx_drawStringRetro(work, 5, 1, "SCORE<1> HI-SCORE SCORE<2>", 0xFFFFFFFF, 1, 3);  
 }
 
-static unsigned short x = 0, y = 200;
 
-void render()
+static void 
+initAudio()
 {
-  //  static unsigned beats[] = {60000, 55000, 50000, 45000};
-
-
-  //gfx_setFrameBuffer(OFFSCREEN1);
-  gfx_fillRect(work, 0, 10, width, height-10, 0xFF000000);
-  gfx_bitBlt(work, 0, 0, x, y, invaderW, invaderH, sprite);
-
-  for (int i = 0; i < invaderIndex; i++) {
-    invader_t *inv = & invaders[i];    
-    gfx_bitBlt(work, 0, ((inv->sprite*2)+inv->state)*invaderH, inv->x, inv->y,invaderW, invaderH, sprite);
-  }
-
-  renderMissle();
-
-  gfx_bitBlt(target, 0, 0, 0, 0, width, height, work);
-
-  //  gfx_setFrameBuffer(ONSCREEN);
-}
-
-void setupAudio()
-{
-  audio_selectChannel(0);
+  audio_selectChannel(AUDIO_CHANNEL_SHOOT);
   audio_setType(AUDIO_TYPE_BUFFER);
   audio_setAddress((unsigned*)&shoot_wav);
   audio_setLength(shoot_wav_length);
 
-  audio_selectChannel(1);
+  audio_selectChannel(AUDIO_CHANNEL_INVADER1);
   audio_setType(AUDIO_TYPE_BUFFER);
   audio_setAddress((unsigned*)&fastinvader1_wav);
   audio_setLength(fastinvader1_wav_length);
@@ -199,73 +157,308 @@ void setupAudio()
   audio_setType(AUDIO_TYPE_BUFFER);
   audio_setAddress((unsigned*)&fastinvader4_wav);
   audio_setLength(fastinvader4_wav_length);
-  }
 
-void shoot()
+  audio_selectChannel(AUDIO_CHANNEL_KILLED);
+  audio_setType(AUDIO_TYPE_BUFFER);
+  audio_setAddress((unsigned*)&invaderkilled_wav);
+  audio_setLength(invaderkilled_wav_length);
+}
+
+
+static void 
+downShiftInvaders()
 {
-  if (missle.state == 0) {
-    missle.x = x + (invaderW/2);
-    missle.y = y-missleH;
-    missle.sprite = 0;
-    missle.state = 1;
-    audio_execute(0);
+  invaderSpeed = invaderSpeed - 50;
+
+  for (int i = 0; i < invaderIndex; i++) {
+    actor_t *inv = &invaders[i];
+    inv->y += invaderH;
   }
 }
 
 
-
-int main(int agrc, char* argv[])
+static void
+moveMissile()
 {
-  unsigned time;
-  unsigned w = 217, h = 248;
-  window_h window = window_create("Space Invaders", 0, 0, w, h);
-  gfx_fillRect(window_getFrameBuffer(window), 0, 0, w, h, 0xFFFFFFFF);
+  if (missile._state == ALIVE) {
+    missile.y-=4;
+    screenDirty = 1;
+  }
+  if (missile.y <= 10) {
+    missile._state = DEAD;
+  }
+}
+
+
+static void
+moveInvaders(int time) 
+{
+  static int last = 0;
+  static unsigned beats[] = {AUDIO_CHANNEL_INVADER1, AUDIO_CHANNEL_INVADER2, AUDIO_CHANNEL_INVADER3, AUDIO_CHANNEL_INVADER4};
+  static unsigned char beatIndex = 0;
+
+  if (time-last > invaderSpeed) {
+    last = time;
+    audio_execute(beats[beatIndex++]);
+    if (beatIndex > 3) {
+      beatIndex = 0;
+    }
+
+    for (int i = 0; i < invaderIndex; i++) {
+      actor_t *inv = &invaders[i];
+      if (inv->_state == ALIVE) {
+	inv->x += invaderDirection;
+	inv->spriteIndex = !inv->spriteIndex;
+      } else if (inv->_state == EXPLODING) {
+	inv->_state = DEAD;
+      }
+    }
+    
+    for (int i = 0; i < invaderIndex; i++) {
+      actor_t *inv = &invaders[i];
+      if (inv->_state == ALIVE) {
+	if (inv->x > width-20) {
+	  invaderDirection = -1;
+	  downShiftInvaders();
+	  break;
+	}
+      }
+    }
+    
+    for (int i = 0; i < invaderIndex; i++) {
+      actor_t *inv = &invaders[i];
+      if (inv->_state == ALIVE) {
+	if (inv->x < 10) {
+	  invaderDirection = 1;
+	  downShiftInvaders();
+	  break;
+	}
+      }
+    }
+
+    screenDirty = 1;
+  }
+}
+
+
+static void
+renderActor(actor_t* actor)
+{
+  sprite_t *s = &spriteConfig[actor->sprite];
+  
+  int sx = 0;
+  for (int i = 0; i < actor->sprite; i++) {
+    sx += spriteConfig[i].width;
+  }
+  int sy = s->height*actor->spriteIndex;
+  gfx_bitBlt(work, sx, sy, actor->x, actor->y, s->width, s->height, spriteFrameBuffer);
+}
+
+
+static void 
+renderMissile()
+{
+  if (missile._state == ALIVE) {
+    renderActor(&missile);
+    if (frame % 10 == 0) {
+      missile.spriteIndex++;
+      missile.spriteIndex = missile.spriteIndex % spriteConfig[missile.sprite].count;
+    }
+  }
+}
+
+
+static char *
+scoretoa(int i, int bufsize, char* buf)
+{
+  buf[bufsize-1] = 0;
+  char *p = buf + bufsize-1;
+  do {
+    *--p = '0' + (i % 10);
+    i /= 10;
+  } while (i != 0);
+  do {
+    *--p = '0';
+  } while (p != buf);
+
+  return buf;
+}
+
+
+static void 
+renderScores()
+{
+  static char scoreBuffer[5];
+  static char hiScoreBuffer[5];
+  static int lastScore = -1;
+  static int lastHiScore = -1;
+  int dirty = 0;
+
+  if (lastScore != score) {
+    scoretoa(score, 5, scoreBuffer);
+    lastScore = score;
+    dirty = 1;
+  }
+
+  if (lastHiScore != hiscore) {
+    scoretoa(hiscore, 5, hiScoreBuffer);
+    lastHiScore = hiscore;
+    dirty = 1;
+  }
+  
+  if (dirty) {
+    gfx_fillRect(work, 0, gfx_retroFontHeight, width, gfx_retroFontHeight+2, 0xFF000000);
+    gfx_drawStringRetro(work, 5+(2*(gfx_retroFontWidth+3)), gfx_retroFontHeight+2, scoreBuffer, 0xFFFFFFFF, 1, 3);    
+    gfx_drawStringRetro(work, 5+(10*(gfx_retroFontWidth+3)), gfx_retroFontHeight+2, hiScoreBuffer, 0xFFFFFFFF, 1, 3);
+  }
+}
+
+
+static void 
+render(int scale, int dw, int dh)
+{
+  if (!screenDirty) {
+    return;
+  }
+
+  gfx_fillRect(work, 0, scoreBoardHeight, width, height-scoreBoardHeight, 0xFF000000);
+
+  renderScores();
+
+  renderActor(&defender);
+
+  for (int i = 0; i < invaderIndex; i++) {
+    actor_t *inv = & invaders[i];    
+    if (inv->_state != DEAD) {
+      renderActor(inv);
+    }
+  }
+
+  renderMissile();
+
+  if (scale) {
+    gfx_bitBltEx(target, 0, 0, 0, 0, width, height, dw, dh, work);
+  } else {
+    gfx_bitBlt(target, 0, 0, 0, 0, width, height, work);
+  }
+
+  screenDirty = 0;
+}
+
+
+static void 
+shoot()
+{
+  if (missile._state == DEAD) {
+    missile.x = defender.x + (invaderW/2);
+    missile.y = defender.y-spriteConfig[missile.sprite].height;
+    missile.spriteIndex = 1;
+    missile._state = ALIVE;
+    audio_execute(AUDIO_CHANNEL_SHOOT);
+  }
+}
+
+
+static void 
+collision(unsigned time)
+{
+  if (missile._state == DEAD) {
+    return;
+  }
+
+  for (int i = 0; i < invaderIndex; i++) {
+    actor_t *inv = &invaders[i];
+    if (inv->_state == ALIVE) {
+      if (inv->x < missile.x + missileW &&
+	  inv->x + invaderW > missile.x &&
+	  inv->y < missile.y + missileH &&
+	  invaderH + inv->y > missile.y) {
+	audio_execute(AUDIO_CHANNEL_KILLED);
+	inv->_state = EXPLODING;
+	inv->spriteIndex = 2;
+	inv->data = time;
+	missile._state = DEAD;
+	score++;
+	if (score > hiscore) {
+	  hiscore = score;
+	}
+	break;
+      }
+    } 
+  }
+}
+
+
+int 
+main(int agrc, char* argv[])
+{
+  unsigned time = 0;
+  int scale = 2;
+  const int w = 217, h = 248;
+  const int dw = w*scale, dh = h*scale;
+
+  window_h window = window_create("Space Invaders", 0, 0, dw, dh);
+  gfx_fillRect(window_getFrameBuffer(window), 0, 0, dw, dh, 0xFFFFFFFF);
   kernel_threadSetWindow(window);
+
+  printf("Console debugging enabled...%d\n", time);
 
   width = w;
   height = h;
   target = window_getFrameBuffer(window);
   work = gfx_createFrameBuffer(w, h);
-  sprite = gfx_createFrameBuffer(w, h);
-  //gfx_setVideoResolution(1, 217, 248, 2);
-  //gfx_setVideoResolution(2, 217, 248, 2);
+  spriteFrameBuffer = gfx_createFrameBuffer(w, h);
+
   initInvaders();
-  setupAudio();
-  preRender();
+  initAudio();
+  initRender();
 
-  for (;;) {
+  int lastTime = 0;
 
+  for (int count = 0;;) {
+   peripheral.simulator.startStopWatch = 1;
 
-    time = peripheral.time.elapsedMilliSeconds;
-    
+   time = peripheral.time.elapsedMilliSeconds;
+
     if (_console_char_avail()) {
-      //if (peripheral.consoleReadBufferSize) {
       switch ( _console_read_char()) {
-	//switch (peripheral.consoleRead) {
       case ' ':
 	shoot();
 	break;
       }
     }
-  
 
     if (window_isKeyDown(window, 37)) {
-      x-=2;
-      if (x > width-invaderW) {
-	x = 0;
+      defender.x-=2;
+      if (defender.x < 0) {
+	defender.x = 0;
       }
+      screenDirty = 1;
     }
+    
     if (window_isKeyDown(window, 39)) {
-      x+=2;
-      if (x >= width-invaderW) {
-	x = width-invaderW-1;
+      defender.x+=2;
+      if (defender.x >= width-invaderW) {
+	defender.x = width-invaderW-1;
       }
-      }
-    render();
+      screenDirty = 1;
+    }
+
+    collision(time);
+    if (screenDirty) {
+      render(scale != 1, dw, dh);
+    }
+
     moveInvaders(time);
-    moveMissle();
+    moveMissile();
 
+    if (count++ % 60 == 0) {
+      printf("frame = %d, delta = %d\n", peripheral.simulator.stopWatchElapsed, time-lastTime);
+    }
 
-    kernel_threadBlocked();
+    lastTime = time;
+    frame++;
+    peripheral.simulator.yield = 1;
+    //kernel_threadBlocked();
   }
 }

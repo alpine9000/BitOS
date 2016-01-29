@@ -1,5 +1,4 @@
 PATH := $(PATH):/usr/local/sh-elf/bin
-BITOS_PATH=~/Projects/BitOS
 TOOLS_BASE=~/Projects/bitos-build
 WARNINGS = -pedantic-errors -Wfatal-errors -Wall -Werror -Wextra -Wno-unused-parameter -Wshadow
 include ./makefiles/optimize.mk
@@ -41,6 +40,7 @@ gdrive: all
 local: all
 	cp $(ELF_FILE) ../BitMachine/BitFS/
 	cp apps/bsh/bsh ../BitMachine/BitFS/
+	cp apps/si/si ../BitMachine/BitFS/
 
 install:
 	cp apps/bsh/bsh /usr/local/bin

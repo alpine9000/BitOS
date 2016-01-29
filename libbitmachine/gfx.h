@@ -99,6 +99,7 @@ gfx_getVideoHeight();
 #define gfx_fillRect(fb,x,y,width,height,color) _bft->gfx_fillRect(fb,x,y,width,height,color) 
 #define gfx_drawPixel(fb,x,y,color) _bft->gfx_drawPixel(fb,x,y,color)
 #define gfx_bitBlt(fb,srcX,srcY,destX,destY,width,height,src)  _bft->gfx_bitBlt(fb, srcX, srcY, destX, destY, width, height, src)
+#define gfx_bitBltEx(fb,sx,sy,dx,dy,sw,sh,dw,dh,src) _bft->gfx_bitBltEx(fb,sx,sy,dx,dy,sw,sh,dw,dh,src)
 #define gfx_drawStringEx(fb, x, y, c, color, size, spaceSize)  _bft->gfx_drawStringEx(fb, x, y, c,  color, size, spaceSize)
 #define gfx_createFrameBuffer(w,h) _bft->gfx_createFrameBuffer(w, h)
 #define gfx_loadData(fb) _bft->gfx_loadData(fb)

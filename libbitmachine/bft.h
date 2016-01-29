@@ -195,6 +195,9 @@ typedef struct {
 
   unsigned
   (*console_getCursorCol)();
+
+  void 
+  (*gfx_bitBltEx)(unsigned fb, short sx, short sy, short dx, short dy, unsigned short sw, unsigned short sh, unsigned short dw, unsigned short dh, unsigned src);
 } _bft_t;
 
 extern _bft_t* _bft;

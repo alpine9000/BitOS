@@ -1,3 +1,4 @@
+BITOS_PATH=~/Projects/BitOS
 ELF_PATH =/usr/local/sh-elf/bin/
 LIB_PATH=/usr/local/sh-elf/
 CC=$(ELF_PATH)sh-elf-gcc
@@ -5,6 +6,7 @@ CPP=$(ELF_PATH)sh-elf-g++
 AR=$(ELF_PATH)sh-elf-ar
 LD=$(ELF_PATH)sh-elf-ld
 STRIP=$(ELF_PATH)sh-elf-strip -g
+CONVERT=/opt/ImageMagick/bin/convert
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) -o $@ $<
@@ -38,12 +40,12 @@ STRIP=$(ELF_PATH)sh-elf-strip -g
 
 .SECONDARY:
 %.rgba: %.png
-	convert $*.png $*.rgba
+	$(CONVERT) $*.png $*.rgba
 
 .SECONDARY:
 %.c: %.rgba
-	./bin/bin2c $*.rgba $*.c
+	$(BITOS_PATH)/bin/bin2c $*.rgba $*.c
 
 .SECONDARY:
 %.c: %.wav
-	./bin2c $*.wav $*.c
+	$(BITOS_PATH)/bin/bin2c $*.wav $*.c
