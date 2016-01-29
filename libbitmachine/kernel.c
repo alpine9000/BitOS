@@ -863,7 +863,7 @@ kernel_threadGetStats()
       status[y]->state = entry->state;
       status[y]->tid = entry->tid;
       status[y]->name = memory_kmalloc(argvLen+1);
-      strlcpy(status[y]->name, entry->argv[0], argvLen);
+      strlcpy(status[y]->name, entry->argv[0], argvLen+1);
       y++;
     }
   }
