@@ -11,6 +11,8 @@
 #include "si.h"
 #include "gfx.h"
 
+#define SCREEN_WIDTH 217
+#define SCREEN_HEIGHT 248
 
 #define printf _bft->simulator_printf
 
@@ -53,6 +55,7 @@ typedef struct {
 
 #define NUM_DEFENDERS_X 7
 #define NUM_DEFENDERS_Y 233
+#define NUM_BASES 4
 
 #define invaderW 12
 #define invaderH 8
@@ -75,11 +78,11 @@ static actor_t spareDefenders[] = {
   {40, 232, 4, 0, ALIVE, 0}
 };
 
-static actor_t bases[] = {
+static actor_t bases[NUM_BASES] = {
   {30, baseTop, 6, 0, ALIVE, 0},
-  {75, baseTop, 6, 0, ALIVE, 0},
-  {120, baseTop, 6, 0, ALIVE, 0},
-  {165, baseTop, 6, 0, ALIVE, 0}
+  {75, baseTop, 6, 1, ALIVE, 0},
+  {120, baseTop, 6, 2, ALIVE, 0},
+  {165, baseTop, 6, 3, ALIVE, 0}
 };
 
 int spriteMapWidth = 128;
@@ -92,7 +95,7 @@ static sprite_t spriteConfig[] = {
   {missileW, missileH, 3},
   {defenderW,defenderH, 1},
   {1, 4, 2}, // Defender Missile
-  {baseW, baseH, 1},
+  {baseW, baseH, 4},
   {0, 0, 0}
 };
 
@@ -139,18 +142,71 @@ drawSpriteRGBA(unsigned x, unsigned y, unsigned *ptr)
   data = (data >> 8) | alpha << 24;
   gfx_drawPixel(spriteFrameBuffer, x, y, data);
 }
+
+static void
+transferSprite(int sprite, int index)
+{
+  unsigned *ptr = (unsigned*) &sprite_rgba;
+  sprite_t* sp = &spriteConfig[sprite];
+  int sy = sp->height*index;  
+  int sx = 0;
+
+  for (int i = 0; i < sprite; i++) {
+    sx += spriteConfig[i].width;
+  }
   
+  for (int y = sy; y < (sy+sp->height); y++) {
+    for (int x = sx; x < (sx+sp->width); x++) {
+      unsigned* dp = ptr + (y*spriteMapWidth) + x;
+      drawSpriteRGBA(x, y, dp);
+    }
+  }
+}
+
+//static 
+void
+putSpritePixelRGBA(int sprite, int index, int x, int y, unsigned pixel)
+{
+ unsigned *ptr = (unsigned*) &sprite_rgba;
+  sprite_t* sp = &spriteConfig[sprite];
+  int sy = sp->height*index;  
+  int sx = 0;
+
+  for (int i = 0; i < sprite; i++) {
+    sx += spriteConfig[i].width;
+  }
+  
+  unsigned* dp = ptr + ((sy+y)*spriteMapWidth) + (sx+x);
+  *dp = pixel;
+}
+
+static unsigned
+getSpritePixelRGBA(int sprite, int index, int x, int y)
+{
+  sprite_t* sp = &spriteConfig[sprite];
+
+  if (!(x > 0 && x < sp->width && y > 0 && y < sp->height)) {
+    return 0;
+  }
+
+  unsigned *ptr = (unsigned*) &sprite_rgba;
+  int sy = sp->height*index;  
+  int sx = 0;
+
+  for (int i = 0; i < sprite; i++) {
+    sx += spriteConfig[i].width;
+  }
+  
+  unsigned* dp = ptr + ((sy+y)*spriteMapWidth) + (sx+x);
+  return *dp;
+}
 
 static void 
 initRender()
 {
-  unsigned *ptr = (unsigned*) &sprite_rgba;
-  int x, y;
-
-
-  for (y = 0; y < spriteMapHeight; y++) {
-    for (x = 0; x < spriteMapWidth; x++) {
-      drawSpriteRGBA(x, y, ptr++);
+  for (int sprite = 0; spriteConfig[sprite].count != 0; sprite++) {
+    for (int index = 0; index < spriteConfig[sprite].count; index++) {
+      transferSprite(sprite, index);
     }
   }
 
@@ -291,7 +347,7 @@ renderActor(actor_t* actor)
 static void
 renderBases()
 {
-  for (unsigned i = 0; i < (sizeof(bases)/sizeof(bases[0])); i++) {
+  for (unsigned i = 0; i < NUM_BASES; i++) {
     renderActor(&bases[i]);
   }
 }
@@ -427,6 +483,17 @@ collision(unsigned time)
     return;
   }
 
+
+  for (int i = 0; i < NUM_BASES; i++) {
+    unsigned pixel = getSpritePixelRGBA(bases[i].sprite, bases[i].spriteIndex, missile.x-bases[i].x, missile.y-bases[i].y);
+    if (pixel != 0x000000FF && pixel != 0) {
+      missile._state = DEAD;
+      return;
+    }
+  }
+
+
+
   for (int i = 0; i < invaderIndex; i++) {
     actor_t *inv = &invaders[i];
     if (inv->_state == ALIVE) {
@@ -454,8 +521,8 @@ int
 main(int agrc, char* argv[])
 {
   unsigned time = 0;
-  int scale = 1;
-  const int w = 217, h = 248;
+  int scale = 2;
+  const int w = SCREEN_WIDTH, h = SCREEN_HEIGHT;
   const int dw = w*scale, dh = h*scale;
 
   window_h window = window_create("Space Invaders", 0, 0, dw, dh);
