@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <stdlib.h>
 #include "gfx.h"
 #include "console.h"
 #include "peripheral.h"
@@ -45,34 +46,47 @@ typedef struct {
   int sprite;
   int spriteIndex;
   actor_state_t _state;
-  unsigned data;
+  void* data;
 } actor_t;
 
+typedef struct {
+  int row;
+  int column;
+} invader_data_t;
+
 #define MISSILE_SPEED 4
+#define BOMB_SPEED 1
+#define BOMB_DROP_FRAMES 100
 
 #define SCORE_X   23
 #define SCORE_Y   17
 #define HISCORE_X 87
+#define STATUS_LINE_Y 231
 
 #define NUM_DEFENDERS_X 7
 #define NUM_DEFENDERS_Y 233
 #define NUM_BASES 4
+#define NUM_INVADER_ROWS 5
+#define NUM_INVADER_COLUMNS 11
+#define NUM_INVADERS (NUM_INVADER_ROWS*NUM_INVADER_COLUMNS)
+#define MAX_BOMBS 4
+#define NUM_BOMB_RANDOMS 10
+#define NUM_BOMB_RANDOM_COLUMNS 11
 
 #define SCOREBOARD_HEIGHT 24
 #define BASE_KILL_WIDTH 7
 #define BASE_KILL_HEIGHT 4
-#define DEFENDER_MISSILE_WIDTH 1
-#define DEFENDER_MISSILE_HEIGHT 4
+#define MISSILE_WIDTH 1
+#define MISSILE_HEIGHT 4
 #define INVADER_WIDTH 12
 #define INVADER_HEIGHT 8
-#define MISSILE_WIDTH 3
-#define MISSILE_HEIGHT 7
+#define BOMB_WIDTH 3
+#define BOMB_HEIGHT 7
 #define DEFENDER_WIDTH 13
 #define DEFENDER_HEIGHT 8
 #define BASE_WIDTH 22
 #define BASE_HEIGHT 16
 #define BASE_TOP 184
-
 #define SPRITEMAP_WIDTH 128
 #define SPRITEMAP_HEIGHT 64
 
@@ -81,9 +95,9 @@ static sprite_t spriteConfig[] = {
   {INVADER_WIDTH, INVADER_HEIGHT, 3},
   {INVADER_WIDTH, INVADER_HEIGHT, 3},
   {INVADER_WIDTH, INVADER_HEIGHT, 3},
-  {MISSILE_WIDTH, MISSILE_HEIGHT, 3},
+  {BOMB_WIDTH, BOMB_HEIGHT, 3},
   {DEFENDER_WIDTH,DEFENDER_HEIGHT, 1},
-  {DEFENDER_MISSILE_WIDTH, DEFENDER_MISSILE_HEIGHT, 2}, // Defender Missile
+  {MISSILE_WIDTH, MISSILE_HEIGHT, 2},
   {BASE_WIDTH, BASE_HEIGHT, 4},
   {BASE_KILL_WIDTH, BASE_KILL_HEIGHT, 2},
   {0, 0, 0}
@@ -101,7 +115,9 @@ typedef enum {
 } sprite_index_t;
 
 
-static actor_t invaders[55];
+static actor_t invaders[NUM_INVADER_COLUMNS*NUM_INVADER_ROWS];
+
+static actor_t bombs[MAX_BOMBS] = {0};
 
 static actor_t missile = {0, 0, SPRITE_DEFENDER_MISSILE, 0, DEAD, 0};
 
@@ -119,35 +135,37 @@ static actor_t bases[NUM_BASES] = {
   {165, BASE_TOP, SPRITE_BASE, 3, ALIVE, 0}
 };
 
-static struct {
+typedef struct {
   int x;
   int y;
-}  baseExplosion[] = {
-  {-2, -3},
-  {0, -3},
-  {2, -3},
-  
-  {-1, -2},
-  {-3, -2},
-  {0, -2},
-  {1, -2},
-  {3, -2},
-  
-  {-1, -1},
-  {-2, -1},
-  {0, -1},
-  {1, -1},
-  {2, -1},
-  
-  {-1, 0},
-  {-3, 0},
-  {1, 0},
-  {3, 0},
-  
-  {0, 0}
+} coord_t;
+
+coord_t missileBaseExplosion[] = 
+  {
+    {-2, -3}, {0, -3}, {2, -3}, 
+    {-1, -2}, {-3, -2}, {0, -2}, {1, -2}, {3, -2},
+    {-1, -1}, {-2, -1}, {0, -1}, {1, -1}, {2, -1},
+    {-1, 0}, {-3, 0}, {1, 0}, {3, 0}, {0, 0}
+  };
+
+coord_t bombBaseExplosion[] = 
+  {
+    {-2, 3}, {0, 3}, {2, 3}, 
+    {-1, 2}, {-3, 2}, {0, 2}, {1, 2}, {3, 2},
+    {-1, 1}, {-2, 1}, {0, 1}, {1, 1}, {2, 1},
+    {-1, 0}, {-3, 0}, {1, 0}, {3, 0}, {0, 0}
+  };
+
+coord_t* baseExplosion[] = {
+  missileBaseExplosion,
+  bombBaseExplosion
 };
 
 
+int bombRandomMap[NUM_BOMB_RANDOMS] = { 1, 0, 1, 1, 0, 0, 0, 1, 0, 0};
+int bombRandomColumns[NUM_BOMB_RANDOM_COLUMNS] = { 0, 2, 6, 1, 9, 3, 5, 7, 8, 4, 10};
+
+static int killScores[NUM_INVADER_ROWS] = { 30, 20, 20, 10, 10};
 static int invaderIndex = 0;
 static int invaderDirection = 1;
 static int invaderSpeed = 500;
@@ -160,14 +178,18 @@ static int target, work, width, height, spriteFrameBuffer;
 
 
 static void 
-initInvader(int x, int y, unsigned _sprite)
+initInvader(int x, int y, int row, int column, unsigned sprite)
 {
   actor_t *i = &  invaders[invaderIndex++];
   i->x = x;
   i->y = y;
-  i->sprite = _sprite;
+  i->sprite = sprite;
   i->spriteIndex = 0;
   i->_state = ALIVE;
+  invader_data_t* data = malloc(sizeof(data));
+  data->row = row;
+  data->column = column;
+  i->data = data;
 }
 
 
@@ -175,13 +197,23 @@ static void
 initInvaders()
 {
   unsigned char sprites[] = {2, 0, 0, 1, 1};
-  for (int y = 0; y < 5; y++) {
-    for (int x = 0; x < 11; x++) {
-      initInvader(20+(x * 16), 40+(y * 16), sprites[y]);
+  for (int y = NUM_INVADER_ROWS-1; y >= 0; y--) {
+    for (int x = 0; x < NUM_INVADER_COLUMNS; x++) {
+      initInvader(20+(x * 16), 40+(y * 16), y, x, sprites[y]);
     } 
   }
 }
 
+static void 
+dropBomb(int index, int x, int y)
+{
+  actor_t *i = &bombs[index];
+  i->x = x;
+  i->y = y;
+  i->sprite = SPRITE_MISSILE;
+  i->spriteIndex = 0;
+  i->_state = ALIVE;
+}
 
 static void 
 drawSpriteRGBA(unsigned x, unsigned y, unsigned *ptr)
@@ -217,11 +249,15 @@ transferSprite(int sprite, int index)
 static void
 putSpritePixelRGBA(int sprite, int index, int x, int y, unsigned pixel)
 {
- unsigned *ptr = (unsigned*) &sprite_rgba;
+  unsigned *ptr = (unsigned*) &sprite_rgba;
   sprite_t* sp = &spriteConfig[sprite];
   int sy = sp->height*index;  
   int sx = 0;
-
+  
+  if (x < 0 || y < 0) {
+    return;
+  }
+    
   for (int i = 0; i < sprite; i++) {
     sx += spriteConfig[i].width;
   }
@@ -332,6 +368,21 @@ moveMissile()
 
 
 static void
+moveBombs()
+{
+  for (int i = 0; i < MAX_BOMBS; i++) {
+    actor_t* b = &bombs[i];
+    if (b->_state == ALIVE) {
+      b->y+=BOMB_SPEED;
+      if (b->y >= STATUS_LINE_Y)
+	b->_state = DEAD;
+    }
+    screenDirty = 1;
+  }
+}
+
+
+static void
 moveInvaders(int time) 
 {
   static int last = 0;
@@ -409,7 +460,7 @@ renderBases()
 static void
 renderStatusBar(int w, int h)
 {
-  gfx_drawLine(work, 0, 231, w, 231, 0xFF00FF00);
+  gfx_drawLine(work, 0, STATUS_LINE_Y, w, STATUS_LINE_Y, 0xFF00FF00);
   gfx_fillRect(work, NUM_DEFENDERS_X, NUM_DEFENDERS_Y, gfx_retroFontWidth, gfx_retroFontHeight, 0xFF000000);
   char buffer[2] = {'0' + numDefenders, 0};
   gfx_drawStringRetro(work, NUM_DEFENDERS_X, NUM_DEFENDERS_Y, buffer , 0xFFFFFFFF, 1, 0);    
@@ -502,6 +553,13 @@ render(int scale, int dw, int dh)
     }
   }
 
+  for (int i = 0; i < MAX_BOMBS; i++) {
+    actor_t *bomb = & bombs[i];    
+    if (bomb->_state != DEAD) {
+      renderActor(bomb);
+    }
+  }
+
   renderMissile();
 
   renderBases();
@@ -517,6 +575,37 @@ render(int scale, int dw, int dh)
   screenDirty = 0;
 }
 
+
+actor_t* findBottomInvader()
+{
+  int column = bombRandomColumns[frame %  NUM_BOMB_RANDOM_COLUMNS];
+  for (int i = 0; i < NUM_INVADERS; i++) {
+    if (invaders[i]._state == ALIVE  && ((invader_data_t*)invaders[i].data)->column  == column) {
+      return &invaders[i];
+      break;
+    }
+  }
+
+  return 0;
+}
+
+static void
+bomb()
+{
+  if (frame % BOMB_DROP_FRAMES == 0) {
+    if (bombRandomMap[frame % NUM_BOMB_RANDOMS]) {
+      for (int i = 0; i < MAX_BOMBS; i++) {
+	if (bombs[i]._state == DEAD) {
+	  actor_t *invader;
+	  if ((invader = findBottomInvader()) != 0) {
+	    dropBomb(i, invader->x + INVADER_WIDTH/2, invader->y + INVADER_HEIGHT);
+	    break;
+	  }
+	}
+      }
+    }
+  }
+}
 
 static void 
 shoot()
@@ -536,23 +625,18 @@ explodeBase(int baseIndex, int explosionIndex, int x, int y)
 {
   int baseX = bases[baseIndex].x;
   int baseY = bases[baseIndex].y;
+  int i;
 
-    int i;
-  for (i = 0; baseExplosion[i].x != 0 || baseExplosion[i].y != 0; i++) {
-    putSpritePixelRGBA(SPRITE_BASE, baseIndex, (x+baseExplosion[i].x-baseX), (y+baseExplosion[i].y-baseY), 0x000000FF);
+  for (i = 0; baseExplosion[explosionIndex][i].x != 0 || baseExplosion[explosionIndex][i].y != 0; i++) {
+    putSpritePixelRGBA(SPRITE_BASE, baseIndex, (x+baseExplosion[explosionIndex][i].x-baseX), (y+baseExplosion[explosionIndex][i].y-baseY), 0x000000FF);
   }
-  putSpritePixelRGBA(SPRITE_BASE, baseIndex, (x+baseExplosion[i].x-baseX), (y+baseExplosion[i].y-baseY), 0x000000FF);
+  putSpritePixelRGBA(SPRITE_BASE, baseIndex, (x+baseExplosion[explosionIndex][i].x-baseX), (y+baseExplosion[explosionIndex][i].y-baseY), 0x000000FF);
   transferSprite(SPRITE_BASE, baseIndex);
 }
 
-
-static void 
-collision(unsigned time)
+static int
+missileBaseCollision()
 {
-  if (missile._state == DEAD) {
-    return;
-  }
-
   #define numOffsets 3
   int xOffsets[numOffsets] = {0, 1, -1};
 
@@ -562,11 +646,49 @@ collision(unsigned time)
 	unsigned pixel = getSpritePixelRGBA(bases[i].sprite, bases[i].spriteIndex, missile.x-bases[i].x+xOffsets[x], missile.y-bases[i].y+y);
 	if (pixel != 0x000000FF && pixel != 0) {
 	  missile._state = DEAD;
-	  explodeBase(i, 1, missile.x+xOffsets[x], missile.y+y);
-	  return;
+	  explodeBase(i, 0, missile.x+xOffsets[x], missile.y+y);
+	  return 1;
 	}
       }
     }
+  }
+
+  return 0;
+}
+
+static int
+bombBaseCollision(int bombIndex)
+{
+  #define numOffsets 3
+  int xOffsets[numOffsets] = {0, 1, -1};
+  actor_t* b = &bombs[bombIndex];
+  int bombY = b->y + BOMB_HEIGHT;
+
+  for (int y = BOMB_SPEED; y >= 0; y--) {
+    for (int x = 0; x < numOffsets; x++) {
+      for (int i = 0; i < NUM_BASES; i++) {
+	unsigned pixel = getSpritePixelRGBA(bases[i].sprite, bases[i].spriteIndex, b->x-bases[i].x+xOffsets[x], bombY-bases[i].y+y);
+	if (pixel != 0x000000FF && pixel != 0) {
+	  b->_state = DEAD;
+	  explodeBase(i, 1, b->x+xOffsets[x], bombY+y-1);
+	  return 1;
+	}
+      }
+    }
+  }
+
+  return 0;
+}
+
+static void 
+missileCollision()
+{
+  if (missile._state == DEAD) {
+    return;
+  }
+
+  if (missileBaseCollision()) {
+    return;
   }
 
   for (int i = 0; i < invaderIndex; i++) {
@@ -579,9 +701,8 @@ collision(unsigned time)
 	audio_execute(AUDIO_CHANNEL_KILLED);
 	inv->_state = EXPLODING;
 	inv->spriteIndex = 2;
-	inv->data = time;
 	missile._state = DEAD;
-	score++;
+	score = score + killScores[((invader_data_t*)inv->data)->row];
 	if (score > hiscore) {
 	  hiscore = score;
 	}
@@ -631,6 +752,8 @@ main(int agrc, char* argv[])
       }
     }
 
+    bomb();
+
     if (window_isKeyDown(window, 37)) {
       defender.x-=2;
       if (defender.x < 0) {
@@ -647,13 +770,21 @@ main(int agrc, char* argv[])
       screenDirty = 1;
     }
 
-    collision(time);
+    missileCollision();
+
+    for (int i = 0; i < MAX_BOMBS; i++) {
+      if (bombs[i]._state == ALIVE) {
+	bombBaseCollision(i);
+      }
+    }
+    
     if (screenDirty) {
       render(scale != 1, dw, dh);
     }
 
     moveInvaders(time);
     moveMissile();
+    moveBombs();
 
     if (0 && count++ % 60 == 0) {
       printf("frame = %d, delta = %d\n", peripheral.simulator.stopWatchElapsed, time-lastTime);
