@@ -56,12 +56,17 @@ typedef struct {
 
 #define MISSILE_SPEED 4
 #define BOMB_SPEED 1
-#define BOMB_DROP_FRAMES 100
+#define BOMB_DROP_FRAMES 400
+#define DEFENDER_EXPLOSION_FRAMES 100
+#define DEFENDER_EXPLOSION_FRAMERATE 10
 
 #define SCORE_X   23
 #define SCORE_Y   17
 #define HISCORE_X 87
 #define STATUS_LINE_Y 231
+#define GAMEOVER_X 70
+#define GAMEOVER_Y 52
+#define INVADER_TOP 70
 
 #define NUM_DEFENDERS_X 7
 #define NUM_DEFENDERS_Y 233
@@ -72,17 +77,16 @@ typedef struct {
 #define MAX_BOMBS 4
 #define NUM_BOMB_RANDOMS 10
 #define NUM_BOMB_RANDOM_COLUMNS 11
+#define NUM_DEFENDER_EXPLOSION_SPRITES 3
 
 #define SCOREBOARD_HEIGHT 24
-#define BASE_KILL_WIDTH 7
-#define BASE_KILL_HEIGHT 4
 #define MISSILE_WIDTH 1
 #define MISSILE_HEIGHT 4
 #define INVADER_WIDTH 12
 #define INVADER_HEIGHT 8
 #define BOMB_WIDTH 3
 #define BOMB_HEIGHT 7
-#define DEFENDER_WIDTH 13
+#define DEFENDER_WIDTH 15
 #define DEFENDER_HEIGHT 8
 #define BASE_WIDTH 22
 #define BASE_HEIGHT 16
@@ -96,10 +100,9 @@ static sprite_t spriteConfig[] = {
   {INVADER_WIDTH, INVADER_HEIGHT, 3},
   {INVADER_WIDTH, INVADER_HEIGHT, 3},
   {BOMB_WIDTH, BOMB_HEIGHT, 3},
-  {DEFENDER_WIDTH,DEFENDER_HEIGHT, 1},
+  {DEFENDER_WIDTH,DEFENDER_HEIGHT, 4},
   {MISSILE_WIDTH, MISSILE_HEIGHT, 2},
   {BASE_WIDTH, BASE_HEIGHT, 4},
-  {BASE_KILL_WIDTH, BASE_KILL_HEIGHT, 2},
   {0, 0, 0}
 };
 
@@ -110,8 +113,7 @@ typedef enum {
   SPRITE_MISSILE = 3,
   SPRITE_DEFENDER = 4,
   SPRITE_DEFENDER_MISSILE = 5,
-  SPRITE_BASE = 6,
-  SPRITE_BASE_KILL = 7
+  SPRITE_BASE = 6
 } sprite_index_t;
 
 
@@ -175,7 +177,7 @@ static unsigned frame = 0;
 static int screenDirty = 1;
 static int numDefenders = 3;
 static int target, work, width, height, spriteFrameBuffer;
-
+static window_h window;
 
 static void 
 initInvader(int x, int y, int row, int column, unsigned sprite)
@@ -199,7 +201,7 @@ initInvaders()
   unsigned char sprites[] = {2, 0, 0, 1, 1};
   for (int y = NUM_INVADER_ROWS-1; y >= 0; y--) {
     for (int x = 0; x < NUM_INVADER_COLUMNS; x++) {
-      initInvader(20+(x * 16), 40+(y * 16), y, x, sprites[y]);
+      initInvader(20+(x * 16), INVADER_TOP+(y * 16), y, x, sprites[y]);
     } 
   }
 }
@@ -432,6 +434,14 @@ moveInvaders(int time)
   }
 }
 
+static void
+renderGameOver()
+{
+  if (numDefenders == 0) {
+    gfx_fillRect(work, GAMEOVER_X, GAMEOVER_Y, 9*(gfx_retroFontWidth+3), gfx_retroFontHeight, 0xFF000000);
+    gfx_drawStringRetro(work, GAMEOVER_X, GAMEOVER_Y, "GAME OVER", 0xFFFFFFFF, 1, 3);  
+  }
+}
 
 
 static void
@@ -465,7 +475,7 @@ renderStatusBar(int w, int h)
   char buffer[2] = {'0' + numDefenders, 0};
   gfx_drawStringRetro(work, NUM_DEFENDERS_X, NUM_DEFENDERS_Y, buffer , 0xFFFFFFFF, 1, 0);    
 
-  for (int i = 0; i < numDefenders; i++) {
+  for (int i = 0; i < numDefenders-1; i++) {
     renderActor(&spareDefenders[i]);
   }
 
@@ -544,7 +554,11 @@ render(int scale, int dw, int dh)
 
   renderScores();
 
-  renderActor(&defender);
+  renderGameOver();
+
+  if (defender._state != DEAD) {
+    renderActor(&defender);
+  }
 
   for (int i = 0; i < invaderIndex; i++) {
     actor_t *inv = & invaders[i];    
@@ -680,6 +694,26 @@ bombBaseCollision(int bombIndex)
   return 0;
 }
 
+
+static void
+bombCollision()
+{
+  for (int i = 0; i < MAX_BOMBS; i++) {
+    if (bombs[i]._state == ALIVE) {
+      if (defender.x < bombs[i].x + BOMB_WIDTH &&
+	  defender.x + DEFENDER_WIDTH > bombs[i].x &&
+	  defender.y < bombs[i].y + BOMB_HEIGHT &&
+	  DEFENDER_HEIGHT + defender.y > bombs[i].y) {
+	defender._state = EXPLODING;
+	defender.data = 0;
+	defender.spriteIndex = 1;
+	bombs[i]._state = DEAD;
+	break;
+      }
+    }
+  }
+}
+
 static void 
 missileCollision()
 {
@@ -712,6 +746,47 @@ missileCollision()
   }
 }
 
+static void
+moveDefender()
+{
+    if (defender._state == ALIVE) {
+      if (window_isKeyDown(window, 37)) {
+	defender.x-=2;
+	if (defender.x < 0) {
+	  defender.x = 0;
+	}
+	screenDirty = 1;
+      }
+      
+      if (window_isKeyDown(window, 39)) {
+	defender.x+=2;
+	if (defender.x >= width-INVADER_WIDTH) {
+	  defender.x = width-INVADER_WIDTH-1;
+	}
+	screenDirty = 1;
+      }
+    } else if (defender._state == EXPLODING) {
+      int explosionCount = (int)defender.data;
+      if (explosionCount++ > DEFENDER_EXPLOSION_FRAMES) {
+	defender.data = 0;
+	defender.spriteIndex = 0;
+	if (--numDefenders > 0) {
+	  defender._state = ALIVE;
+	} else {
+	  defender._state = DEAD;
+	}
+      } else {
+	defender.data = (void*)explosionCount;
+	if (explosionCount % DEFENDER_EXPLOSION_FRAMERATE == 0) {
+	  defender.spriteIndex++;
+	}
+	if (defender.spriteIndex == NUM_DEFENDER_EXPLOSION_SPRITES) {
+	  defender.spriteIndex = 1;
+	}
+      }
+    }
+}
+
 
 int 
 main(int agrc, char* argv[])
@@ -721,7 +796,7 @@ main(int agrc, char* argv[])
   const int w = SCREEN_WIDTH, h = SCREEN_HEIGHT;
   const int dw = w*scale, dh = h*scale;
 
-  window_h window = window_create("Space Invaders", 0, 0, dw, dh);
+  window = window_create("Space Invaders", 0, 0, dw, dh);
   gfx_fillRect(window_getFrameBuffer(window), 0, 0, dw, dh, 0xFFFFFFFF);
   kernel_threadSetWindow(window);
 
@@ -744,55 +819,44 @@ main(int agrc, char* argv[])
 
    time = peripheral.time.elapsedMilliSeconds;
 
-    if (_console_char_avail()) {
-      switch ( _console_read_char()) {
-      case ' ':
-	shoot();
-	break;
-      }
-    }
-
-    bomb();
-
-    if (window_isKeyDown(window, 37)) {
-      defender.x-=2;
-      if (defender.x < 0) {
-	defender.x = 0;
-      }
-      screenDirty = 1;
-    }
-    
-    if (window_isKeyDown(window, 39)) {
-      defender.x+=2;
-      if (defender.x >= width-INVADER_WIDTH) {
-	defender.x = width-INVADER_WIDTH-1;
-      }
-      screenDirty = 1;
-    }
-
-    missileCollision();
-
-    for (int i = 0; i < MAX_BOMBS; i++) {
-      if (bombs[i]._state == ALIVE) {
-	bombBaseCollision(i);
-      }
-    }
-    
-    if (screenDirty) {
-      render(scale != 1, dw, dh);
-    }
-
-    moveInvaders(time);
-    moveMissile();
-    moveBombs();
-
-    if (0 && count++ % 60 == 0) {
-      printf("frame = %d, delta = %d\n", peripheral.simulator.stopWatchElapsed, time-lastTime);
-    }
-
-    lastTime = time;
-    frame++;
-    peripheral.simulator.yield = 1;
-    //kernel_threadBlocked();
+   if (numDefenders > 0) {
+     if (_console_char_avail()) {
+       switch ( _console_read_char()) {
+       case ' ':
+	 shoot();
+	 break;
+       }
+     }
+     
+     bomb();
+     
+     moveDefender();
+     missileCollision();
+     bombCollision();
+     
+     for (int i = 0; i < MAX_BOMBS; i++) {
+       if (bombs[i]._state == ALIVE) {
+	 bombBaseCollision(i);
+       }
+     }
+     
+     if (screenDirty) {
+       render(scale != 1, dw, dh);
+     }
+     
+     moveInvaders(time);
+     moveMissile();
+     moveBombs();
+     
+     if (0 && count++ % 60 == 0) {
+       printf("frame = %d, delta = %d\n", peripheral.simulator.stopWatchElapsed, time-lastTime);
+     }
+     
+     lastTime = time;
+     frame++;
+     peripheral.simulator.yield = 1;
+   } else {
+     kernel_threadBlocked();
+   }
   }
 }
