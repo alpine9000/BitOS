@@ -48,68 +48,116 @@ typedef struct {
   unsigned data;
 } actor_t;
 
+#define MISSILE_SPEED 4
+
 #define SCORE_X   23
 #define SCORE_Y   17
 #define HISCORE_X 87
-#define scoreBoardHeight 24
 
 #define NUM_DEFENDERS_X 7
 #define NUM_DEFENDERS_Y 233
 #define NUM_BASES 4
 
-#define invaderW 12
-#define invaderH 8
-#define missileW 3
-#define missileH 7
-#define defenderW 13
-#define defenderH 8
-#define baseW 22
-#define baseH 16
-#define baseTop 184
+#define SCOREBOARD_HEIGHT 24
+#define BASE_KILL_WIDTH 7
+#define BASE_KILL_HEIGHT 4
+#define DEFENDER_MISSILE_WIDTH 1
+#define DEFENDER_MISSILE_HEIGHT 4
+#define INVADER_WIDTH 12
+#define INVADER_HEIGHT 8
+#define MISSILE_WIDTH 3
+#define MISSILE_HEIGHT 7
+#define DEFENDER_WIDTH 13
+#define DEFENDER_HEIGHT 8
+#define BASE_WIDTH 22
+#define BASE_HEIGHT 16
+#define BASE_TOP 184
+
+#define SPRITEMAP_WIDTH 128
+#define SPRITEMAP_HEIGHT 64
+
+
+static sprite_t spriteConfig[] = { 
+  {INVADER_WIDTH, INVADER_HEIGHT, 3},
+  {INVADER_WIDTH, INVADER_HEIGHT, 3},
+  {INVADER_WIDTH, INVADER_HEIGHT, 3},
+  {MISSILE_WIDTH, MISSILE_HEIGHT, 3},
+  {DEFENDER_WIDTH,DEFENDER_HEIGHT, 1},
+  {DEFENDER_MISSILE_WIDTH, DEFENDER_MISSILE_HEIGHT, 2}, // Defender Missile
+  {BASE_WIDTH, BASE_HEIGHT, 4},
+  {BASE_KILL_WIDTH, BASE_KILL_HEIGHT, 2},
+  {0, 0, 0}
+};
+
+typedef enum {
+  SPRITE_INVADER1 = 0,
+  SPRITE_INVADER2 = 1,
+  SPRITE_INVADER3 = 2,
+  SPRITE_MISSILE = 3,
+  SPRITE_DEFENDER = 4,
+  SPRITE_DEFENDER_MISSILE = 5,
+  SPRITE_BASE = 6,
+  SPRITE_BASE_KILL = 7
+} sprite_index_t;
+
 
 static actor_t invaders[55];
 
-static actor_t missile = {0, 0, 5, 0, DEAD, 0};
+static actor_t missile = {0, 0, SPRITE_DEFENDER_MISSILE, 0, DEAD, 0};
 
-static actor_t defender = {0, 208, 4, 0, ALIVE, 0};
+static actor_t defender = {0, 208, SPRITE_DEFENDER, 0, ALIVE, 0};
 
 static actor_t spareDefenders[] = {
-  {24, 232, 4, 0, ALIVE, 0},
-  {40, 232, 4, 0, ALIVE, 0}
+  {24, 232, SPRITE_DEFENDER, 0, ALIVE, 0},
+  {40, 232, SPRITE_DEFENDER, 0, ALIVE, 0}
 };
 
 static actor_t bases[NUM_BASES] = {
-  {30, baseTop, 6, 0, ALIVE, 0},
-  {75, baseTop, 6, 1, ALIVE, 0},
-  {120, baseTop, 6, 2, ALIVE, 0},
-  {165, baseTop, 6, 3, ALIVE, 0}
+  {30, BASE_TOP, SPRITE_BASE, 0, ALIVE, 0},
+  {75, BASE_TOP, SPRITE_BASE, 1, ALIVE, 0},
+  {120, BASE_TOP, SPRITE_BASE, 2, ALIVE, 0},
+  {165, BASE_TOP, SPRITE_BASE, 3, ALIVE, 0}
 };
 
-int spriteMapWidth = 128;
-int spriteMapHeight = 64;
-
-static sprite_t spriteConfig[] = { 
-  {invaderW, invaderH, 3},
-  {invaderW, invaderH, 3},
-  {invaderW, invaderH, 3},
-  {missileW, missileH, 3},
-  {defenderW,defenderH, 1},
-  {1, 4, 2}, // Defender Missile
-  {baseW, baseH, 4},
-  {0, 0, 0}
+static struct {
+  int x;
+  int y;
+}  baseExplosion[] = {
+  {-2, -3},
+  {0, -3},
+  {2, -3},
+  
+  {-1, -2},
+  {-3, -2},
+  {0, -2},
+  {1, -2},
+  {3, -2},
+  
+  {-1, -1},
+  {-2, -1},
+  {0, -1},
+  {1, -1},
+  {2, -1},
+  
+  {-1, 0},
+  {-3, 0},
+  {1, 0},
+  {3, 0},
+  
+  {0, 0}
 };
+
 
 static int invaderIndex = 0;
 static int invaderDirection = 1;
 static int invaderSpeed = 500;
-
 static int score = 0;
 static int hiscore = 0;
 static unsigned frame = 0;
 static int screenDirty = 1;
 static int numDefenders = 3;
-
 static int target, work, width, height, spriteFrameBuffer;
+
 
 static void 
 initInvader(int x, int y, unsigned _sprite)
@@ -134,6 +182,7 @@ initInvaders()
   }
 }
 
+
 static void 
 drawSpriteRGBA(unsigned x, unsigned y, unsigned *ptr)
 {
@@ -142,6 +191,7 @@ drawSpriteRGBA(unsigned x, unsigned y, unsigned *ptr)
   data = (data >> 8) | alpha << 24;
   gfx_drawPixel(spriteFrameBuffer, x, y, data);
 }
+
 
 static void
 transferSprite(int sprite, int index)
@@ -157,14 +207,14 @@ transferSprite(int sprite, int index)
   
   for (int y = sy; y < (sy+sp->height); y++) {
     for (int x = sx; x < (sx+sp->width); x++) {
-      unsigned* dp = ptr + (y*spriteMapWidth) + x;
+      unsigned* dp = ptr + (y*SPRITEMAP_WIDTH) + x;
       drawSpriteRGBA(x, y, dp);
     }
   }
 }
 
-//static 
-void
+
+static void
 putSpritePixelRGBA(int sprite, int index, int x, int y, unsigned pixel)
 {
  unsigned *ptr = (unsigned*) &sprite_rgba;
@@ -176,9 +226,10 @@ putSpritePixelRGBA(int sprite, int index, int x, int y, unsigned pixel)
     sx += spriteConfig[i].width;
   }
   
-  unsigned* dp = ptr + ((sy+y)*spriteMapWidth) + (sx+x);
+  unsigned* dp = ptr + ((sy+y)*SPRITEMAP_WIDTH) + (sx+x);
   *dp = pixel;
 }
+
 
 static unsigned
 getSpritePixelRGBA(int sprite, int index, int x, int y)
@@ -197,9 +248,10 @@ getSpritePixelRGBA(int sprite, int index, int x, int y)
     sx += spriteConfig[i].width;
   }
   
-  unsigned* dp = ptr + ((sy+y)*spriteMapWidth) + (sx+x);
+  unsigned* dp = ptr + ((sy+y)*SPRITEMAP_WIDTH) + (sx+x);
   return *dp;
 }
+
 
 static void 
 initRender()
@@ -257,7 +309,7 @@ downShiftInvaders()
 
   for (int i = 0; i < invaderIndex; i++) {
     actor_t *inv = &invaders[i];
-    inv->y += invaderH;
+    inv->y += INVADER_HEIGHT;
   }
 }
 
@@ -266,14 +318,14 @@ static void
 moveMissile()
 {
   if (missile._state == ALIVE) {
-    missile.y-=4;
-    if ((missile.y+missileH) < baseTop) {
+    missile.y-=MISSILE_SPEED;
+    if ((missile.y+MISSILE_HEIGHT) < BASE_TOP) {
       missile.spriteIndex = 1;
     }
     screenDirty = 1;
   }
 
-  if (missile.y <= scoreBoardHeight) {
+  if (missile.y <= SCOREBOARD_HEIGHT) {
     missile._state = DEAD;
   }
 }
@@ -344,6 +396,7 @@ renderActor(actor_t* actor)
   gfx_bitBlt(work, sx, sy, actor->x, actor->y, s->width, s->height, spriteFrameBuffer);
 }
 
+
 static void
 renderBases()
 {
@@ -351,6 +404,7 @@ renderBases()
     renderActor(&bases[i]);
   }
 }
+
 
 static void
 renderStatusBar(int w, int h)
@@ -367,6 +421,7 @@ renderStatusBar(int w, int h)
   gfx_drawStringRetro(work, 135, NUM_DEFENDERS_Y, "CREDIT 00", 0xFFFFFFFF, 1, 3);    
 
 }
+
 
 static void 
 renderMissile()
@@ -420,7 +475,7 @@ renderScores()
   }
   
   if (dirty) {
-    gfx_fillRect(work, 0, gfx_retroFontHeight, width, gfx_retroFontHeight+2, 0xFF000000);
+    gfx_fillRect(work, 0, SCORE_Y, width, gfx_retroFontHeight+2, 0xFF000000);
     gfx_drawStringRetro(work, SCORE_X, SCORE_Y, scoreBuffer, 0xFFFFFFFF, 1, 3);    
     gfx_drawStringRetro(work, HISCORE_X, SCORE_Y, hiScoreBuffer, 0xFFFFFFFF, 1, 3);
   }
@@ -434,7 +489,7 @@ render(int scale, int dw, int dh)
     return;
   }
 
-  gfx_fillRect(work, 0, scoreBoardHeight, width, height-scoreBoardHeight, 0xFF000000);
+  gfx_fillRect(work, 0, SCOREBOARD_HEIGHT, width, height-SCOREBOARD_HEIGHT, 0xFF000000);
 
   renderScores();
 
@@ -467,12 +522,27 @@ static void
 shoot()
 {
   if (missile._state == DEAD) {
-    missile.x = defender.x + (invaderW/2);
+    missile.x = defender.x + (INVADER_WIDTH/2);
     missile.y = defender.y-spriteConfig[missile.sprite].height;
     missile.spriteIndex = 0;
     missile._state = ALIVE;
     audio_execute(AUDIO_CHANNEL_SHOOT);
   }
+}
+
+
+static void
+explodeBase(int baseIndex, int explosionIndex, int x, int y)
+{
+  int baseX = bases[baseIndex].x;
+  int baseY = bases[baseIndex].y;
+
+    int i;
+  for (i = 0; baseExplosion[i].x != 0 || baseExplosion[i].y != 0; i++) {
+    putSpritePixelRGBA(SPRITE_BASE, baseIndex, (x+baseExplosion[i].x-baseX), (y+baseExplosion[i].y-baseY), 0x000000FF);
+  }
+  putSpritePixelRGBA(SPRITE_BASE, baseIndex, (x+baseExplosion[i].x-baseX), (y+baseExplosion[i].y-baseY), 0x000000FF);
+  transferSprite(SPRITE_BASE, baseIndex);
 }
 
 
@@ -483,24 +553,29 @@ collision(unsigned time)
     return;
   }
 
+  #define numOffsets 3
+  int xOffsets[numOffsets] = {0, 1, -1};
 
-  for (int i = 0; i < NUM_BASES; i++) {
-    unsigned pixel = getSpritePixelRGBA(bases[i].sprite, bases[i].spriteIndex, missile.x-bases[i].x, missile.y-bases[i].y);
-    if (pixel != 0x000000FF && pixel != 0) {
-      missile._state = DEAD;
-      return;
+  for (int y = MISSILE_SPEED; y >= 0; y--) {
+    for (int x = 0; x < numOffsets; x++) {
+      for (int i = 0; i < NUM_BASES; i++) {
+	unsigned pixel = getSpritePixelRGBA(bases[i].sprite, bases[i].spriteIndex, missile.x-bases[i].x+xOffsets[x], missile.y-bases[i].y+y);
+	if (pixel != 0x000000FF && pixel != 0) {
+	  missile._state = DEAD;
+	  explodeBase(i, 1, missile.x+xOffsets[x], missile.y+y);
+	  return;
+	}
+      }
     }
   }
-
-
 
   for (int i = 0; i < invaderIndex; i++) {
     actor_t *inv = &invaders[i];
     if (inv->_state == ALIVE) {
-      if (inv->x < missile.x + missileW &&
-	  inv->x + invaderW > missile.x &&
-	  inv->y < missile.y + missileH &&
-	  invaderH + inv->y > missile.y) {
+      if (inv->x < missile.x + MISSILE_WIDTH &&
+	  inv->x + INVADER_WIDTH > missile.x &&
+	  inv->y < missile.y + MISSILE_HEIGHT &&
+	  INVADER_HEIGHT + inv->y > missile.y) {
 	audio_execute(AUDIO_CHANNEL_KILLED);
 	inv->_state = EXPLODING;
 	inv->spriteIndex = 2;
@@ -566,8 +641,8 @@ main(int agrc, char* argv[])
     
     if (window_isKeyDown(window, 39)) {
       defender.x+=2;
-      if (defender.x >= width-invaderW) {
-	defender.x = width-invaderW-1;
+      if (defender.x >= width-INVADER_WIDTH) {
+	defender.x = width-INVADER_WIDTH-1;
       }
       screenDirty = 1;
     }
@@ -580,7 +655,7 @@ main(int agrc, char* argv[])
     moveInvaders(time);
     moveMissile();
 
-    if (count++ % 60 == 0) {
+    if (0 && count++ % 60 == 0) {
       printf("frame = %d, delta = %d\n", peripheral.simulator.stopWatchElapsed, time-lastTime);
     }
 
