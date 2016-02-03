@@ -219,7 +219,7 @@ sysconf(int name)
   } else if (name == _SC_OPEN_MAX) {
     return 1024;
   } else {
-    sprintf(buffer, "sysconf - unhandled option %d", name);
+    //sprintf(buffer, "sysconf - unhandled option %d", name);
     panic(buffer);
   }
   return -1;
@@ -317,8 +317,8 @@ utime(const char *path, const struct utimbuf *times)
 int 
 _link_r(struct _reent *r,const char *path1, const char *path2)
 {
-  //  panic("_link_r - not implemented");
-  printf("link %s %s ?!?!\n", path1, path2);
+  //panic("_link_r - not implemented");
+  //printf("link %s %s ?!?!\n", path1, path2);
   return -1;
 }
 
