@@ -32,6 +32,13 @@ typedef enum {
 } audio_channel_t;
 
 
+typedef enum {
+  SCREEN_DEMO,
+  SCREEN_START,
+  SCREEN_PLAYER_TURN_MESSAGE,
+  SCREEN_GAME
+} screen_t;
+
 typedef struct {
   int width;
   int height;
@@ -53,6 +60,14 @@ typedef struct {
   int column;
 } invader_data_t;
 
+
+typedef struct {
+  char* text;
+  int x;
+  int y;
+  unsigned color;
+} screen_text_t;
+
 #define SCREEN_WIDTH 217
 #define SCREEN_HEIGHT 248
 #define SCALE  2
@@ -64,6 +79,27 @@ typedef struct {
 #define BOMB_DROP_FRAMES 50
 #define DEFENDER_EXPLOSION_FRAMES 100
 #define DEFENDER_EXPLOSION_FRAMERATE 10
+#define DEMO_FRAME_TIME 100
+#define PLAYER_TURN_MESSAGE_TIME 4000
+#define SCORE_FLICKER_TIME 50
+
+
+#define SCOREBOARD_HEIGHT 24
+#define MISSILE_WIDTH 1
+#define MISSILE_HEIGHT 4
+#define INVADER_WIDTH 12
+#define INVADER_HEIGHT 8
+#define BOMB_WIDTH 3
+#define BOMB_HEIGHT 7
+#define DEFENDER_WIDTH 15
+#define DEFENDER_HEIGHT 8
+#define BASE_WIDTH 22
+#define BASE_HEIGHT 16
+#define BASE_TOP 184
+#define MYSTERY_INVADER_WIDTH 16
+#define MYSTERY_INVADER_HEIGHT 8
+#define SPRITEMAP_WIDTH 128
+#define SPRITEMAP_HEIGHT 64
 
 #define SCORE_X   23
 #define SCORE_Y   17
@@ -90,30 +126,17 @@ typedef struct {
 #define NUM_BOMB_RANDOM_COLUMNS 11
 #define NUM_DEFENDER_EXPLOSION_SPRITES 3
 
-#define SCOREBOARD_HEIGHT 24
-#define MISSILE_WIDTH 1
-#define MISSILE_HEIGHT 4
-#define INVADER_WIDTH 12
-#define INVADER_HEIGHT 8
-#define BOMB_WIDTH 3
-#define BOMB_HEIGHT 7
-#define DEFENDER_WIDTH 15
-#define DEFENDER_HEIGHT 8
-#define BASE_WIDTH 22
-#define BASE_HEIGHT 16
-#define BASE_TOP 184
-#define SPRITEMAP_WIDTH 128
-#define SPRITEMAP_HEIGHT 64
-
+#define COLOR_GREEN 0xFF00FF00
 
 static sprite_t spriteConfig[] = { 
   {INVADER_WIDTH, INVADER_HEIGHT, 3},
-  {INVADER_WIDTH, INVADER_HEIGHT, 3},
+  {INVADER_WIDTH, INVADER_HEIGHT, 4},
   {INVADER_WIDTH, INVADER_HEIGHT, 3},
   {BOMB_WIDTH, BOMB_HEIGHT, 3},
   {DEFENDER_WIDTH,DEFENDER_HEIGHT, 4},
   {MISSILE_WIDTH, MISSILE_HEIGHT, 2},
   {BASE_WIDTH, BASE_HEIGHT, 4},
+  {MYSTERY_INVADER_WIDTH, MYSTERY_INVADER_HEIGHT, 1},
   {0, 0, 0}
 };
 
@@ -124,7 +147,8 @@ typedef enum {
   SPRITE_MISSILE = 3,
   SPRITE_DEFENDER = 4,
   SPRITE_DEFENDER_MISSILE = 5,
-  SPRITE_BASE = 6
+  SPRITE_BASE = 6,
+  SPRITE_MYSTERY_INVADER = 7
 } sprite_index_t;
 
 
@@ -138,10 +162,10 @@ static actor_t missile = {0, 0, SPRITE_DEFENDER_MISSILE, 0, DEAD, 0};
 static actor_t defender = {0, DEFENDER_Y, SPRITE_DEFENDER, 0, ALIVE, 0};
 
 static actor_t demoInvaders[NUM_DEMO_INVADERS] = {
-  {66, 137, SPRITE_INVADER1, 0, ALIVE, 0},
-  {66, 152, SPRITE_INVADER1, 0, ALIVE, 0},
-  {66, 168, SPRITE_INVADER2, 0, ALIVE, 0},
-  {66, 184, SPRITE_INVADER3, 0, ALIVE, 0}
+  {64, 137, SPRITE_MYSTERY_INVADER, 0, ALIVE, 0},
+  {66, 152, SPRITE_INVADER3, 0, ALIVE, 0},
+  {66, 168, SPRITE_INVADER1, 0, ALIVE, 0},
+  {66, 184, SPRITE_INVADER2, 3, ALIVE, 0}
 };
 
 static actor_t spareDefenders[] = {
@@ -201,6 +225,9 @@ static int target, work, spriteFrameBuffer;
 static window_h window;
 static int renderTime = 0;
 static int lastTime = 0;
+static int demoIndex = 0;
+static int playerTurnMessageTime = 0;
+static screen_t currentScreen = SCREEN_DEMO;
 
 
 static char *
@@ -476,7 +503,6 @@ moveInvaders(int time)
   }
 }
 
-
 static void
 renderGameOver()
 {
@@ -514,12 +540,14 @@ static void
 renderStatusBar(int drawLine)
 {
   if (drawLine) {
-    gfx_drawLine(work, 0, STATUS_LINE_Y, SCREEN_WIDTH, STATUS_LINE_Y, 0xFF00FF00);
+    gfx_drawLine(work, 0, STATUS_LINE_Y, SCREEN_WIDTH, STATUS_LINE_Y, COLOR_GREEN);
   }
 
   gfx_fillRect(work, NUM_DEFENDERS_X, NUM_DEFENDERS_Y, gfx_retroFontWidth, gfx_retroFontHeight, 0xFF000000);
-  char buffer[2] = {'0' + numDefenders, 0};
-  gfx_drawStringRetro(work, NUM_DEFENDERS_X, NUM_DEFENDERS_Y, buffer , 0xFFFFFFFF, 1, 0);    
+  if (drawLine) {
+    char buffer[2] = {'0' + numDefenders, 0};
+    gfx_drawStringRetro(work, NUM_DEFENDERS_X, NUM_DEFENDERS_Y, buffer , 0xFFFFFFFF, 1, 0);    
+  }
 
   for (int i = 0; i < numDefenders-1; i++) {
     renderActor(&spareDefenders[i]);
@@ -552,13 +580,19 @@ renderMissile()
 
 
 static void 
-renderScores()
+renderScores(int hideScore)
 {
   static char scoreBuffer[5];
   static char hiScoreBuffer[5];
   static int lastScore = -1;
   static int lastHiScore = -1;
+  static int lastHide = -1;
   int dirty = 0;
+
+  if (lastHide != hideScore) {
+    dirty = 1;
+    lastHide = hideScore;
+  }
 
   if (lastScore != score) {
     scoretoa(score, 5, scoreBuffer);
@@ -574,7 +608,9 @@ renderScores()
   
   if (dirty) {
     gfx_fillRect(work, 0, SCORE_Y, SCREEN_WIDTH, gfx_retroFontHeight+2, 0xFF000000);
-    gfx_drawStringRetro(work, SCORE_X, SCORE_Y, scoreBuffer, 0xFFFFFFFF, 1, 3);    
+    if (hideScore != 1) {
+      gfx_drawStringRetro(work, SCORE_X, SCORE_Y, scoreBuffer, 0xFFFFFFFF, 1, 3);    
+    }
     gfx_drawStringRetro(work, HISCORE_X, SCORE_Y, hiScoreBuffer, 0xFFFFFFFF, 1, 3);
   }
 }
@@ -618,7 +654,7 @@ renderGameScreen(int scale)
 {
   gfx_fillRect(work, 0, SCOREBOARD_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT-SCOREBOARD_HEIGHT, 0xFF000000);
 
-  renderScores();
+  renderScores(0);
 
   renderGameOver();
 
@@ -649,9 +685,19 @@ renderStartScreen()
 {
   gfx_fillRect(work, 0, SCOREBOARD_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT-SCOREBOARD_HEIGHT, 0xFF000000);
 
-  renderScores();
+  renderScores(0);
 
   renderStatusBar(0);
+
+  screen_text_t text[] = {
+    {"PUSH", (SCREEN_WIDTH/2) - (2*(gfx_retroFontWidth+3)), 120-(3*gfx_retroFontHeight),  0xFFFFFFFF},
+    {"ONLY 1PLAYER  BUTTON", (SCREEN_WIDTH/2) - (10*(gfx_retroFontWidth+3)), 120,  0xFFFFFFFF}
+  };
+
+  for (unsigned i = 0; i < sizeof(text)/sizeof(screen_text_t); i++) {
+    gfx_drawStringRetro(work, text[i].x, text[i].y, text[i].text, text[i].color, 1, 3);  
+  }
+    
 
   if (SCALE != 1) {
     gfx_bitBltEx(target, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCALED_W, SCALED_H, work);
@@ -663,29 +709,140 @@ renderStartScreen()
 }
 
 static void
-renderDemoScreen()
+renderPlayer1TurnMessageScreen(int time)
 {
+  static int flickerTime = 0;
+  static int showScore = 0;
+
   gfx_fillRect(work, 0, SCOREBOARD_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT-SCOREBOARD_HEIGHT, 0xFF000000);
 
-  renderScores();
+  if (time - flickerTime > SCORE_FLICKER_TIME) {
+    showScore = !showScore;
+    flickerTime = time;
+  }
+
+  renderScores(showScore);
 
   renderStatusBar(0);
 
-  for (int i = 0; i < NUM_DEMO_INVADERS; i++) {
-    renderActor(&demoInvaders[i]);
+  screen_text_t text[] = {
+    {"PLAY PLAYER<1>", (SCREEN_WIDTH/2) - (7*(gfx_retroFontWidth+3)), 120-(2*gfx_retroFontHeight),  0xFFFFFFFF}
+  };
+
+  for (unsigned i = 0; i < sizeof(text)/sizeof(screen_text_t); i++) {
+    gfx_drawStringRetro(work, text[i].x, text[i].y, text[i].text, text[i].color, 1, 3);  
+  }
+    
+  if (SCALE != 1) {
+    gfx_bitBltEx(target, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCALED_W, SCALED_H, work);
+  } else {
+    gfx_bitBlt(target, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, work);
   }
 
-  gfx_drawStringRetro(work, 97, 64, "PLAY", 0xFFFFFFFF, 1, 3);  
-  gfx_drawStringRetro(work, 56, 89, "SPACE", 0xFFFFFFFF, 1, 3);  
-  gfx_drawStringRetro(work, 114, 89, "INVADERS", 0xFFFFFFFF, 1, 3);  
-  gfx_drawStringRetro(work, 32, 120, "*SCORE ADVANCE TABLE*", 0xFFFFFFFF, 1, 3);  
+  screenDirty = 0;
+}
 
-  gfx_drawStringRetro(work, 80, 137, "=? MYSTERY", 0xFFFFFFFF, 1, 3);  
-  gfx_drawStringRetro(work, 80, 153, "=30 POINTS", 0xFFFFFFFF, 1, 3);  
-  gfx_drawStringRetro(work, 80, 169, "=20 POINTS", 0xFFFFFFFF, 1, 3);  
-  gfx_drawStringRetro(work, 80, 185, "=10 POINTS", 0xFF00FF00, 1, 3);  
 
- 
+static void
+renderDemoScreen(int time)
+{
+  static int lastDemoTime = 0;
+  gfx_fillRect(work, 0, SCOREBOARD_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT-SCOREBOARD_HEIGHT, 0xFF000000);
+
+  renderScores(0);
+
+  renderStatusBar(0);
+
+  static screen_text_t text[] = {
+    {"P", 97, 64, 0xFFFFFFFF},
+    {"L", 97+(1*(gfx_retroFontWidth+3)), 64, 0xFFFFFFFF},
+    {"A", 97+(2*(gfx_retroFontWidth+3)), 64, 0xFFFFFFFF},
+    {"Y", 97+(3*(gfx_retroFontWidth+3)), 64, 0xFFFFFFFF},
+
+    {"S", 56+(0*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+    {"P", 56+(1*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+    {"A", 56+(2*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+    {"C", 56+(3*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+    {"E", 56+(4*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+    {" ", 56+(5*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+    {" ", 56+(6*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+
+    {"I", 114+(0*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+    {"N", 114+(1*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+    {"V", 114+(2*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+    {"A", 114+(3*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+    {"D", 114+(4*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+    {"E", 114+(5*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+    {"R", 114+(6*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+    {"S", 114+(7*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+    {"E", 114+(8*(gfx_retroFontWidth+3)), 89, 0xFFFFFFFF},
+
+    {"*SCORE ADVANCE TABLE*", 32, 120, 0xFFFFFFFF},
+
+    {"=", 81+(0*(gfx_retroFontWidth+3)), 137, 0xFFFFFFFF},
+    {"?", 81+(1*(gfx_retroFontWidth+3)), 137, 0xFFFFFFFF},
+    {" ", 81+(2*(gfx_retroFontWidth+3)), 137, 0xFFFFFFFF},
+    {"M", 81+(3*(gfx_retroFontWidth+3)), 137, 0xFFFFFFFF},
+    {"Y", 81+(4*(gfx_retroFontWidth+3)), 137, 0xFFFFFFFF},
+    {"S", 81+(5*(gfx_retroFontWidth+3)), 137, 0xFFFFFFFF},
+    {"T", 81+(6*(gfx_retroFontWidth+3)), 137, 0xFFFFFFFF},
+    {"E", 81+(7*(gfx_retroFontWidth+3)), 137, 0xFFFFFFFF},
+    {"R", 81+(8*(gfx_retroFontWidth+3)), 137, 0xFFFFFFFF},
+    {"Y", 81+(9*(gfx_retroFontWidth+3)), 137, 0xFFFFFFFF},
+
+    {"=", 81+(0*(gfx_retroFontWidth+3)), 153, 0xFFFFFFFF},
+    {"3", 81+(1*(gfx_retroFontWidth+3)), 153, 0xFFFFFFFF},
+    {"0", 81+(2*(gfx_retroFontWidth+3)), 153, 0xFFFFFFFF},
+    {" ", 81+(3*(gfx_retroFontWidth+3)), 153, 0xFFFFFFFF},
+    {"P", 81+(4*(gfx_retroFontWidth+3)), 153, 0xFFFFFFFF},
+    {"O", 81+(5*(gfx_retroFontWidth+3)), 153, 0xFFFFFFFF},
+    {"I", 81+(6*(gfx_retroFontWidth+3)), 153, 0xFFFFFFFF},
+    {"N", 81+(7*(gfx_retroFontWidth+3)), 153, 0xFFFFFFFF},
+    {"T", 81+(8*(gfx_retroFontWidth+3)), 153, 0xFFFFFFFF},
+    {"S", 81+(9*(gfx_retroFontWidth+3)), 153, 0xFFFFFFFF},
+
+    {"=", 81+(0*(gfx_retroFontWidth+3)), 169, 0xFFFFFFFF},
+    {"2", 81+(1*(gfx_retroFontWidth+3)), 169, 0xFFFFFFFF},
+    {"0", 81+(2*(gfx_retroFontWidth+3)), 169, 0xFFFFFFFF},
+    {" ", 81+(3*(gfx_retroFontWidth+3)), 169, 0xFFFFFFFF},
+    {"P", 81+(4*(gfx_retroFontWidth+3)), 169, 0xFFFFFFFF},
+    {"O", 81+(5*(gfx_retroFontWidth+3)), 169, 0xFFFFFFFF},
+    {"I", 81+(6*(gfx_retroFontWidth+3)), 169, 0xFFFFFFFF},
+    {"N", 81+(7*(gfx_retroFontWidth+3)), 169, 0xFFFFFFFF},
+    {"T", 81+(8*(gfx_retroFontWidth+3)), 169, 0xFFFFFFFF},
+    {"S", 81+(9*(gfx_retroFontWidth+3)), 169, 0xFFFFFFFF},
+
+    {"=", 81+(0*(gfx_retroFontWidth+3)), 185, COLOR_GREEN},
+    {"1", 81+(1*(gfx_retroFontWidth+3)), 185, COLOR_GREEN},
+    {"0", 81+(2*(gfx_retroFontWidth+3)), 185, COLOR_GREEN},
+    {" ", 81+(3*(gfx_retroFontWidth+3)), 185, COLOR_GREEN},
+    {"P", 81+(4*(gfx_retroFontWidth+3)), 185, COLOR_GREEN},
+    {"O", 81+(5*(gfx_retroFontWidth+3)), 185, COLOR_GREEN},
+    {"I", 81+(6*(gfx_retroFontWidth+3)), 185, COLOR_GREEN},
+    {"N", 81+(7*(gfx_retroFontWidth+3)), 185, COLOR_GREEN},
+    {"T", 81+(8*(gfx_retroFontWidth+3)), 185, COLOR_GREEN},
+    {"S", 81+(9*(gfx_retroFontWidth+3)), 185, COLOR_GREEN},
+
+  };
+
+  for (int i = 0; i < demoIndex; i++) {
+    gfx_drawStringRetro(work, text[i].x, text[i].y, text[i].text, text[i].color, 1, 3);  
+    if (text[i].text[0] == '*') {
+      for (int a = 0; a < NUM_DEMO_INVADERS; a++) {
+	renderActor(&demoInvaders[a]);
+      }
+    }
+  }
+
+  if (lastDemoTime == 0) {
+    lastDemoTime = time + (5*DEMO_FRAME_TIME);
+  }
+
+  if (time - lastDemoTime >  DEMO_FRAME_TIME && demoIndex < (int)(sizeof(text)/sizeof(screen_text_t))) {
+    demoIndex++;
+    lastDemoTime = time;
+  }
+
   if (SCALE != 1) {
     gfx_bitBltEx(target, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCALED_W, SCALED_H, work);
   } else {
@@ -933,21 +1090,23 @@ init()
 static void
 gameLoop(unsigned time, int key)
 {
-  if (key == ' ') {
-    shootMissile();
+  if (numDefenders > 0) {
+    if (key == ' ') {
+      shootMissile();
+    }
+    
+    dropBombs();
+    
+    moveDefender();
+    moveInvaders(time);
+    moveMissile();
+    moveBombs();
+    
+    missileCollision();
+    bombCollision();
+    bombBasesCollision();     
   }
 
-  dropBombs();
-  
-  moveDefender();
-  moveInvaders(time);
-  moveMissile();
-  moveBombs();
-  
-  missileCollision();
-  bombCollision();
-  bombBasesCollision();     
-  
   if (screenDirty) {
     renderGameScreen(SCALE != 1);
   }     
@@ -956,7 +1115,6 @@ gameLoop(unsigned time, int key)
   }
   lastTime = time;
   frame++;
-  peripheral.simulator.yield = 1;
 }
 
 static void
@@ -964,16 +1122,28 @@ startLoop(int time, int key)
 {
   if (key == '1' && credits > 0) {
     credits--;
-    numDefenders = 3;
+    currentScreen = SCREEN_PLAYER_TURN_MESSAGE;
+    playerTurnMessageTime = time;
   } else {
     renderStartScreen();
   }
 }
 
 static void
+playerTurnMessageLoop(int time, int key) 
+{
+  if (time - playerTurnMessageTime > PLAYER_TURN_MESSAGE_TIME) {
+    numDefenders = 3;
+    currentScreen = SCREEN_GAME;
+  } else {
+    renderPlayer1TurnMessageScreen(time);
+  }
+}
+
+static void
 demoLoop(int time, int key)
 {
-  renderDemoScreen();
+  renderDemoScreen(time);
 }
 
 int 
@@ -1005,6 +1175,7 @@ main(int agrc, char* argv[])
     switch (key) {
     case 'c':
       credits++;
+      currentScreen = SCREEN_START;
       screenDirty = 1;
       printf("credits = %d\n", credits);
       break;
@@ -1016,15 +1187,21 @@ main(int agrc, char* argv[])
     default:
 	break;
     }
-    
-    if (numDefenders > 0) {
-      gameLoop(time, key);
-    } else if (credits > 0) {
-      startLoop(time, key);
-      kernel_threadBlocked();
-    } else {
+
+    switch (currentScreen) {
+    case SCREEN_DEMO:
       demoLoop(time, key);
-      kernel_threadBlocked();
+      break;
+    case SCREEN_START:
+      startLoop(time, key);
+      break;
+    case SCREEN_PLAYER_TURN_MESSAGE:
+      playerTurnMessageLoop(time, key);      
+      break;
+    case SCREEN_GAME:
+      gameLoop(time, key);
+      break;
     }
+    peripheral.simulator.yield = 1;
   }
 }
