@@ -133,10 +133,7 @@ _kernel_scheduleFromBlocked()
   }
 
   if (i == previous) {
-    ktrace_simulator_yield();
     peripheral.simulator.yieldOnRTE = 1;
-  } else {
-    ktrace_current_thread();
   }
 
   threadTable[i].state = _THREAD_RUNNING;
@@ -164,8 +161,6 @@ _kernel_schedule()
     }
   }
   
-  ktrace_current_thread();
-
   threadTable[i].state = _THREAD_RUNNING;
   return i;
 }
@@ -399,7 +394,6 @@ _from_asm_kernel_blocked(unsigned int *sp)
   KERNEL_ASSERT_INTERRUPTS_DISABLED();
 
   threadTable[currentThread].sp = sp;
-  ktrace_thread_blocked();
   threadTable[currentThread].state = _THREAD_BLOCKED;
 
   _kernel_checkStack();
@@ -543,7 +537,6 @@ void
 kernel_init(int (*ptr)(int argc, char** argv), const char* version)
 {
   _version = version;
-  ktrace_reset();
   currentThread = 0;
   for (int i = 0; i < _thread_max; i++) {
     threadTable[i].thread_stack = memory_kmalloc(_thread_stack_size_bytes);

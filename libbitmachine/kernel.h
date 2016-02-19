@@ -90,22 +90,6 @@ const char*
 kernel_version();
 
 
-//#define KTRACE
-
-#ifdef KTRACE
-#define ktrace_current_thread() (peripheral.simulator.trace = currentThread)
-#define ktrace_thread_blocked() (peripheral.simulator.trace = currentThread|0x100)
-#define ktrace_simulator_yield() (peripheral.simulator.trace =0x1000)
-#define ktrace_reset() (peripheral.simulator.traceReset = 1)
-#else
-#define ktrace_current_thread() 
-#define ktrace_thread_blocked() 
-#define ktrace_simulator_yield()
-#define ktrace_reset()
-
-#endif
-
-
 #define KERNEL_MODE() unsigned __kernelMode = kernel_enterKernelMode();
 #define USER_MODE() kernel_exitKernelMode(__kernelMode);
 
