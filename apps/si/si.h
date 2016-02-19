@@ -17,5 +17,8 @@ extern const unsigned long fastinvader4_wav_length;
 extern const unsigned char invaderkilled_wav[];
 extern const unsigned long invaderkilled_wav_length;
 
+extern const unsigned char explosion_wav[];
+extern const unsigned long explosion_wav_length;
+
 
 #endif
